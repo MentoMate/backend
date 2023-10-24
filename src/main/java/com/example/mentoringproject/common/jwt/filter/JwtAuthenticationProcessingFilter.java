@@ -1,12 +1,12 @@
 package com.example.mentoringproject.common.jwt.filter;
 
 import com.example.mentoringproject.common.jwt.service.JwtService;
-import com.example.mentoringproject.common.jwt.util.PasswordUtil;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -94,12 +94,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
   public void saveAuthentication(User myUser) {
     String password = myUser.getPassword();
     if (password == null) {
-      password = PasswordUtil.generateRandomPassword();
+      password = UUID.randomUUID().toString();
     }
 
     UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
             .username(myUser.getEmail())
             .password(password)
+            .authorities("USER")
             .build();
 
     Authentication authentication =
@@ -124,5 +125,4 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     userRepository.saveAndFlush(user);
     return reIssuedRefreshToken;
   }
-
 }
