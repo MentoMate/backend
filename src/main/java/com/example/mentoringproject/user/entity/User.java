@@ -1,13 +1,23 @@
 package com.example.mentoringproject.user.entity;
 
+import com.example.mentoringproject.post.entity.Post;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
@@ -38,6 +48,10 @@ public class User {
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
   private LocalDateTime deleteDate;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<Post> posts = new ArrayList<>();
 
 
   public void passwordEncode(PasswordEncoder passwordEncoder) {
