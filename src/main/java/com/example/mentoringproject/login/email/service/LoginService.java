@@ -1,7 +1,10 @@
 package com.example.mentoringproject.login.email.service;
 
+import com.example.mentoringproject.login.oauth2.CustomOAuth2User;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
+import java.time.LocalDateTime;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class LoginService implements UserDetailsService {
 
   private final UserRepository userRepository;
+
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     User user = userRepository.findByEmail(email)
@@ -23,5 +27,12 @@ public class LoginService implements UserDetailsService {
         .password(user.getPassword())
         .authorities("USER")
         .build();
+  }
+
+  @Transactional
+  public void setLastLogin(CustomOAuth2User oAuth2User) {
+    User user = userRepository.findByEmail(oAuth2User.getEmail())
+        .orElseThrow(() -> new RuntimeException("Not Found OAuth2User"));
+    user.setLastLogin(LocalDateTime.now());
   }
 }

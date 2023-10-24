@@ -6,6 +6,7 @@ import com.example.mentoringproject.login.oauth2.userinfo.NaverOAuth2UserInfo;
 import com.example.mentoringproject.login.oauth2.userinfo.OAuth2UserInfo;
 import com.example.mentoringproject.user.entity.SocialType;
 import com.example.mentoringproject.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Builder;
@@ -61,6 +62,8 @@ public class OAuthAttributes {
         .socialType(socialType)
         .socialId(oauth2UserInfo.getId())
         .email(UUID.randomUUID() + "@socialUser.com")
+        .nickName(UUID.randomUUID()+"@nickName")
+        .registerDate(LocalDateTime.now())
         .build();
   }
 }

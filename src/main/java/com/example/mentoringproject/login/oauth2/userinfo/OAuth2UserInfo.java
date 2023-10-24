@@ -12,5 +12,4 @@ public abstract class OAuth2UserInfo {
 
   public abstract String getId();
 
-
 }
