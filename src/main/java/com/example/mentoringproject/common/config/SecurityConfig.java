@@ -104,5 +104,4 @@ public class SecurityConfig {
         jwtService, userRepository);
     return jwtAuthenticationFilter;
   }
-
 }

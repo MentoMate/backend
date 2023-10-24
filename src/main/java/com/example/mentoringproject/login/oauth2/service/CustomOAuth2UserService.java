@@ -62,9 +62,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
   }
 
   private User getUser(OAuthAttributes attributes, SocialType socialType) {
+    //기존에 등록된 User인지 확인
     User findUser = userRepository.findBySocialTypeAndSocialId(socialType,
         attributes.getOauth2UserInfo().getId()).orElse(null);
 
+    //기존 유저가 아니면 db에 User save
     if(findUser == null) {
       return saveUser(attributes, socialType);
     }
