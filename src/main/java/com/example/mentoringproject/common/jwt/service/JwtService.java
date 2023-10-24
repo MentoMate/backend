@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,13 +59,8 @@ public class JwtService {
         .sign(Algorithm.HMAC512(secretKey));
   }
 
-  public void sendAccessToken(HttpServletResponse response, String accessToken) {
-    response.setStatus(HttpServletResponse.SC_OK);
-    response.setHeader(accessHeader, accessToken);
-    log.info("재발급된 AccessToken: {}", accessToken);
-  }
-
-  public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+  public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken,
+      String refreshToken) {
     response.setStatus(HttpServletResponse.SC_OK);
     setAccessTokenHeader(response, accessToken);
     setRefreshTokenHeader(response, refreshToken);
@@ -104,11 +100,12 @@ public class JwtService {
     response.setHeader(refreshHeader, refreshToken);
   }
 
+  @Transactional
   public void updateRefreshToken(String email, String refreshToken) {
     userRepository.findByEmail(email)
         .ifPresentOrElse(
             user -> user.updateRefreshToken(refreshToken),
-            () -> new Exception("일치하는 회원이 없습니다.")
+            () -> new RuntimeException("일치하는 회원이 없습니다.")
         );
   }
 
