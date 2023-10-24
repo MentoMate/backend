@@ -1,9 +1,9 @@
-package com.example.mentoringproject.post.controller;
+package com.example.mentoringproject.post.post.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.post.model.PostRegisterDto;
-import com.example.mentoringproject.post.model.PostUpdateDto;
-import com.example.mentoringproject.post.service.PostService;
+import com.example.mentoringproject.post.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.post.model.PostUpdateDto;
+import com.example.mentoringproject.post.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

@@ -1,11 +1,11 @@
-package com.example.mentoringproject.post.service;
+package com.example.mentoringproject.post.post.service;
 
 
-import com.example.mentoringproject.post.entity.Post;
-import com.example.mentoringproject.post.model.PostDto;
-import com.example.mentoringproject.post.model.PostRegisterDto;
-import com.example.mentoringproject.post.model.PostUpdateDto;
-import com.example.mentoringproject.post.repository.PostRepository;
+import com.example.mentoringproject.post.post.entity.Post;
+import com.example.mentoringproject.post.post.model.PostDto;
+import com.example.mentoringproject.post.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.post.model.PostUpdateDto;
+import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;

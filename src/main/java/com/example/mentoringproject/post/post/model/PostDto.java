@@ -1,7 +1,7 @@
-package com.example.mentoringproject.post.model;
+package com.example.mentoringproject.post.post.model;
 
-import com.example.mentoringproject.post.entity.Category;
-import com.example.mentoringproject.post.entity.Post;
+import com.example.mentoringproject.post.post.entity.Category;
+import com.example.mentoringproject.post.post.entity.Post;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

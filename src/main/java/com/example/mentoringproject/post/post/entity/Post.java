@@ -1,6 +1,6 @@
-package com.example.mentoringproject.post.entity;
+package com.example.mentoringproject.post.post.entity;
 
-import com.example.mentoringproject.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.post.model.PostRegisterDto;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDateTime;
 import javax.persistence.Column;

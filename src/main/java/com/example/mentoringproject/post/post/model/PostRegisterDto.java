@@ -1,6 +1,6 @@
-package com.example.mentoringproject.post.model;
+package com.example.mentoringproject.post.post.model;
 
-import com.example.mentoringproject.post.entity.Category;
+import com.example.mentoringproject.post.post.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
