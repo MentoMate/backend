@@ -1,12 +1,9 @@
-package com.example.mentoringproject.post.post.entity;
+package com.example.mentoringproject.post.comment.entity;
 
-import com.example.mentoringproject.post.comment.entity.Comment;
-import com.example.mentoringproject.post.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.comment.model.CommentRegisterDto;
+import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.user.entity.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,18 +22,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "posts")
-public class Post {
+@Entity(name = "comments")
+public class Comment {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "post_id")
+  @Column(name = "comment_id")
   private Long id;
 
-  private Category category;
-  private String title;
-  private String content;
-  private String imgUrl;
+  private String comment;
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
@@ -47,18 +40,15 @@ public class Post {
   @JoinColumn(name = "user_Id")
   private User user;
 
-  @JsonIgnore
-  @OneToMany(mappedBy = "post")
-  List<Comment> comments = new ArrayList<>();
+  @ManyToOne
+  @JoinColumn(name = "post_Id")
+  private Post post;
 
 
-  public static Post of(User user, PostRegisterDto postRegisterDto) {
-    return Post.builder()
+  public static Comment of(User user, CommentRegisterDto commentRegisterDto) {
+    return Comment.builder()
         .user(user)
-        .category(postRegisterDto.getCategory())
-        .title(postRegisterDto.getTitle())
-        .content(postRegisterDto.getContent())
-        .imgUrl(postRegisterDto.getImgUrl())
+        .comment(commentRegisterDto.getComment())
         .registerDatetime(LocalDateTime.now())
         .build();
   }
