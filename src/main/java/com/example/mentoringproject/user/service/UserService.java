@@ -1,10 +1,12 @@
 package com.example.mentoringproject.user.service;
 
+import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
+  private final JwtService jwtService;
 
   private static final String EMAIL_VERIFY_URL = "http://localhost:8080/user/join/email/auth";
 
@@ -92,4 +95,12 @@ public class UserService {
 
   }
 
+  public User getUser(String token){
+    String email =  jwtService.extractEmail(token).orElseThrow(() -> new RuntimeException("토큰이 유효하지 않습니다."));
+
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("존재하지 않는 이메일 입니다."));
+
+    return user;
+  }
 }
