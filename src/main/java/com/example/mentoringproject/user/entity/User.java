@@ -1,6 +1,8 @@
 package com.example.mentoringproject.user.entity;
 
-import com.example.mentoringproject.post.entity.Post;
+import com.example.mentoringproject.post.comment.entity.Comment;
+import com.example.mentoringproject.post.post.entity.Post;
+import com.example.mentoringproject.post.postLikes.entity.PostLikes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,6 +54,15 @@ public class User {
   @JsonIgnore
   @OneToMany(mappedBy = "user")
   List<Post> posts = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<Comment> comments = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<PostLikes> postLikes = new ArrayList<>();
+
 
 
   public void passwordEncode(PasswordEncoder passwordEncoder) {

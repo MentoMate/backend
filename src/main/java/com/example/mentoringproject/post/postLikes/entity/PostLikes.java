@@ -1,11 +1,11 @@
-package com.example.mentoringproject.post.comment.entity;
+package com.example.mentoringproject.post.postLikes.entity;
 
-import com.example.mentoringproject.post.comment.model.CommentRegisterDto;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,25 +16,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "comments")
-public class Comment {
+@Entity(name = "postlikes")
+@EntityListeners(AuditingEntityListener.class)
+public class PostLikes {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "comment_id")
+  @Column(name = "postlikes_id")
   private Long id;
 
-  private String comment;
-
   private LocalDateTime registerDatetime;
-  private LocalDateTime updateDatetime;
-  private LocalDateTime deleteDatetime;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
@@ -45,12 +43,11 @@ public class Comment {
   private Post post;
 
 
-  public static Comment of(User user, CommentRegisterDto commentRegisterDto) {
-    return Comment.builder()
-        .user(user)
-        .comment(commentRegisterDto.getComment())
+  public static PostLikes of(User user, Post post) {
+    return PostLikes.builder()
         .registerDatetime(LocalDateTime.now())
+        .user(user)
+        .post(post)
         .build();
   }
-
 }

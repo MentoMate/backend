@@ -2,6 +2,7 @@ package com.example.mentoringproject.post.post.entity;
 
 import com.example.mentoringproject.post.comment.entity.Comment;
 import com.example.mentoringproject.post.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.postLikes.entity.PostLikes;
 import com.example.mentoringproject.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
@@ -44,12 +45,17 @@ public class Post {
   private LocalDateTime deleteDatetime;
 
   @ManyToOne
-  @JoinColumn(name = "user_Id")
+  @JoinColumn(name = "user_id")
   private User user;
 
   @JsonIgnore
   @OneToMany(mappedBy = "post")
   List<Comment> comments = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "post")
+  List<PostLikes> postLikes = new ArrayList<>();
+
 
 
   public static Post of(User user, PostRegisterDto postRegisterDto) {
