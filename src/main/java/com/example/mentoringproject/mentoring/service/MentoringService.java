@@ -62,16 +62,17 @@ public class MentoringService {
     Mentoring mentoring = getMentoring(mentoringId);
 
     mentoring.setStatus(MentoringStatus.DELETE);
+
     mentoring.setDeleteDate(LocalDateTime.now());
 
     mentoringRepository.save(mentoring);
   }
 
+  @Transactional
   public MentoringInfo MentoringInfo(Long mentoringId){
-      Mentoring mentoring = getMentoring(mentoringId);
+      mentoringRepository.updateCount(mentoringId);
 
-      mentoring.setCountWatch(mentoring.getCountWatch()+1);
-      mentoringRepository.save(mentoring);
+      Mentoring mentoring = getMentoring(mentoringId);
 
     return  MentoringInfo.from(mentoring);
   }
