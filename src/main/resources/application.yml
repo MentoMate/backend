@@ -1,7 +1,10 @@
 spring:
-  config:
-    import:
+  profiles:
+    include:
       - oauth.yml
+      - jwt.yml
+      - mail.yml
+      - db-dev.yml
   h2:
     console:
       enabled: true
