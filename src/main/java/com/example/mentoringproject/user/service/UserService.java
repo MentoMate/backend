@@ -1,5 +1,6 @@
 package com.example.mentoringproject.user.service;
 
+import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
-
+  private final JwtService jwtService;
   private static final String EMAIL_VERIFY_URL = "http://localhost:8080/user/join/email/auth";
 
   //인증 확인 이메일을 보내고 DB에 저장
@@ -92,4 +94,12 @@ public class UserService {
 
   }
 
+  public User getUser(String token){
+    String email = jwtService.extractEmail(token).orElseThrow(() -> new RuntimeException("유효하지 않은 토큰 입니다."));
+
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다."));
+
+    return user;
+  }
 }
