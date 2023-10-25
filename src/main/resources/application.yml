@@ -2,12 +2,9 @@ spring:
   config:
     import:
       - oauth.yml
-
-
   h2:
     console:
       enabled: true
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://mentoring-mysql.cho8m9hxcz0n.ap-northeast-2.rds.amazonaws.com/test
