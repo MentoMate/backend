@@ -6,10 +6,12 @@ import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.repository.UserRepository;
 import com.example.mentoringproject.user.service.UserService;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,28 +19,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MentoringService {
   private final MentoringRepository mentoringRepository;
-  private final UserService userService;
+  private final UserRepository userRepository;
 
-    public void createMentoring(String token, MentoringDto mentoringDto){
-      User user = userService.getUser(token);
+    public void createMentoring(String email, MentoringDto mentoringDto){
+
+      User user = getUser(email);
 
       //프로필 등록여부 확인
 
-      mentoringRepository.save(Mentoring.builder()
-              .title(mentoringDto.getTitle())
-              .content(mentoringDto.getContent())
-              .startDate(mentoringDto.getStartDate())
-              .endDate(mentoringDto.getEndDate())
-              .numberOfPeople(mentoringDto.getNumberOfPeople())
-              .amount(mentoringDto.getAmount())
-              .status(mentoringDto.getStatus())
-              .category(mentoringDto.getCategory())
-              .imgUrl(mentoringDto.getImgUrl())
-              .registerDate(LocalDateTime.now())
-              .user(user)
-              .build()
-      );
+      mentoringRepository.save( Mentoring.from(user, mentoringDto));
     }
+
+  public User getUser(String email){
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+    return user;
+  }
 
   public void updateMentoring(Long mentoringId, MentoringDto mentoringDto){
 

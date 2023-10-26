@@ -1,5 +1,6 @@
 package com.example.mentoringproject.mentoring.controller;
 
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
@@ -25,10 +26,10 @@ public class MentoringController {
   private final MentoringService mentoringService;
   @PostMapping
   public ResponseEntity<?> createMentoring(
-      @RequestHeader(value = "Authorization") String token,
       @RequestBody MentoringDto mentoringDto
   ) {
-    mentoringService.createMentoring(token, mentoringDto);
+    String email = SpringSecurityUtil.getLoginEmail();
+    mentoringService.createMentoring(email, mentoringDto);
     return ResponseEntity.ok("mentoring create success");
   }
 

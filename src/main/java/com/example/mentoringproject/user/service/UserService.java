@@ -93,13 +93,4 @@ public class UserService {
     user.setRegisterDate(LocalDateTime.now());
 
   }
-
-  public User getUser(String token){
-    String email = jwtService.extractEmail(token).orElseThrow(() -> new RuntimeException("유효하지 않은 토큰 입니다."));
-
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다."));
-
-    return user;
-  }
 }

@@ -1,5 +1,6 @@
 package com.example.mentoringproject.mentoring.entity;
 
+import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.user.entity.SocialType;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
@@ -53,5 +54,21 @@ public class Mentoring {
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
   private LocalDateTime deleteDate;
+
+  public static Mentoring from(User user, MentoringDto mentoringDto) {
+    return Mentoring.builder()
+        .title(mentoringDto.getTitle())
+        .content(mentoringDto.getContent())
+        .startDate(mentoringDto.getStartDate())
+        .endDate(mentoringDto.getEndDate())
+        .numberOfPeople(mentoringDto.getNumberOfPeople())
+        .amount(mentoringDto.getAmount())
+        .status(mentoringDto.getStatus())
+        .category(mentoringDto.getCategory())
+        .imgUrl(mentoringDto.getImgUrl())
+        .registerDate(LocalDateTime.now())
+        .user(user)
+        .build();
+  }
 
 }
