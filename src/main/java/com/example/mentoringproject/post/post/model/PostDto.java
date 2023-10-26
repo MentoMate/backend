@@ -35,7 +35,6 @@ public class PostDto {
             .category(post.getCategory())
             .title(post.getTitle())
             .content(post.getContent())
-            .imgUrl(post.getImgUrl())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
             .deleteDatetime(post.getDeleteDatetime())

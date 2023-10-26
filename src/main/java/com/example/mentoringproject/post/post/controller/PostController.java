@@ -1,9 +1,13 @@
 package com.example.mentoringproject.post.post.controller;
 
+import com.example.mentoringproject.post.img.service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.post.model.PostRegisterDto;
 import com.example.mentoringproject.post.post.model.PostUpdateDto;
 import com.example.mentoringproject.post.post.service.PostService;
+import java.io.IOException;
+import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,12 +30,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
   private final PostService postService;
+  private final S3Service s3Service;
 
   // 글 등록
+  @Transactional
   @PostMapping
-  public ResponseEntity<?> createPost(@RequestBody PostRegisterDto postRegisterDto) {
+  public ResponseEntity<?> createPost(@RequestPart PostRegisterDto postRegisterDto,
+      @RequestPart("imgUrl") List<MultipartFile> multipartFiles) throws IOException {
     String email = SpringSecurityUtil.getLoginEmail();
-    postService.createPost(email, postRegisterDto);
+
+    List<String> imgPaths = s3Service.upload(multipartFiles);
+    postService.createPost(email, postRegisterDto, imgPaths);
     return ResponseEntity.ok("Post created successfully!");
   }
 

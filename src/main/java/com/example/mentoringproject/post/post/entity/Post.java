@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.post.entity;
 
 import com.example.mentoringproject.post.comment.entity.Comment;
+import com.example.mentoringproject.post.img.entity.Img;
 import com.example.mentoringproject.post.post.model.PostRegisterDto;
 import com.example.mentoringproject.post.postLikes.entity.PostLikes;
 import com.example.mentoringproject.user.entity.User;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,7 +40,6 @@ public class Post {
   private Category category;
   private String title;
   private String content;
-  private String imgUrl;
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
@@ -56,7 +57,9 @@ public class Post {
   @OneToMany(mappedBy = "post")
   List<PostLikes> postLikes = new ArrayList<>();
 
-
+  @JsonIgnore
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  List<Img> imgs = new ArrayList<>();
 
   public static Post of(User user, PostRegisterDto postRegisterDto) {
     return Post.builder()
@@ -64,7 +67,6 @@ public class Post {
         .category(postRegisterDto.getCategory())
         .title(postRegisterDto.getTitle())
         .content(postRegisterDto.getContent())
-        .imgUrl(postRegisterDto.getImgUrl())
         .registerDatetime(LocalDateTime.now())
         .build();
   }
