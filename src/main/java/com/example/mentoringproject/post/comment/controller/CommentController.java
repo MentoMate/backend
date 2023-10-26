@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/comments/{postId}")
+@RequestMapping("/{postId}/comments")
 public class CommentController {
 
   private final CommentService commentService;
