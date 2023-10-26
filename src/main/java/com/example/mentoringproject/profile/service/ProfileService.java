@@ -2,6 +2,7 @@ package com.example.mentoringproject.profile.service;
 
 import com.example.mentoringproject.profile.entity.Profile;
 import com.example.mentoringproject.profile.model.ProfileDto;
+import com.example.mentoringproject.profile.model.ProfileInfo;
 import com.example.mentoringproject.profile.repository.ProfileRepository;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.service.UserService;
