@@ -1,5 +1,6 @@
 package com.example.mentoringproject.profile.controller;
 
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.profile.entity.Profile;
 import com.example.mentoringproject.profile.model.ProfileDto;
 import com.example.mentoringproject.profile.model.ProfileInfo;
@@ -15,34 +16,32 @@ public class ProfileController {
     private final ProfileService profileService;
     @PostMapping
     public ResponseEntity<?> createProfile(
-            @RequestHeader(value = "Authorization") String token,
             @RequestBody ProfileDto profileDto
     ) {
-        profileService.createProfile(token, profileDto);
+        String email = SpringSecurityUtil.getLoginEmail();
+        profileService.createProfile(email, profileDto);
         return ResponseEntity.ok("profile create success");
     }
 
     @PutMapping
     public ResponseEntity<?> updateProfile(
-            @RequestHeader(value = "Authorization") String token,
             @RequestBody ProfileDto profileDto
     ) {
-        profileService.updateProfile(token, profileDto);
+        String email = SpringSecurityUtil.getLoginEmail();
+        profileService.updateProfile(email, profileDto);
         return ResponseEntity.ok("profile update success");
     }
 
     @GetMapping
-    public ResponseEntity<ProfileInfo>  getProfile(
-            @RequestHeader(value = "Authorization") String token
-    ) {
-       return ResponseEntity.ok(ProfileInfo.from(profileService.getProfile(token)));
+    public ResponseEntity<ProfileInfo>  profileInfo() {
+        String email = SpringSecurityUtil.getLoginEmail();
+        return ResponseEntity.ok(profileService.profileInfo(email));
     }
 
     @DeleteMapping
-    public ResponseEntity<?> DeleteProfile(
-            @RequestHeader(value = "Authorization") String token
-    ) {
-        profileService.deleteProfile(token);
+    public ResponseEntity<?> DeleteProfile() {
+        String email = SpringSecurityUtil.getLoginEmail();
+        profileService.deleteProfile(email);
         return ResponseEntity.ok("profile delete success");
     }
 

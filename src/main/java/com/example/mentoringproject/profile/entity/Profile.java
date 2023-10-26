@@ -1,5 +1,6 @@
 package com.example.mentoringproject.profile.entity;
 
+import com.example.mentoringproject.profile.model.ProfileDto;
 import com.example.mentoringproject.user.entity.User;
 import lombok.*;
 
@@ -32,4 +33,17 @@ public class Profile {
 
     private LocalDateTime registerDate;
     private LocalDateTime updateDate;
+
+    public static Profile from(User user, ProfileDto profileDto){
+       return Profile.builder()
+            .name(profileDto.getName())
+            .career(profileDto.getCareer())
+            .introduce(profileDto.getIntroduce())
+            .mainCategory(profileDto.getMainCategory())
+            .middleCategory(profileDto.getMiddleCategory())
+            .imgUrl(profileDto.getImgUrl())
+            .user(user)
+            .registerDate(LocalDateTime.now())
+            .build();
+    };
 }

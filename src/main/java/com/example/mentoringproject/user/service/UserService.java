@@ -95,12 +95,4 @@ public class UserService {
 
   }
 
-  public User getUser(String token){
-    String email =  jwtService.extractEmail(token).orElseThrow(() -> new RuntimeException("토큰이 유효하지 않습니다."));
-
-    User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("존재하지 않는 이메일 입니다."));
-
-    return user;
-  }
 }

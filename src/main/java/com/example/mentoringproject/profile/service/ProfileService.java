@@ -5,6 +5,7 @@ import com.example.mentoringproject.profile.model.ProfileDto;
 import com.example.mentoringproject.profile.model.ProfileInfo;
 import com.example.mentoringproject.profile.repository.ProfileRepository;
 import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.repository.UserRepository;
 import com.example.mentoringproject.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,31 +19,22 @@ import java.time.LocalDateTime;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Transactional
-    public void createProfile(String token, ProfileDto profileDto) {
-        User user = userService.getUser(token);
+    public void createProfile(String email, ProfileDto profileDto) {
+        User user = getUser(email);
 
         if(profileExists(user.getId())){
             throw new RuntimeException("프로필이 등록 되어 있습니다.");
         }
 
-        profileRepository.save(Profile.builder()
-                        .name(profileDto.getName())
-                        .career(profileDto.getCareer())
-                        .introduce(profileDto.getIntroduce())
-                        .mainCategory(profileDto.getMainCategory())
-                        .middleCategory(profileDto.getMiddleCategory())
-                        .imgUrl(profileDto.getImgUrl())
-                        .user(user)
-                        .registerDate(LocalDateTime.now())
-                        .build());
+        profileRepository.save( Profile.from(user, profileDto));
     }
 
     @Transactional
-    public void updateProfile(String token, ProfileDto profileDto) {
-        User user = userService.getUser(token);
+    public void updateProfile(String email, ProfileDto profileDto) {
+        User user = getUser(email);
 
         if(!profileExists(user.getId())){
             throw new RuntimeException("프로필 정보가 등록 되어 있지 않습니다.");
@@ -61,8 +53,8 @@ public class ProfileService {
     }
 
     @Transactional
-    public void deleteProfile(String token) {
-        User user = userService.getUser(token);
+    public void deleteProfile(String email) {
+        User user = getUser(email);
 
         if(!profileExists(user.getId())){
             throw new RuntimeException("프로필 정보가 등록 되어 있지 않습니다.");
@@ -72,17 +64,24 @@ public class ProfileService {
         profileRepository.delete(profile);
     }
 
-    public Profile getProfile(String token){
-        User user = userService.getUser(token);
+    public ProfileInfo profileInfo(String email){
+        User user = getUser(email);
 
         if(!profileExists(user.getId())){
             throw new RuntimeException("프로필 정보가 등록 되어 있지 않습니다.");
         }
 
-        return profileRepository.findByUserId(user.getId()).get();
+        return ProfileInfo.from(profileRepository.findByUserId(user.getId()).get());
     }
 
     public boolean profileExists(Long userId){
         return  profileRepository.findByUserId(userId).isPresent();
+    }
+
+    private User getUser(String email){
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("존재하지 않는 이메일 입니다."));
+
+        return user;
     }
 }
