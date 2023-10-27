@@ -2,7 +2,6 @@ package com.example.mentoringproject.user.controller;
 
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.user.model.UserDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.service.UserService;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-private final JwtService jwtService;
+  private final JwtService jwtService;
 
   @GetMapping("/test")
   public String authTest() {
@@ -68,8 +67,8 @@ private final JwtService jwtService;
   }
 
   @GetMapping
-  public ResponseEntity<UserDto>  userInfo() {
+  public ResponseEntity<UserProfile>  profileInfo() {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(userService.userInfo(email));
+    return ResponseEntity.ok(userService.profileInfo(email));
   }
 }
