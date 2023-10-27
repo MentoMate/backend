@@ -20,7 +20,7 @@ public class PostLikesController {
   @PostMapping
   public ResponseEntity<?> PostLikes(@PathVariable Long postId) {
     String email = SpringSecurityUtil.getLoginEmail();
-    postLikesService.createPostLikes(email, postId);
+    postLikesService.switchPostLikes(email, postId);
     return ResponseEntity.ok("postLikes successfully!");
   }
 

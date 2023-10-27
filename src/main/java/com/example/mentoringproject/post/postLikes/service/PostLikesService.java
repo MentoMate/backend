@@ -25,7 +25,7 @@ public class PostLikesService {
 
   // 좋아요 등록 / 취소
   @Transactional
-  public void createPostLikes(String email, Long postId) {
+  public void switchPostLikes(String email, Long postId) {
     User user = getUser(email);
 
     Post post = postRepository.findById(postId)
