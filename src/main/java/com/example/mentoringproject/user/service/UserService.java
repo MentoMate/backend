@@ -3,7 +3,6 @@ package com.example.mentoringproject.user.service;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.model.UserDto;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.repository.UserRepository;
@@ -133,8 +132,8 @@ public class UserService {
     return  user;
   }
 
-  public UserDto userInfo(String email){
-    return UserDto.from(getUser(email));
+  public UserProfile profileInfo(String email){
+    return UserProfile.from(getUser(email));
   }
 
   public User getUser(String email){
