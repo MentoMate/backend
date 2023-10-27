@@ -40,15 +40,13 @@ public class PostService {
 
     postRepository.save(post); // 엔티티를 저장하고 반환
 
-    List<String> imgList = imgPaths.stream()
-        .map(imgUrl -> {
-          Img img = new Img();
-          img.setImgUrl(imgUrl);
-          img.setPost(post);
-          imgRepository.save(img);
-          return img.getImgUrl();
-        })
-        .collect(Collectors.toList());
+    imgPaths.forEach(imgUrl -> {
+      Img img = new Img();
+      img.setImgUrl(imgUrl);
+      img.setPost(post);
+      imgRepository.save(img);
+    });
+
   }
 
 
