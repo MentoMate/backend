@@ -21,8 +21,6 @@ public class PostLikesService {
   private final UserRepository userRepository;
   private final PostLikesRepository postLikesRepository;
 
-
-
   // 좋아요 등록 / 취소
   @Transactional
   public void switchPostLikes(String email, Long postId) {

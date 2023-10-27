@@ -33,7 +33,6 @@ public class PostController {
   private final S3Service s3Service;
 
   // 글 등록
-  @Transactional
   @PostMapping
   public ResponseEntity<?> createPost(@RequestPart PostRegisterDto postRegisterDto,
       @RequestPart("imgUrl") List<MultipartFile> multipartFiles) throws IOException {

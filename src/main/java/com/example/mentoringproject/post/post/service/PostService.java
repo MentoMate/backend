@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -57,6 +58,7 @@ public class PostService {
   }
 
   // 포스팅 수정
+  @Transactional
   public void updatePost(String email, Long postId, PostUpdateDto postUpdateDto) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
@@ -76,6 +78,7 @@ public class PostService {
   }
 
   // 포스팅 삭제
+  @Transactional
   public void deletePost(String email, Long postId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
@@ -87,6 +90,7 @@ public class PostService {
   }
 
   // 모든 포스트 조회
+  @Transactional(readOnly = true)
   public Page<PostDto> findAllPosts(Pageable pageable) {
     Page<Post> posts = postRepository.findAll(pageable);
     List<PostDto> postDtos = PostDto.fromEntity(posts);

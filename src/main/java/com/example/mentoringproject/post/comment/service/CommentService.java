@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +43,7 @@ public class CommentService {
   }
 
   // 댓글 수정
+  @Transactional
   public void updateComment(String email, Long postId, Long commentId, CommentUpdateDto commentUpdateDto) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
@@ -61,6 +63,7 @@ public class CommentService {
   }
 
   // 댓글 삭제
+  @Transactional
   public void deleteComment(String email, Long postId, Long commentId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
@@ -76,6 +79,7 @@ public class CommentService {
   }
 
   // 모든 댓글 조회
+  @Transactional(readOnly = true)
   public Page<CommentDto> findAllComments(Pageable pageable) {
     Page<Comment> comments = commentRepository.findAll(pageable);
     List<CommentDto> commentDtos = CommentDto.fromEntity(comments);
