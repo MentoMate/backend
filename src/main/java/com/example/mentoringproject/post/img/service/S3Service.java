@@ -11,7 +11,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class S3Service  {
 
   private final AmazonS3 s3Client;
+
+  private final Set<String> fileExtensions = new HashSet<>(Arrays.asList(".jpg", ".jpeg", ".png"));
 
   @Value("${cloud.aws.credentials.accessKey}")
   private String accessKey;
@@ -77,15 +82,8 @@ public class S3Service  {
     if (fileName.length() == 0) {
       throw new RuntimeException("WRONG_INPUT_IMAGE");
     }
-    ArrayList<String> fileValidate = new ArrayList<>();
-    fileValidate.add(".jpg");
-    fileValidate.add(".jpeg");
-    fileValidate.add(".png");
-    fileValidate.add(".JPG");
-    fileValidate.add(".JPEG");
-    fileValidate.add(".PNG");
-    String idxFileName = fileName.substring(fileName.lastIndexOf("."));
-    if (!fileValidate.contains(idxFileName)) {
+    String idxFileName = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+    if (!fileExtensions.contains(idxFileName)) {
       throw new RuntimeException("WRONG_IMAGE_FORMAT");
     }
     return fileName.substring(fileName.lastIndexOf("."));
