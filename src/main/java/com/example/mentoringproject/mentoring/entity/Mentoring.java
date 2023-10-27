@@ -1,12 +1,12 @@
 package com.example.mentoringproject.mentoring.entity;
 
 import com.example.mentoringproject.mentoring.model.MentoringDto;
-import com.example.mentoringproject.user.entity.SocialType;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -16,10 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -27,6 +29,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity(name = "mentoring")
+@EntityListeners(AuditingEntityListener.class)
 public class Mentoring {
 
   @Id
@@ -51,9 +54,10 @@ public class Mentoring {
   private User user;
 
   private int countWatch;
+  @CreatedDate
   private LocalDateTime registerDate;
+  @LastModifiedDate
   private LocalDateTime updateDate;
-  private LocalDateTime deleteDate;
 
   public static Mentoring from(User user, MentoringDto mentoringDto) {
     return Mentoring.builder()
@@ -66,7 +70,6 @@ public class Mentoring {
         .status(mentoringDto.getStatus())
         .category(mentoringDto.getCategory())
         .imgUrl(mentoringDto.getImgUrl())
-        .registerDate(LocalDateTime.now())
         .user(user)
         .build();
   }

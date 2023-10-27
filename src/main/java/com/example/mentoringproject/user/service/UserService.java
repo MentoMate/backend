@@ -3,7 +3,9 @@ package com.example.mentoringproject.user.service;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.model.UserDto;
 import com.example.mentoringproject.user.model.UserJoinDto;
+import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -92,5 +94,49 @@ public class UserService {
     user.setPassword(encoder.encode(parameter.getPassword()));
     user.setRegisterDate(LocalDateTime.now());
 
+  }
+
+  @Transactional
+  public void createProfile(String email, UserProfile userProfile) {
+    User user = getUser(email);
+
+    if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
+      throw new RuntimeException("프로필이 등록 되어 있습니다.");
+    }
+
+    setProfile(user, userProfile);
+    userRepository.save(user);
+  }
+
+  @Transactional
+  public void updateProfile(String email, UserProfile userProfile) {
+    User user = getUser(email);
+
+    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
+      throw new RuntimeException("프로필이 등록 되어 있지 않습니다.");
+    }
+    setProfile(user, userProfile);
+    userRepository.save(user);
+  }
+
+  private User setProfile(User user, UserProfile userProfile){
+
+    user.setName(userProfile.getName());
+    user.setCareer(userProfile.getCareer());
+    user.setIntroduce(userProfile.getIntroduce());
+    user.setMainCategory(userProfile.getMainCategory());
+    user.setMiddleCategory(userProfile.getMiddleCategory());
+    user.setImgUrl(userProfile.getImgUrl());
+
+    return  user;
+  }
+
+  public UserDto userInfo(String email){
+    return UserDto.from(getUser(email));
+  }
+
+  public User getUser(String email){
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
   }
 }

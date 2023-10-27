@@ -35,6 +35,14 @@ public class User {
   private SocialType socialType;
   private String refreshToken;
   private LocalDateTime lastLogin;
+
+  private String name;
+  private int career;
+  private String introduce;
+  private String mainCategory;
+  private String middleCategory;
+  private String imgUrl;
+
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
   private LocalDateTime deleteDate;

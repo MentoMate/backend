@@ -1,12 +1,18 @@
 package com.example.mentoringproject.user.controller;
 
+import com.example.mentoringproject.common.jwt.service.JwtService;
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.user.model.UserDto;
+import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.service.UserService;
 import javax.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-
+private final JwtService jwtService;
 
   @GetMapping("/test")
   public String authTest() {
@@ -42,5 +48,28 @@ public class UserController {
   public ResponseEntity<?> joinEmailUser(@RequestBody UserJoinDto parameter) {
     userService.joinEmailUser(parameter);
     return ResponseEntity.ok("email join success");
+  }
+
+  @PostMapping("/profile")
+  public ResponseEntity<String> createProfile(
+      @RequestBody UserProfile userProfile
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    userService.createProfile(email, userProfile);
+    return ResponseEntity.ok("profile update success");
+  }
+  @PutMapping("/profile")
+  public ResponseEntity<String> updateProfile(
+      @RequestBody UserProfile userProfile
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    userService.updateProfile(email, userProfile);
+    return ResponseEntity.ok("profile update success");
+  }
+
+  @GetMapping
+  public ResponseEntity<UserDto>  userInfo() {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(userService.userInfo(email));
   }
 }

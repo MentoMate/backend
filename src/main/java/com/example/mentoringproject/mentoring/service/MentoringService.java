@@ -6,12 +6,9 @@ import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.repository.UserRepository;
 import com.example.mentoringproject.user.service.UserService;
-import java.time.LocalDateTime;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,24 +16,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MentoringService {
   private final MentoringRepository mentoringRepository;
-  private final UserRepository userRepository;
+  private final UserService userService;
 
     public void createMentoring(String email, MentoringDto mentoringDto){
 
-      User user = getUser(email);
+      User user = userService.getUser(email);
 
       //프로필 등록여부 확인
 
       mentoringRepository.save( Mentoring.from(user, mentoringDto));
     }
 
-  public User getUser(String email){
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
-    return user;
-  }
-
+  @Transactional
   public void updateMentoring(Long mentoringId, MentoringDto mentoringDto){
 
     Mentoring mentoring = getMentoring(mentoringId);
@@ -49,18 +40,14 @@ public class MentoringService {
     mentoring.setAmount(mentoringDto.getAmount());
     mentoring.setCategory(mentoringDto.getCategory());
     mentoring.setImgUrl(mentoringDto.getImgUrl());
-    mentoring.setUpdateDate(LocalDateTime.now());
 
     mentoringRepository.save(mentoring);
   }
-
+  @Transactional
   public void deleteMentoring(Long mentoringId){
 
     Mentoring mentoring = getMentoring(mentoringId);
-
     mentoring.setStatus(MentoringStatus.DELETE);
-
-    mentoring.setDeleteDate(LocalDateTime.now());
 
     mentoringRepository.save(mentoring);
   }

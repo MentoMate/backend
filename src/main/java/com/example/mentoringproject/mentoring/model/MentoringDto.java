@@ -2,6 +2,7 @@ package com.example.mentoringproject.mentoring.model;
 
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

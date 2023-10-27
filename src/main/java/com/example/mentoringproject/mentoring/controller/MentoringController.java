@@ -1,11 +1,9 @@
 package com.example.mentoringproject.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.service.MentoringService;
-import javax.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,9 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MentoringController {
   private final MentoringService mentoringService;
   @PostMapping
-  public ResponseEntity<?> createMentoring(
+  public ResponseEntity<String> createMentoring(
       @RequestBody MentoringDto mentoringDto
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
@@ -34,7 +30,7 @@ public class MentoringController {
   }
 
   @PutMapping("/{mentoringId}")
-  public ResponseEntity<?> updateMentoring(
+  public ResponseEntity<String> updateMentoring(
       @PathVariable Long mentoringId,
       @RequestBody MentoringDto mentoringDto
   ) {
@@ -43,7 +39,7 @@ public class MentoringController {
   }
 
   @DeleteMapping("/{mentoringId}")
-  public ResponseEntity<?> deleteMentoring(
+  public ResponseEntity<String> deleteMentoring(
       @PathVariable Long mentoringId
   ) {
     mentoringService.deleteMentoring(mentoringId);
