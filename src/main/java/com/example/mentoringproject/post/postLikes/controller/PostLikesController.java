@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts/postLikes/{postId}")
+@RequestMapping("/posts/{postId}/postLikes")
 public class PostLikesController {
 
   private final PostLikesService postLikesService;
 
   // 좋아요 등록/취소
   @PostMapping
-  public ResponseEntity<?> createPostLikes(@PathVariable Long postId) {
+  public ResponseEntity<?> PostLikes(@PathVariable Long postId) {
     String email = SpringSecurityUtil.getLoginEmail();
     postLikesService.createPostLikes(email, postId);
     return ResponseEntity.ok("postLikes successfully!");
