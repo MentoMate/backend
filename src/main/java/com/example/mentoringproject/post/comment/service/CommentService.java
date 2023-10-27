@@ -33,7 +33,7 @@ public class CommentService {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
 
-    Comment comment = commentRepository.save(Comment.of(user, CommentRegisterDto));
+    commentRepository.save(Comment.of(user, CommentRegisterDto));
   }
 
   private User getUser(String email) {
