@@ -51,6 +51,13 @@ public class User {
   private String refreshToken;
   private LocalDateTime lastLogin;
 
+  private String name;
+  private int career;
+  private String introduce;
+  private String mainCategory;
+  private String middleCategory;
+  private String imgUrl;
+
   @CreatedDate
   private LocalDateTime registerDate;
   @LastModifiedDate
