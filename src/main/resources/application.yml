@@ -4,6 +4,7 @@ spring:
       - jwt.yml
       - oauth.yml
       - mail.yml
+      - s3.yml
 
   h2:
     console:
