@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
@@ -35,14 +38,13 @@ public class User {
   private SocialType socialType;
   private String refreshToken;
   private LocalDateTime lastLogin;
+
+  @CreatedDate
   private LocalDateTime registerDate;
+  @LastModifiedDate
   private LocalDateTime updateDate;
+
   private LocalDateTime deleteDate;
-
-
-  public void passwordEncode(PasswordEncoder passwordEncoder) {
-    this.password = passwordEncoder.encode(this.password);
-  }
 
   public void updateRefreshToken(String updateRefreshToken) {
     this.refreshToken = updateRefreshToken;

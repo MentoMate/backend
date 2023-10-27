@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ public class UserService {
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
 
-  private static final String EMAIL_VERIFY_URL = "http://localhost:8080/user/join/email/auth";
+  @Value("${spring.mail.url}")
+  private String EMAIL_VERIFY_URL;
 
   //인증 확인 이메일을 보내고 DB에 저장
   @Transactional
