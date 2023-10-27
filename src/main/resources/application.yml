@@ -1,8 +1,8 @@
 spring:
-  config:
-    import:
-      - jwt.yml
+  profiles:
+    include:
       - oauth.yml
+      - jwt.yml
       - mail.yml
       - s3.yml
 
