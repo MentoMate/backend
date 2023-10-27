@@ -19,7 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PreRemove;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -68,7 +67,7 @@ public class Post {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   List<Img> imgs = new ArrayList<>();
 
-  public static Post of(User user, PostRegisterDto postRegisterDto) {
+  public static Post from (User user, PostRegisterDto postRegisterDto) {
     return Post.builder()
         .user(user)
         .category(postRegisterDto.getCategory())

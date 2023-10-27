@@ -45,7 +45,7 @@ public class PostLikes {
   private Post post;
 
 
-  public static PostLikes of(User user, Post post) {
+  public static PostLikes from(User user, Post post) {
     return PostLikes.builder()
         .user(user)
         .post(post)

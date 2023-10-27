@@ -13,7 +13,6 @@ import com.example.mentoringproject.user.repository.UserRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,7 +35,7 @@ public class PostService {
       List<String> imgPaths) throws IOException {
     User user = getUser(email);
 
-    Post post = Post.of(user, postRegisterDto);
+    Post post = Post.from(user, postRegisterDto);
 
     postRepository.save(post); // 엔티티를 저장하고 반환
 

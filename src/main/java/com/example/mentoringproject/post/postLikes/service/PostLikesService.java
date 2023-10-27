@@ -8,10 +8,8 @@ import com.example.mentoringproject.post.postLikes.repository.PostLikesRepositor
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.util.Optional;
-import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +28,7 @@ public class PostLikesService {
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
     Optional<PostLikes> postLikes = postLikesRepository.findByUserAndPost(user, post);
     if(postLikes.isEmpty()){
-      PostLikes Likes = PostLikes.of(user, post);
+      PostLikes Likes = PostLikes.from(user, post);
       postLikesRepository.save(Likes);
     } else {
       postLikesRepository.delete(postLikes.get());
