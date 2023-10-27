@@ -51,9 +51,10 @@ public class Comment {
   private Post post;
 
 
-  public static Comment of(User user, CommentRegisterDto commentRegisterDto) {
+  public static Comment of(User user, Post post, CommentRegisterDto commentRegisterDto) {
     return Comment.builder()
         .user(user)
+        .post(post)
         .comment(commentRegisterDto.getComment())
         .build();
   }
