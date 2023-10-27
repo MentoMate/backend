@@ -37,7 +37,6 @@ public class PostDto {
             .content(post.getContent())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
-            .deleteDatetime(post.getDeleteDatetime())
             .build()
         )
         .collect(Collectors.toList());

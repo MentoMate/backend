@@ -31,7 +31,6 @@ public class CommentDto {
             .comment(comment.getComment())
             .registerDatetime(comment.getRegisterDatetime())
             .updateDatetime(comment.getUpdateDatetime())
-            .deleteDatetime(comment.getDeleteDatetime())
             .build()
         )
         .collect(Collectors.toList());

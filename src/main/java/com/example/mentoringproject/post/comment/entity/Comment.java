@@ -55,7 +55,6 @@ public class Comment {
     return Comment.builder()
         .user(user)
         .comment(commentRegisterDto.getComment())
-        .registerDatetime(LocalDateTime.now())
         .build();
   }
 

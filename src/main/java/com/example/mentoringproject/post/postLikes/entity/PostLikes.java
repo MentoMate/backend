@@ -47,7 +47,6 @@ public class PostLikes {
 
   public static PostLikes of(User user, Post post) {
     return PostLikes.builder()
-        .registerDatetime(LocalDateTime.now())
         .user(user)
         .post(post)
         .build();

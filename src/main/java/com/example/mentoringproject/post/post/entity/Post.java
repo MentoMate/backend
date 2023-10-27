@@ -74,7 +74,6 @@ public class Post {
         .category(postRegisterDto.getCategory())
         .title(postRegisterDto.getTitle())
         .content(postRegisterDto.getContent())
-        .registerDatetime(LocalDateTime.now())
         .build();
   }
 
