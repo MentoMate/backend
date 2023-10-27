@@ -70,7 +70,7 @@ public class JwtService {
   public Optional<String> extractRefreshToken(HttpServletRequest request) {
     return Optional.ofNullable(request.getHeader(refreshHeader))
         .filter(refreshToken -> refreshToken.startsWith(BEARER))
-        .map(refreshToken -> refreshToken.replace(BEARER, ""));
+        .map(refreshToken -> refreshToken.split(" ")[1]);
   }
 
   public Optional<String> extractAccessToken(HttpServletRequest request) {

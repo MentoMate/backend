@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -73,8 +75,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     return findUser;
   }
 
-  private User saveUser(OAuthAttributes attributes, SocialType socialType) {
-    User createdUser = attributes.toEntity(socialType, attributes.getOauth2UserInfo());
-    return userRepository.save(createdUser);
+  @Transactional
+  public User saveUser(OAuthAttributes attributes, SocialType socialType) {
+    return attributes.from(socialType, attributes.getOauth2UserInfo());
   }
 }
