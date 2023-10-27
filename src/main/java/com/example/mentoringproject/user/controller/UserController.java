@@ -32,20 +32,20 @@ private final JwtService jwtService;
   }
 
   @PostMapping("/join/email/auth")
-  public ResponseEntity<?> sendEmailAuth(@RequestParam("email") String email) {
+  public ResponseEntity<String> sendEmailAuth(@RequestParam("email") String email) {
     userService.sendEmailAuth(email);
     return ResponseEntity.ok("email send success");
   }
 
   @GetMapping("/join/email/auth/verify")
-  public ResponseEntity<?> verifyEmailAuth(@PathParam("auth") String auth) {
+  public ResponseEntity<String> verifyEmailAuth(@PathParam("auth") String auth) {
     userService.verifyEmailAuth(auth);
     return ResponseEntity.ok("email auth verify success");
   }
 
 
   @PostMapping("/join/email")
-  public ResponseEntity<?> joinEmailUser(@RequestBody UserJoinDto parameter) {
+  public ResponseEntity<String> joinEmailUser(@RequestBody UserJoinDto parameter) {
     userService.joinEmailUser(parameter);
     return ResponseEntity.ok("email join success");
   }
