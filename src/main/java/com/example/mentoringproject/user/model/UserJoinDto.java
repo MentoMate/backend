@@ -10,4 +10,5 @@ public class UserJoinDto {
   private String email;
   private String password;
   private String nickName;
+
 }
