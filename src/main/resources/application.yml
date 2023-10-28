@@ -1,21 +1,20 @@
 spring:
   profiles:
-    include:
-      - oauth.yml
-      - jwt.yml
-      - mail.yml
-      - s3.yml
-
-  h2:
-    console:
-      enabled: true
-
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mentoringdb
-    username: root
-    password: zerobase
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
+    active: local
+    group:
+      common:
+        - jwt
+        - oauth
+        - mail
+        - s3
+      local:
+        - common
+        - db-local
+      dev:
+        - common
+        - db-dev
+---
+spring:
+  config:
+    activate:
+      on-profile: jwt, oauth, mail, db-dev, s3
