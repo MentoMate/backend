@@ -1,20 +1,9 @@
 spring:
   profiles:
-    active: local
-    group:
-      common:
-        - jwt
-        - oauth
-        - mail
-        - s3
-      local:
-        - common
-        - db-local
-      dev:
-        - common
-        - db-dev
----
-spring:
-  config:
-    activate:
-      on-profile: jwt, oauth, mail, db-dev, s3
+    include: 
+      - jwt.yml
+      - mail.yml
+      - oauth.yml
+      - s3.yml
+      - db-dev.yml
+
