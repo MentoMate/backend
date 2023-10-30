@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.post.controller;
 
-import com.example.mentoringproject.post.img.service.S3Service;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.post.model.PostRegisterDto;
 import com.example.mentoringproject.post.post.model.PostUpdateDto;
@@ -35,11 +36,10 @@ public class PostController {
   // 글 등록
   @PostMapping
   public ResponseEntity<?> createPost(@RequestPart PostRegisterDto postRegisterDto,
-      @RequestPart("imgUrl") List<MultipartFile> multipartFiles) throws IOException {
+      @RequestPart(name = "imgUrl", required = false) List<MultipartFile> multipartFiles) throws IOException {
     String email = SpringSecurityUtil.getLoginEmail();
 
-    List<String> imgPaths = s3Service.upload(multipartFiles);
-    postService.createPost(email, postRegisterDto, imgPaths);
+    postService.createPost(email, postRegisterDto, multipartFiles);
     return ResponseEntity.ok("Post created successfully!");
   }
 

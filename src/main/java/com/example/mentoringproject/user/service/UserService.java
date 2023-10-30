@@ -132,8 +132,12 @@ public class UserService {
     return  user;
   }
 
-  public UserProfile profileInfo(String email){
-    return UserProfile.from(getUser(email));
+  public User profileInfo(String email){
+    User user = getUser(email);
+    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
+      throw new RuntimeException("프로필이 등록 되어 있지 않습니다.");
+    }
+    return user;
   }
 
   public User getUser(String email){

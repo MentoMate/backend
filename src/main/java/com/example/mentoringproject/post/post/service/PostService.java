@@ -1,6 +1,8 @@
 package com.example.mentoringproject.post.post.service;
 
 
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.post.img.entity.Img;
 import com.example.mentoringproject.post.img.repository.ImgRepository;
 import com.example.mentoringproject.post.post.entity.Post;
@@ -13,6 +15,8 @@ import com.example.mentoringproject.user.repository.UserRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -29,23 +34,30 @@ public class PostService {
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final ImgRepository imgRepository;
+  private final S3Service s3Service;
 
   // 포스팅 등록
   public void createPost(String email, PostRegisterDto postRegisterDto,
-      List<String> imgPaths) throws IOException {
+      List<MultipartFile> multipartFiles) {
     User user = getUser(email);
 
     Post post = Post.from(user, postRegisterDto);
 
     postRepository.save(post); // 엔티티를 저장하고 반환
 
-    imgPaths.forEach(imgUrl -> {
-      Img img = new Img();
-      img.setImgUrl(imgUrl);
-      img.setPost(post);
-      imgRepository.save(img);
-    });
+    if(multipartFiles != null) {
+      List<S3FileDto> s3FileDto = s3Service.upload(multipartFiles, "post", "img");
+      Set<Img> ImgList = s3FileDto.stream()
+          .map(s3File -> Img.builder()
+              .uploadName(s3File.getUploadName())
+              .uploadPath(s3File.getUploadPath())
+              .uploadUrl(s3File.getUploadUrl())
+              .post(post)
+              .build())
+          .collect(Collectors.toSet());
 
+      imgRepository.saveAll(ImgList);
+    }
   }
 
 
@@ -83,6 +95,15 @@ public class PostService {
     if (!post.getUser().getEmail().equals(email)) {
       throw new RuntimeException("Not wirter of post");
     }
+
+    List<S3FileDto> s3FileDtoList = post.getImgs().stream()
+        .map(mentoringImg -> S3FileDto.builder()
+            .uploadName(mentoringImg.getUploadName())
+            .uploadPath(mentoringImg.getUploadPath())
+            .build())
+        .collect(Collectors.toList());
+    s3Service.deleteFile(s3FileDtoList);
+
     postRepository.deleteById(postId);
   }
 

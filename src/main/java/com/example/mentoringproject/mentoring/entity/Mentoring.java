@@ -1,19 +1,14 @@
 package com.example.mentoringproject.mentoring.entity;
 
+import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,13 +42,17 @@ public class Mentoring {
   @Enumerated(EnumType.STRING)
   private MentoringStatus status;
   private String category;
-  private String imgUrl;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
 
   private int countWatch;
+
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "mentoring")
+  private List<MentoringImg> mentoringImgList = new ArrayList<>();
+
+
   @CreatedDate
   private LocalDateTime registerDate;
   @LastModifiedDate
@@ -69,9 +68,7 @@ public class Mentoring {
         .amount(mentoringDto.getAmount())
         .status(mentoringDto.getStatus())
         .category(mentoringDto.getCategory())
-        .imgUrl(mentoringDto.getImgUrl())
         .user(user)
         .build();
   }
-
 }

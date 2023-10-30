@@ -69,6 +69,6 @@ public class UserController {
   @GetMapping
   public ResponseEntity<UserProfile>  profileInfo() {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(userService.profileInfo(email));
+    return ResponseEntity.ok(UserProfile.from(userService.profileInfo(email)));
   }
 }
