@@ -42,6 +42,8 @@ public class SecurityConfig {
     http
         .httpBasic().disable() // httpBasic 사용 X
         .csrf().disable() // csrf 보안 사용 X
+        .cors().configurationSource(corsConfigurationSource())
+        .and()
         .formLogin().disable() // FormLogin 사용 X
         .headers().frameOptions().disable()
         .and()
@@ -61,6 +63,21 @@ public class SecurityConfig {
         CustomJsonUsernamePasswordAuthenticationFilter.class);
 
     return http.build();
+  }
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+
+    config.addAllowedOrigin("http://localhost:5173"); // 로컬
+    config.addAllowedOrigin("http://localhost:3000"); // 로컬
+    config.addAllowedOrigin("http://프론트 AWS  주소"); // 프론트 IPv4 주소
+    config.addAllowedMethod("*"); // 모든 메소드 허용.
+    config.addAllowedHeader("*");
+    config.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 
 
