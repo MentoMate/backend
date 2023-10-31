@@ -23,6 +23,8 @@ public class MentorSearchDocumment {
   private String mainCategory;
   private String middleCategory;
 
+  private Double rating;
+
   public static MentorSearchDocumment fromEntity(User user) {
     return MentorSearchDocumment.builder()
         .id(user.getId())
@@ -31,6 +33,7 @@ public class MentorSearchDocumment {
         .introduce(user.getIntroduce())
         .mainCategory(user.getMainCategory())
         .middleCategory(user.getMiddleCategory())
+        .rating(user.getRating())
         .build();
   }
 

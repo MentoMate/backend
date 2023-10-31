@@ -42,11 +42,11 @@ public class MentoringSearchController {
     // 평점순, 최신순, 금액순 정렬
     if ("rating".equals(sortBy)) {
       mentoringSearchDtoList.sort(
-          Comparator.comparing(MentoringSearchDto::getNumberOfPeople).reversed()); // 평점으로 수정 필요
+          Comparator.comparing(MentoringSearchDto::getRating).reversed());
     } else if ("latest".equals(sortBy)) {
       mentoringSearchDtoList.sort(Comparator.comparing(MentoringSearchDto::getId).reversed());
     } else if ("cost".equals(sortBy)) {
-      mentoringSearchDtoList.sort(Comparator.comparing(MentoringSearchDto::getAmount)); // 금액으로 수정 필요
+      mentoringSearchDtoList.sort(Comparator.comparing(MentoringSearchDto::getAmount));
     }
     return ResponseEntity.ok(mentoringSearchDtoList);
   }

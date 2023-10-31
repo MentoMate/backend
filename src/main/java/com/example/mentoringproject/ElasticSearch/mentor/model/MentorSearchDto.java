@@ -19,6 +19,8 @@ public class MentorSearchDto {
   private String mainCategory;
   private String middleCategory;
 
+  private Double rating;
+
   public static MentorSearchDto fromDocument(MentorSearchDocumment mentorSearchDocumment) {
     return MentorSearchDto.builder()
         .id(mentorSearchDocumment.getId())
@@ -27,6 +29,7 @@ public class MentorSearchDto {
         .introduce(mentorSearchDocumment.getIntroduce())
         .mainCategory(mentorSearchDocumment.getMainCategory())
         .middleCategory(mentorSearchDocumment.getMiddleCategory())
+        .rating(mentorSearchDocumment.getRating())
         .build();
   }
 

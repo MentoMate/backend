@@ -28,6 +28,9 @@ public class MentoringSearchDocumment {
   private String category;
   private String imgUrl;
 
+  private Double rating;
+  private Long Cost;
+
   public static MentoringSearchDocumment fromEntity(User user, Mentoring mentoring) {
     return MentoringSearchDocumment.builder()
         .id(mentoring.getId())
@@ -38,6 +41,7 @@ public class MentoringSearchDocumment {
         .amount(mentoring.getAmount())
         .status(mentoring.getStatus())
         .category(mentoring.getCategory())
+        .rating(user.getRating())
         .build();
   }
 }

@@ -9,5 +9,5 @@ public interface MentorSearchRepository extends
 
   List<MentorSearchDocumment> findAllByNameAndMiddleCategory(String name, String middleCategory);
 
-  void deleteByEmail(String email);
+  void deleteByName(String name);
 }

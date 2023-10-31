@@ -23,6 +23,8 @@ public class MentoringSearchDto {
   private String category;
   private String imgUrl;
 
+  private Double rating;
+
   public static MentoringSearchDto fromDocument(
       MentoringSearchDocumment mentoringSearchDocumment) {
     return MentoringSearchDto.builder()
@@ -34,6 +36,7 @@ public class MentoringSearchDto {
         .amount(mentoringSearchDocumment.getAmount())
         .status(mentoringSearchDocumment.getStatus())
         .category(mentoringSearchDocumment.getCategory())
+        .rating(mentoringSearchDocumment.getRating())
         .build();
   }
 }

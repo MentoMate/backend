@@ -31,7 +31,7 @@ public class MentorSearchController {
     // 평점순, 최신순 정렬
     if ("rating".equals(sortBy)) {
       mentorSearchDtoList.sort(
-          Comparator.comparing(MentorSearchDto::getCareer).reversed()); // 평점 순으로 수정 필요
+          Comparator.comparing(MentorSearchDto::getRating).reversed());
     } else if ("latest".equals(sortBy)) {
       mentorSearchDtoList.sort(Comparator.comparing(MentorSearchDto::getId).reversed());
     }

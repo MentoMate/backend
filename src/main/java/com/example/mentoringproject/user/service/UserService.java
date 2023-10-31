@@ -123,7 +123,7 @@ public class UserService {
     setProfile(user, userProfile);
     userRepository.save(user);
 
-    mentorSearchRepository.deleteByEmail(email);
+    mentorSearchRepository.deleteByName(user.getName());
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
   }
 
