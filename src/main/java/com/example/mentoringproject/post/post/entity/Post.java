@@ -46,6 +46,8 @@ public class Post {
   private String title;
   private String content;
 
+  private int postLikesCount;
+
   @CreatedDate
   private LocalDateTime registerDatetime;
   @LastModifiedDate
@@ -73,6 +75,7 @@ public class Post {
         .category(postRegisterDto.getCategory())
         .title(postRegisterDto.getTitle())
         .content(postRegisterDto.getContent())
+        .postLikesCount(0)
         .build();
   }
 

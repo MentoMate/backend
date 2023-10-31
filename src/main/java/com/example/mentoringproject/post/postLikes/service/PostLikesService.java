@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PostLikesService {
+
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final PostLikesRepository postLikesRepository;
@@ -27,13 +28,16 @@ public class PostLikesService {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
     Optional<PostLikes> postLikes = postLikesRepository.findByUserAndPost(user, post);
-    if(postLikes.isEmpty()){
+    if (postLikes.isEmpty()) {
       PostLikes Likes = PostLikes.from(user, post);
       postLikesRepository.save(Likes);
+      post.setPostLikesCount(post.getPostLikesCount() + 1);
     } else {
       postLikesRepository.delete(postLikes.get());
+      post.setPostLikesCount(post.getPostLikesCount() - 1);
     }
   }
+
 
   private User getUser(String email) {
     return userRepository.findByEmail(email)

@@ -1,6 +1,8 @@
 package com.example.mentoringproject.post.post.service;
 
 
+import com.example.mentoringproject.ElasticSearch.post.entity.PostSearchDocumment;
+import com.example.mentoringproject.ElasticSearch.post.repository.PostSearchRepository;
 import com.example.mentoringproject.post.img.entity.Img;
 import com.example.mentoringproject.post.img.repository.ImgRepository;
 import com.example.mentoringproject.post.post.entity.Post;
@@ -28,6 +30,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final UserRepository userRepository;
+  private final PostSearchRepository postSearchRepository;
   private final ImgRepository imgRepository;
 
   // 포스팅 등록
@@ -45,6 +48,9 @@ public class PostService {
       img.setPost(post);
       imgRepository.save(img);
     });
+
+    postSearchRepository.save(PostSearchDocumment.fromEntity(post));
+
 
   }
 
@@ -72,6 +78,9 @@ public class PostService {
 
     postRepository.save(post);
 
+    postSearchRepository.deleteById(postId);
+    postSearchRepository.save(PostSearchDocumment.fromEntity(post));
+
   }
 
   // 포스팅 삭제
@@ -84,6 +93,9 @@ public class PostService {
       throw new RuntimeException("Not wirter of post");
     }
     postRepository.deleteById(postId);
+    postSearchRepository.deleteById(postId);
+
+    postSearchRepository.deleteById(postId);
   }
 
   // 모든 포스트 조회
