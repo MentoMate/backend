@@ -1,6 +1,5 @@
 package com.example.mentoringproject.login.email.service;
 
-import com.example.mentoringproject.login.oauth2.CustomOAuth2User;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -30,7 +29,7 @@ public class LoginService implements UserDetailsService {
   }
 
   @Transactional
-  public void setLastLogin(CustomOAuth2User oAuth2User) {
+  public void setLastLogin(User oAuth2User) {
     User user = userRepository.findByEmail(oAuth2User.getEmail())
         .orElseThrow(() -> new RuntimeException("Not Found OAuth2User"));
     user.setLastLogin(LocalDateTime.now());

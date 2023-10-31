@@ -13,13 +13,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByRefreshToken(String refreshToken);
 
-  Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String id);
-
   boolean existsByEmail(String email);
 
-  Optional<User> findByEmailAuth(String auth);
+  Optional<User> findByEmailAndEmailAuth(String email, String authCode);
 
   void deleteByEmail(String email);
 
   boolean existsByIdAndNameIsNotNull(Long id);
+
+  Optional<User> findByNickNameAndRegisterDateIsNotNull(String nickname);
+
+  Optional<User> findBySocialIdAndSocialType(String socialId, SocialType socialType);
 }

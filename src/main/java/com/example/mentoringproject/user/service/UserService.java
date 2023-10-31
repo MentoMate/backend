@@ -1,17 +1,14 @@
 package com.example.mentoringproject.user.service;
 
-import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,20 +21,17 @@ public class UserService {
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
 
-  @Value("${spring.mail.url}")
-  private String EMAIL_VERIFY_URL;
-
   //인증 확인 이메일을 보내고 DB에 저장
   @Transactional
   public void sendEmailAuth(String email) {
     verifyExistEmail(email);
 
-    String uuid = UUID.randomUUID().toString();
-    sendEmailAuth(email, uuid);
+    String authCode = String.valueOf((int) (Math.random() * 899999) + 100000);
+    sendEmailAuth(email, authCode);
     userRepository.save(
         User.builder()
             .email(email)
-            .emailAuth(uuid)
+            .emailAuth(authCode)
             .build()
     );
   }
@@ -51,7 +45,7 @@ public class UserService {
 
     //만약 이미 이메일이 존재하면 회원가입이 완료된 이메일인지 확인
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("find email server error"));
+        .orElseThrow(() -> new RuntimeException("이미 존재하는 이메일입니다."));
 
     //회원가입이 완료된 이메일이면 exception
     if (user.getRegisterDate()!=null) {
@@ -64,21 +58,30 @@ public class UserService {
   }
 
   //인증을 위한 이메일 보내기
-  private void sendEmailAuth(String email, String uuid) {
+  private void sendEmailAuth(String email, String authCode) {
     String subject = "MentoringProject에 가입을 축하드립니다.";
-    String text = "<p>MentoringProject에 가입을 축하드립니다.</p><p>아래 링크를 클릭하셔서 가입을 완료 하세요.</p>" +
-        "<div><a href='" + EMAIL_VERIFY_URL + "?auth=" + uuid + "'>가입완료</a></div>";
+    String text = "<p>MentoringProject에 가입을 축하드립니다.</p><p>인증 코드 : " + authCode + "</p>";
     mailComponents.sendMail(email, subject, text);
   }
 
 
   //이메일 인증 확인
   @Transactional
-  public void verifyEmailAuth(String auth) {
-    User user = userRepository.findByEmailAuth(auth).orElseThrow(
+  public void verifyEmailAuth(String email, String authCode) {
+    User user = userRepository.findByEmailAndEmailAuth(email, authCode).orElseThrow(
         () -> new RuntimeException("Not Found email auth")
     );
+    if (!user.getEmailAuth().equals(authCode)) {
+      throw new RuntimeException("Wrong AuthCode");
+    }
     user.setEmailAuthDate(LocalDateTime.now());
+  }
+
+  public void checkDuplicateNickName(String nickName) {
+    Optional<User> user = userRepository.findByNickNameAndRegisterDateIsNotNull(nickName);
+    if (user.isPresent()) {
+      throw new RuntimeException("이미 존재하는 닉네임입니다.");
+    }
   }
 
 
@@ -90,6 +93,8 @@ public class UserService {
     if (user.getEmailAuth().isEmpty()) {
       throw new RuntimeException("이메일 인증이 필요합니다.");
     }
+
+    checkDuplicateNickName(parameter.getNickName());
 
     user.setNickName(parameter.getNickName());
     user.setPassword(encoder.encode(parameter.getPassword()));
@@ -138,6 +143,6 @@ public class UserService {
 
   public User getUser(String email){
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
   }
 }
