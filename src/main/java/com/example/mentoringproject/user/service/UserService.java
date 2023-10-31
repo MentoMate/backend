@@ -1,5 +1,6 @@
 package com.example.mentoringproject.user.service;
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -103,7 +105,7 @@ public class UserService {
     User user = getUser(email);
 
     if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
-      throw new RuntimeException("프로필이 등록 되어 있습니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있습니다.");
     }
 
     setProfile(user, userProfile);
@@ -115,7 +117,7 @@ public class UserService {
     User user = getUser(email);
 
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
-      throw new RuntimeException("프로필이 등록 되어 있지 않습니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
     setProfile(user, userProfile);
     return userRepository.save(user);
@@ -136,13 +138,13 @@ public class UserService {
   public User profileInfo(String email){
     User user = getUser(email);
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
-      throw new RuntimeException("프로필이 등록 되어 있지 않습니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
     return user;
   }
 
   public User getUser(String email){
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 }

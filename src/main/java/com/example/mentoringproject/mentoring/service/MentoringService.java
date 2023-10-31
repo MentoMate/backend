@@ -1,5 +1,6 @@
 package com.example.mentoringproject.mentoring.service;
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,6 +95,6 @@ public class MentoringService {
   }
 
   public Mentoring getMentoring(Long mentoringId){
-    return mentoringRepository.findById(mentoringId).orElseThrow(() -> new RuntimeException("존재 하지 않는 멘토링 입니다."));
+    return mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
   }
 }

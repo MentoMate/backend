@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,7 +53,7 @@ public class S3Service {
             .withCannedAcl(CannedAccessControlList.PublicRead));
       }
       catch (IOException e) {
-        throw new RuntimeException(fileType +"_UPLOAD_ERROR");
+        throw new AppException(HttpStatus.BAD_REQUEST, fileType +"_UPLOAD_ERROR");
       }
 
       s3FileDtoList.add(
@@ -75,10 +77,7 @@ public class S3Service {
         }
       }
       catch (AmazonS3Exception e) {
-        throw new RuntimeException("S3 파일 삭제 중 오류 발생: " + e.getMessage(), e);
-      }
-      catch (SdkClientException e) {
-        throw new RuntimeException("S3 클라이언트 오류: " + e.getMessage(), e);
+        throw new AppException(HttpStatus.BAD_REQUEST, "DELETE_ERROR");
       }
     }
   }
@@ -89,11 +88,11 @@ public class S3Service {
 
   private void imageFileExtensionChk(String fileName) {
     if (!fileExtensions.contains(fileName.substring(fileName.lastIndexOf(".")).toLowerCase())) {
-      throw new RuntimeException("WRONG_IMAGE_FORMAT");
+      throw new AppException(HttpStatus.BAD_REQUEST, "WRONG_IMAGE_FORMAT");
     }
   }
   private String fileNameChk(String fileName){
-    if (fileName == null || fileName.length() == 0) throw new RuntimeException("WRONG_INPUT_IMAGE");
+    if (fileName == null || fileName.length() == 0) throw new AppException(HttpStatus.BAD_REQUEST,"WRONG_INPUT_IMAGE");
     return fileName;
   }
 }
