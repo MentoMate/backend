@@ -37,7 +37,9 @@ out/
 .vscode/
 
 ###private###
-/src/main/resources/jwt.yml
-/src/main/resources/mail.yml
-/src/main/resources/oauth.yml
+/src/main/resources/application-jwt.yml
+/src/main/resources/application-mail.yml
+/src/main/resources/application-s3.yml
+/src/main/resources/application-db-local.yml
+/src/main/resources/application-oauth.yml
 
