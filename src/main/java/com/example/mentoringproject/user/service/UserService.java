@@ -1,6 +1,7 @@
 package com.example.mentoringproject.user.service;
 
-import com.example.mentoringproject.common.jwt.service.JwtService;
+import com.example.mentoringproject.ElasticSearch.mentor.entity.MentorSearchDocumment;
+import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
@@ -10,8 +11,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
+  private final MentorSearchRepository mentorSearchRepository;
 
   @Value("${spring.mail.url}")
   private String EMAIL_VERIFY_URL;
@@ -107,6 +109,8 @@ public class UserService {
 
     setProfile(user, userProfile);
     userRepository.save(user);
+
+    mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
   }
 
   @Transactional
@@ -118,6 +122,9 @@ public class UserService {
     }
     setProfile(user, userProfile);
     userRepository.save(user);
+
+    mentorSearchRepository.deleteByEmail(email);
+    mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
   }
 
   private User setProfile(User user, UserProfile userProfile){
