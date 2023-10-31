@@ -50,20 +50,18 @@ public class UserController {
   }
 
   @PostMapping("/profile")
-  public ResponseEntity<String> createProfile(
+  public ResponseEntity<UserProfile> createProfile(
       @RequestBody UserProfile userProfile
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    userService.createProfile(email, userProfile);
-    return ResponseEntity.ok("profile update success");
+    return ResponseEntity.ok(UserProfile.from(userService.createProfile(email, userProfile)));
   }
   @PutMapping("/profile")
-  public ResponseEntity<String> updateProfile(
+  public ResponseEntity<UserProfile> updateProfile(
       @RequestBody UserProfile userProfile
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    userService.updateProfile(email, userProfile);
-    return ResponseEntity.ok("profile update success");
+    return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfile)));
   }
 
   @GetMapping

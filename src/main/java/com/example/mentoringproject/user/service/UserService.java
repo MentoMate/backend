@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -98,7 +99,7 @@ public class UserService {
   }
 
   @Transactional
-  public void createProfile(String email, UserProfile userProfile) {
+  public User createProfile(String email, UserProfile userProfile) {
     User user = getUser(email);
 
     if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
@@ -106,18 +107,18 @@ public class UserService {
     }
 
     setProfile(user, userProfile);
-    userRepository.save(user);
+    return userRepository.save(user);
   }
 
   @Transactional
-  public void updateProfile(String email, UserProfile userProfile) {
+  public User updateProfile(String email, UserProfile userProfile) {
     User user = getUser(email);
 
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
       throw new RuntimeException("프로필이 등록 되어 있지 않습니다.");
     }
     setProfile(user, userProfile);
-    userRepository.save(user);
+    return userRepository.save(user);
   }
 
   private User setProfile(User user, UserProfile userProfile){

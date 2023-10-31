@@ -25,33 +25,30 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/mentoring")
 public class MentoringController {
   private final MentoringService mentoringService;
-  private final S3Service s3Service;
 
   @PostMapping
-  public ResponseEntity<String> createMentoring(
+  public ResponseEntity<MentoringDto> createMentoring(
       @RequestPart MentoringDto mentoringDto,
       @RequestPart(name = "img", required = false) List<MultipartFile> multipartFiles
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    mentoringService.createMentoring(email, mentoringDto, multipartFiles);
-    return ResponseEntity.ok("mentoring create success");
+    return ResponseEntity.ok(MentoringDto.from(mentoringService.createMentoring(email, mentoringDto, multipartFiles)));
   }
 
   @PutMapping("/{mentoringId}")
-  public ResponseEntity<String> updateMentoring(
+  public ResponseEntity<MentoringDto> updateMentoring(
       @PathVariable Long mentoringId,
       @RequestBody MentoringDto mentoringDto
   ) {
-    mentoringService.updateMentoring(mentoringId, mentoringDto);
-    return ResponseEntity.ok("mentoring update success");
+    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(mentoringId, mentoringDto)));
   }
 
   @DeleteMapping("/{mentoringId}")
-  public ResponseEntity<String> deleteMentoring(
+  public ResponseEntity<Void> deleteMentoring(
       @PathVariable Long mentoringId
   ) {
     mentoringService.deleteMentoring(mentoringId);
-    return ResponseEntity.ok("mentoring delete success");
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/{mentoringId}")

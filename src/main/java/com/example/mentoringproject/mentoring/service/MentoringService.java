@@ -27,7 +27,7 @@ public class MentoringService {
   private final UserService userService;
   private final S3Service s3Service;
   @Transactional
-  public void createMentoring(String email, MentoringDto mentoringDto, List<MultipartFile> multipartFiles){
+  public Mentoring createMentoring(String email, MentoringDto mentoringDto, List<MultipartFile> multipartFiles){
 
     User user = userService.profileInfo(email);
 
@@ -46,10 +46,12 @@ public class MentoringService {
 
       mentoringImgRepository.saveAll(mentoringImgList);
     }
+
+    return  mentoring;
   }
 
   @Transactional
-  public void updateMentoring(Long mentoringId, MentoringDto mentoringDto){
+  public Mentoring updateMentoring(Long mentoringId, MentoringDto mentoringDto){
 
     Mentoring mentoring = getMentoring(mentoringId);
 
@@ -61,7 +63,7 @@ public class MentoringService {
     mentoring.setAmount(mentoringDto.getAmount());
     mentoring.setCategory(mentoringDto.getCategory());
 
-    mentoringRepository.save(mentoring);
+    return mentoringRepository.save(mentoring);
   }
   @Transactional
   public void deleteMentoring(Long mentoringId){
