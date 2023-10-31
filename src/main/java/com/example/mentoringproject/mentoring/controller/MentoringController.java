@@ -34,7 +34,9 @@ public class MentoringController {
       @PathVariable Long mentoringId,
       @RequestBody MentoringDto mentoringDto
   ) {
-    mentoringService.updateMentoring(mentoringId, mentoringDto);
+
+    String email = SpringSecurityUtil.getLoginEmail();
+    mentoringService.updateMentoring(email, mentoringId, mentoringDto);
     return ResponseEntity.ok("mentoring update success");
   }
 

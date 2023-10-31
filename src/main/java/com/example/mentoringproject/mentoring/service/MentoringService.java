@@ -1,5 +1,7 @@
 package com.example.mentoringproject.mentoring.service;
 
+import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
+import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MentoringService {
   private final MentoringRepository mentoringRepository;
+  private final MentoringSearchRepository mentoringSearchRepository;
   private final UserService userService;
 
     public void createMentoring(String email, MentoringDto mentoringDto){
@@ -24,11 +27,16 @@ public class MentoringService {
 
       //프로필 등록여부 확인
 
-      mentoringRepository.save( Mentoring.from(user, mentoringDto));
+     Mentoring mentoring = mentoringRepository.save( Mentoring.from(user, mentoringDto));
+
+      mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
     }
 
+
   @Transactional
-  public void updateMentoring(Long mentoringId, MentoringDto mentoringDto){
+  public void updateMentoring(String email, Long mentoringId, MentoringDto mentoringDto){
+
+    User user = userService.getUser(email);
 
     Mentoring mentoring = getMentoring(mentoringId);
 
@@ -42,6 +50,9 @@ public class MentoringService {
     mentoring.setImgUrl(mentoringDto.getImgUrl());
 
     mentoringRepository.save(mentoring);
+
+    mentoringSearchRepository.deleteById(mentoringId);
+    mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
   }
   @Transactional
   public void deleteMentoring(Long mentoringId){
@@ -50,6 +61,8 @@ public class MentoringService {
     mentoring.setStatus(MentoringStatus.DELETE);
 
     mentoringRepository.save(mentoring);
+
+    mentoringSearchRepository.deleteById(mentoringId);
   }
 
   @Transactional
