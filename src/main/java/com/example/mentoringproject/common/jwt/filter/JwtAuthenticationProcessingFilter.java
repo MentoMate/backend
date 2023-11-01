@@ -42,7 +42,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-          throws ServletException, IOException {
+      throws ServletException, IOException {
 
     Optional<String> header = resolveToken(request);
     if (header.isPresent()) {
@@ -52,14 +52,17 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
       }
 
       String refreshToken = jwtService.extractRefreshToken(request)
-              .filter(jwtService::isTokenValid)
-              .orElse(null);
-
-      if (refreshToken == null) checkAccessTokenAndAuthentication(request, response, filterChain);
-      else checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
-    }else {
-      filterChain.doFilter(request, response);
+          .filter(jwtService::isTokenValid)
+          .orElse(null);
+      if (refreshToken == null) {
+        checkAccessTokenAndAuthentication(request, response, filterChain);
+      }
+      if (refreshToken != null) {
+        checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+        return;
+      }
     }
+    filterChain.doFilter(request, response);
   }
 
   private Optional<String> resolveToken(HttpServletRequest request){

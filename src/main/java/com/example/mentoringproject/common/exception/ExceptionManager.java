@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionManager {
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(AppException.class)
     public ResponseEntity<?> appExceptionHandler(AppException e) {
         return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
     }
