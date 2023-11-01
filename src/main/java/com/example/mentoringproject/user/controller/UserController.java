@@ -60,7 +60,7 @@ public class UserController {
   @PostMapping("/profile")
   public ResponseEntity<UserProfile> createProfile(
       @RequestPart UserProfile userProfile,
-      @RequestPart(name = "img", required = false) MultipartFile multipartFile
+      @RequestPart(name = "img", required = false) List<MultipartFile >multipartFile
 
   ) {
     String email = SpringSecurityUtil.getLoginEmail();

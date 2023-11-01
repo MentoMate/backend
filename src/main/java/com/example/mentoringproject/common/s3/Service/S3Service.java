@@ -67,28 +67,6 @@ public class S3Service {
     return s3FileDtoList;
   }
 
-  public S3FileDto upload(MultipartFile multipartFile, String folderName) {
-
-    String originalFileName = fileNameChk(multipartFile.getOriginalFilename());
-    imageFileExtensionChk(originalFileName);
-    String keyName = folderName + "/" + createFileName(originalFileName);
-
-    ObjectMetadata objectMetadata = new ObjectMetadata();
-    objectMetadata.setContentLength(multipartFile.getSize());
-    objectMetadata.setContentType(multipartFile.getContentType());
-
-    try (InputStream inputStream = multipartFile.getInputStream()) {
-      amazonS3.putObject(new PutObjectRequest(bucket,  keyName, inputStream, objectMetadata)
-          .withCannedAcl(CannedAccessControlList.PublicRead));
-    }
-    catch (IOException e) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "UPLOAD_ERROR");
-    }
-
-    return  S3FileDto.builder()
-        .uploadUrl(amazonS3.getUrl(bucket, keyName).toString())
-        .build();
-  }
 
   public void deleteFile(List<S3FileDto> s3FileDtoList) {
     String keyName;

@@ -4,13 +4,16 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
+import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -105,7 +108,7 @@ public class UserService {
   }
 
   @Transactional
-  public User createProfile(String email, UserProfile userProfile, MultipartFile multipartFile) {
+  public User createProfile(String email, UserProfile userProfile, List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
     if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
@@ -115,8 +118,9 @@ public class UserService {
     setProfile(user, userProfile);
 
     if(multipartFile != null){
-      S3FileDto s3FileDto = s3Service.upload(multipartFile,"profile");
-      user.setImgUrl(s3FileDto.getUploadUrl());
+      List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
+
+      user.setImgUrl(s3FileDto.get(0).getUploadUrl());
     }
 
     return userRepository.save(user);
