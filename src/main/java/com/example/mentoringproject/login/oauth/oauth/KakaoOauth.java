@@ -1,5 +1,6 @@
 package com.example.mentoringproject.login.oauth.oauth;
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.login.oauth.model.KakaoUserInfo;
 import com.example.mentoringproject.login.oauth.model.OAuthToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -64,7 +66,7 @@ public class KakaoOauth implements SocialOauth {
       response.sendRedirect(redirectUrl);
       log.info("redirectUrl = {}", redirectUrl);
     } catch (IOException e) {
-      log.error("send redirect url error");
+      throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "sendRedirectFail");
     }
 
   }
@@ -112,7 +114,7 @@ public class KakaoOauth implements SocialOauth {
         new HttpEntity(headers), String.class);
 
     if (response.getStatusCode() != OK) {
-      throw new RuntimeException("accessToken 응답 에러");
+      throw new AppException(HttpStatus.BAD_REQUEST, "accessToken 응답에러");
     }
 
     return response;

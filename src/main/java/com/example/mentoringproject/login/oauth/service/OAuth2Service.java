@@ -1,6 +1,7 @@
 package com.example.mentoringproject.login.oauth.service;
 
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.service.LoginService;
 import com.example.mentoringproject.login.oauth.model.OAuthToken;
@@ -12,6 +13,7 @@ import com.example.mentoringproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,7 @@ public class OAuth2Service {
       kakaoOauth.sendOauthRedirectURL();
       return;
     }
-    throw new RuntimeException("알수 없는 소셜로그인 형식입니다.");
+    throw new AppException(HttpStatus.BAD_REQUEST, "알수 없는 소셜로그인 형식입니다.");
   }
 
   public void oAuthLogin(SocialType socialType, String code) throws IOException {

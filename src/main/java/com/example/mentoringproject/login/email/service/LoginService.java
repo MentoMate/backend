@@ -1,10 +1,12 @@
 package com.example.mentoringproject.login.email.service;
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +33,7 @@ public class LoginService implements UserDetailsService {
   @Transactional
   public void setLastLogin(User oAuth2User) {
     User user = userRepository.findByEmail(oAuth2User.getEmail())
-        .orElseThrow(() -> new RuntimeException("Not Found OAuth2User"));
+        .orElseThrow(() -> new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "Not Found OAuth2User"));
     user.setLastLogin(LocalDateTime.now());
   }
 }

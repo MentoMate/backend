@@ -71,10 +71,10 @@ public class UserService {
   @Transactional
   public void verifyEmailAuth(String email, String authCode) {
     User user = userRepository.findByEmailAndEmailAuth(email, authCode).orElseThrow(
-        () -> new RuntimeException("Not Found email auth")
+        () -> new AppException(HttpStatus.BAD_REQUEST, "Not Found email auth")
     );
     if (!user.getEmailAuth().equals(authCode)) {
-      throw new RuntimeException("Wrong AuthCode");
+      throw new AppException(HttpStatus.BAD_REQUEST, "Wrong AuthCode");
     }
     user.setEmailAuthDate(LocalDateTime.now());
   }
@@ -82,7 +82,7 @@ public class UserService {
   public void checkDuplicateNickName(String nickName) {
     Optional<User> user = userRepository.findByNickNameAndRegisterDateIsNotNull(nickName);
     if (user.isPresent()) {
-      throw new RuntimeException("이미 존재하는 닉네임입니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
     }
   }
 
@@ -93,7 +93,7 @@ public class UserService {
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
     if (user.getEmailAuth().isEmpty()) {
-      throw new RuntimeException("이메일 인증이 필요합니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다.");
     }
 
     checkDuplicateNickName(parameter.getNickName());
@@ -145,6 +145,6 @@ public class UserService {
 
   public User getUser(String email){
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 }
