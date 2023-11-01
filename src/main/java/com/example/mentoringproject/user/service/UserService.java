@@ -1,18 +1,33 @@
 package com.example.mentoringproject.user.service;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
+import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -22,6 +37,8 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
+  private final S3Service s3Service;
+
 
   //인증 확인 이메일을 보내고 DB에 저장
   @Transactional
@@ -105,26 +122,47 @@ public class UserService {
   }
 
   @Transactional
-  public void createProfile(String email, UserProfile userProfile) {
+  public User createProfile(String email, UserProfile userProfile, List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
     if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
-      throw new RuntimeException("프로필이 등록 되어 있습니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있습니다.");
     }
 
     setProfile(user, userProfile);
-    userRepository.save(user);
+
+    if(multipartFile != null){
+      List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
+
+      user.setImgUrl(s3FileDto.get(0).getUploadUrl());
+    }
+
+    return userRepository.save(user);
   }
 
   @Transactional
-  public void updateProfile(String email, UserProfile userProfile) {
+  public User updateProfile(String email, UserProfile userProfile) {
     User user = getUser(email);
 
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
-      throw new RuntimeException("프로필이 등록 되어 있지 않습니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
     setProfile(user, userProfile);
-    userRepository.save(user);
+    return userRepository.save(user);
+  }
+
+  public User profileInfo(String email){
+    User user = getUser(email);
+    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
+    }
+    return user;
+  }
+
+
+  public User getUser(String email){
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 
   private User setProfile(User user, UserProfile userProfile){
@@ -138,13 +176,5 @@ public class UserService {
 
     return  user;
   }
-
-  public UserProfile profileInfo(String email){
-    return UserProfile.from(getUser(email));
-  }
-
-  public User getUser(String email){
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
-  }
+  
 }

@@ -19,7 +19,6 @@ public class MentoringInfo {
   private int amount;
   private MentoringStatus status;
   private String category;
-  private String imgUrl;
   private Long userId;
   private String nickName;
   private int countWatch;
@@ -37,7 +36,6 @@ public class MentoringInfo {
         .amount(mentoring.getAmount())
         .status(mentoring.getStatus())
         .category(mentoring.getCategory())
-        .imgUrl(mentoring.getImgUrl())
         .userId(mentoring.getUser().getId())
         .nickName(mentoring.getUser().getNickName())
         .countWatch(mentoring.getCountWatch())
