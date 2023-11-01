@@ -6,9 +6,6 @@ import com.example.mentoringproject.login.email.filter.CustomJsonUsernamePasswor
 import com.example.mentoringproject.login.email.handler.LoginFailureHandler;
 import com.example.mentoringproject.login.email.handler.LoginSuccessHandler;
 import com.example.mentoringproject.login.email.service.LoginService;
-import com.example.mentoringproject.login.oauth2.handler.OAuth2LoginFailureHandler;
-import com.example.mentoringproject.login.oauth2.handler.OAuth2LoginSuccessHandler;
-import com.example.mentoringproject.login.oauth2.service.CustomOAuth2UserService;
 import com.example.mentoringproject.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +34,6 @@ public class SecurityConfig {
   private final JwtService jwtService;
   private final UserRepository userRepository;
   private final ObjectMapper objectMapper;
-  private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-  private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-  private final CustomOAuth2UserService customOAuth2UserService;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,14 +48,8 @@ public class SecurityConfig {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-
         .antMatchers("/", "/user/login/**", "/user/join/**").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .oauth2Login().loginPage("/").permitAll()
-        .successHandler(oAuth2LoginSuccessHandler)
-        .failureHandler(oAuth2LoginFailureHandler)
-        .userInfoEndpoint().userService(customOAuth2UserService);
+        .anyRequest().authenticated();
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.addFilterBefore(jwtAuthenticationProcessingFilter(),
         CustomJsonUsernamePasswordAuthenticationFilter.class);
@@ -74,7 +62,6 @@ public class SecurityConfig {
 
     config.addAllowedOrigin("http://localhost:5173"); // 로컬
     config.addAllowedOrigin("http://localhost:3000"); // 로컬
-    config.addAllowedOrigin("http://프론트 AWS  주소"); // 프론트 IPv4 주소
     config.addAllowedMethod("*"); // 모든 메소드 허용.
     config.addAllowedHeader("*");
     config.setAllowCredentials(true);
