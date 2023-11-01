@@ -53,7 +53,7 @@ public class KakaoOauth implements SocialOauth {
   @Value("${spring.OAuth2.kakao.token-url}")
   private String TOKEN_REQUEST_URL;
 
-  private String RESPONSE_TYPE = "code";
+  private final String RESPONSE_TYPE = "code";
 
   @Override
   public void sendOauthRedirectURL() {

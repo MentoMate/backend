@@ -1,5 +1,6 @@
 package com.example.mentoringproject.user.service;
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +90,7 @@ public class UserService {
   @Transactional
   public void joinEmailUser(UserJoinDto parameter) {
     User user = userRepository.findByEmail(parameter.getEmail())
-        .orElseThrow(() -> new RuntimeException("이메일 인증이 필요합니다."));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
     if (user.getEmailAuth().isEmpty()) {
       throw new RuntimeException("이메일 인증이 필요합니다.");
