@@ -4,6 +4,9 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.service.MentoringService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -55,4 +58,13 @@ public class MentoringController {
     return ResponseEntity.ok(mentoringService.MentoringInfo(mentoringId));
   }
 
+  @GetMapping("/main")
+  public ResponseEntity<Map<String, List<?>>> getMentoringMain() {
+    Map<String, List<?>> mentoringMainPageDtoMap = new HashMap<>();
+    mentoringMainPageDtoMap.put("MentoringByCountWatch", mentoringService.getMentoringByCountWatch());
+    mentoringMainPageDtoMap.put("MentorByRating", mentoringService.getMentorByRating());
+    mentoringMainPageDtoMap.put("PostRegisterDateTime", mentoringService.getPostByRegisterDateTime());
+    mentoringMainPageDtoMap.put("MentoringByEndDate", mentoringService.getMentoringByEndDate());
+    return ResponseEntity.ok(mentoringMainPageDtoMap);
+  }
 }
