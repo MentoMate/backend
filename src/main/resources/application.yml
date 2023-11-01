@@ -1,4 +1,7 @@
 spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 20
   profiles:
     include: 
       - jwt.yml
@@ -6,13 +9,13 @@ spring:
       - oauth.yml
       - s3.yml
       - db-dev.yml
-  # config:
-  #   import:
-  #     - application-jwt.yml
-  #     - application-mail.yml
-  #     - application-oauth.yml
-  #     - application-s3.yml
-  #     - application-db-local.yml
+#  config:
+#     import:
+#       - application-jwt.yml
+#       - application-mail.yml
+#       - application-oauth.yml
+#       - application-s3.yml
+#       - application-db-local.yml
 logging:
   level:
     com:
