@@ -86,12 +86,10 @@ public class MentoringService {
   }
 
   @Transactional
-  public MentoringInfo MentoringInfo(Long mentoringId){
+  public Mentoring mentoringInfo(Long mentoringId){
       mentoringRepository.updateCount(mentoringId);
 
-      Mentoring mentoring = getMentoring(mentoringId);
-
-    return  MentoringInfo.from(mentoring);
+    return  getMentoring(mentoringId);
   }
 
   public Mentoring getMentoring(Long mentoringId){

@@ -1,22 +1,26 @@
 package com.example.mentoringproject.user.service;
 
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.jwt.service.JwtService;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -26,7 +30,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
-
+  private final S3Service s3Service;
   @Value("${spring.mail.url}")
   private String EMAIL_VERIFY_URL;
 
@@ -101,7 +105,7 @@ public class UserService {
   }
 
   @Transactional
-  public User createProfile(String email, UserProfile userProfile) {
+  public User createProfile(String email, UserProfile userProfile, MultipartFile multipartFile) {
     User user = getUser(email);
 
     if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
@@ -109,6 +113,12 @@ public class UserService {
     }
 
     setProfile(user, userProfile);
+
+    if(multipartFile != null){
+      S3FileDto s3FileDto = s3Service.upload(multipartFile,"profile");
+      user.setImgUrl(s3FileDto.getUploadUrl());
+    }
+
     return userRepository.save(user);
   }
 
@@ -123,6 +133,20 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  public User profileInfo(String email){
+    User user = getUser(email);
+    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
+    }
+    return user;
+  }
+
+
+  public User getUser(String email){
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+  }
+
   private User setProfile(User user, UserProfile userProfile){
 
     user.setName(userProfile.getName());
@@ -135,16 +159,4 @@ public class UserService {
     return  user;
   }
 
-  public User profileInfo(String email){
-    User user = getUser(email);
-    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
-      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
-    }
-    return user;
-  }
-
-  public User getUser(String email){
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
-  }
 }

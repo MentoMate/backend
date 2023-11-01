@@ -5,17 +5,25 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.service.UserService;
+import java.util.List;
 import javax.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,10 +59,12 @@ public class UserController {
 
   @PostMapping("/profile")
   public ResponseEntity<UserProfile> createProfile(
-      @RequestBody UserProfile userProfile
+      @RequestPart UserProfile userProfile,
+      @RequestPart(name = "img", required = false) MultipartFile multipartFile
+
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(UserProfile.from(userService.createProfile(email, userProfile)));
+    return ResponseEntity.ok(UserProfile.from(userService.createProfile(email, userProfile, multipartFile)));
   }
   @PutMapping("/profile")
   public ResponseEntity<UserProfile> updateProfile(
@@ -63,10 +73,12 @@ public class UserController {
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfile)));
   }
-
-  @GetMapping
-  public ResponseEntity<UserProfile>  profileInfo() {
-    String email = SpringSecurityUtil.getLoginEmail();
+  @GetMapping("/profile")
+  public ResponseEntity<UserProfile>  profileInfo(
+      @PathVariable String email
+  ) {
     return ResponseEntity.ok(UserProfile.from(userService.profileInfo(email)));
   }
+
+
 }

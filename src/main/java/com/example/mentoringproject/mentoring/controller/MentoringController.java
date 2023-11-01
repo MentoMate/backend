@@ -52,10 +52,10 @@ public class MentoringController {
   }
 
   @GetMapping("/{mentoringId}")
-  public ResponseEntity<MentoringInfo> getMentoring(
+  public ResponseEntity<MentoringInfo> MentoringInfo(
       @PathVariable Long mentoringId
   ) {
-    return ResponseEntity.ok(mentoringService.MentoringInfo(mentoringId));
+    return ResponseEntity.ok(MentoringInfo.from(mentoringService.mentoringInfo(mentoringId)));
   }
 
 }
