@@ -5,6 +5,11 @@ import com.example.mentoringproject.login.oauth.model.NaverUserInfo;
 import com.example.mentoringproject.login.oauth.model.OAuthToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,14 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
 @Component
@@ -113,18 +110,16 @@ public class NaverOauth implements SocialOauth {
 
     String redirectURL = TOKEN_REQUEST_URL + "?" + parameterString;
 
-    ResponseEntity<String> response = restTemplate.getForEntity(redirectURL, String.class);
-
-    if (response.getStatusCode() != OK) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "accessToken 응답에러");
-    }
-
-    return response;
+    return restTemplate.getForEntity(redirectURL, String.class);
   }
 
   @Override
   public OAuthToken getAccessToken(ResponseEntity<String> response) throws JsonProcessingException {
-    return objectMapper.readValue(response.getBody(), OAuthToken.class);
+    OAuthToken oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+    if (oAuthToken.getAccess_token()==null) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "토큰값이 유효하지 않습니다. 중복토큰 혹은 토큰값 오류");
+    }
+    return oAuthToken;
   }
 
   @Override
