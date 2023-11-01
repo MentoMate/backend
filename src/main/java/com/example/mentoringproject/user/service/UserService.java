@@ -64,11 +64,11 @@ public class UserService {
 
     //만약 이미 이메일이 존재하면 회원가입이 완료된 이메일인지 확인
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("이미 존재하는 이메일입니다."));
-
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."));
+    
     //회원가입이 완료된 이메일이면 exception
     if (user.getRegisterDate()!=null) {
-      throw new RuntimeException("이미 가입된 이메일입니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다.");    
     }
 
     //회원가입이 완료되지 않은 이메일이면 삭제해야됨
