@@ -1,11 +1,9 @@
 package com.example.mentoringproject.user.controller;
 
-import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.model.UserJoinDto;
-import com.example.mentoringproject.user.service.UserService;
-import java.util.List;
+import com.example.mentoringproject.user.model.UserProfile;
+import com.example.mentoringproject.user.service.UserService;7
 import javax.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
   private final UserService userService;
-  private final JwtService jwtService;
 
   @GetMapping("/test")
   public String authTest() {
@@ -44,17 +40,27 @@ public class UserController {
     return ResponseEntity.ok("email send success");
   }
 
-  @GetMapping("/join/email/auth/verify")
-  public ResponseEntity<String> verifyEmailAuth(@PathParam("auth") String auth) {
-    userService.verifyEmailAuth(auth);
+  @PostMapping("/join/email/auth/verify")
+  public ResponseEntity<String> verifyEmailAuth(@RequestParam("email") String email, @RequestParam("authCode") String authCode) {
+    userService.verifyEmailAuth(email, authCode);
     return ResponseEntity.ok("email auth verify success");
   }
 
+  @PostMapping("/join/email/nickname/verify")
+  public ResponseEntity<String> checkDuplicateNickname(@RequestParam("nickName") String nickName) {
+    userService.checkDuplicateNickName(nickName);
+    return ResponseEntity.ok("check nickname success");
+  }
 
   @PostMapping("/join/email")
   public ResponseEntity<String> joinEmailUser(@RequestBody UserJoinDto parameter) {
     userService.joinEmailUser(parameter);
     return ResponseEntity.ok("email join success");
+  }
+
+  @GetMapping("/join/success")
+  public ResponseEntity<?> joinSuccessPage() {
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/profile")
@@ -79,6 +85,4 @@ public class UserController {
   ) {
     return ResponseEntity.ok(UserProfile.from(userService.profileInfo(email)));
   }
-
-
 }
