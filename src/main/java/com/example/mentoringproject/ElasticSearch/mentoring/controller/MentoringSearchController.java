@@ -25,7 +25,9 @@ public class MentoringSearchController {
       @RequestParam(required = true) String searchType,
       @RequestParam(required = true) String searchText,
       @RequestParam(required = true) String sortBy,
-      @RequestParam(required = true) String searchCategory) {
+      @RequestParam(required = true) String searchCategory,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "4") int pageSize) {
 
     List<MentoringSearchDto> mentoringSearchDtoList = new ArrayList<>();
 
@@ -48,6 +50,12 @@ public class MentoringSearchController {
     } else if ("cost".equals(sortBy)) {
       mentoringSearchDtoList.sort(Comparator.comparing(MentoringSearchDto::getAmount));
     }
-    return ResponseEntity.ok(mentoringSearchDtoList);
+    // 페이징 처리
+    int start = (page - 1) * pageSize;
+    int end = Math.min(start + pageSize, mentoringSearchDtoList.size());
+
+    List<MentoringSearchDto> pagedResult = mentoringSearchDtoList.subList(start, end);
+
+    return ResponseEntity.ok(pagedResult);
   }
 }

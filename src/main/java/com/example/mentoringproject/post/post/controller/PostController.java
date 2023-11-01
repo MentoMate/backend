@@ -1,17 +1,16 @@
 package com.example.mentoringproject.post.post.controller;
 
-import com.example.mentoringproject.post.img.service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.post.img.service.S3Service;
 import com.example.mentoringproject.post.post.model.PostRegisterDto;
 import com.example.mentoringproject.post.post.model.PostUpdateDto;
 import com.example.mentoringproject.post.post.service.PostService;
 import java.io.IOException;
 import java.util.List;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,7 +63,13 @@ public class PostController {
   // 전체 목록 조회
   @GetMapping
   public ResponseEntity<?> getAllPosts(
-      @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "8") int pageSize,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "DESC") String sortDirection) {
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+
+    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortBy);
     return ResponseEntity.ok(postService.findAllPosts(pageable));
   }
 

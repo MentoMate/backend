@@ -25,7 +25,9 @@ public class PostSearchController {
   public ResponseEntity<List<PostSearchDto>> searchPost(
       @RequestParam(required = true) String searchType,
       @RequestParam(required = true) String searchText,
-      @RequestParam(required = true) String sortBy) {
+      @RequestParam(required = true) String sortBy,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "4") int pageSize) {
 
     List<PostSearchDto> postSearchDtoList = new ArrayList<>();
 
@@ -45,6 +47,13 @@ public class PostSearchController {
       postSearchDtoList.sort(Comparator.comparing(PostSearchDto::getId).reversed());
     }
 
-    return ResponseEntity.ok(postSearchDtoList);
+    // 페이징 처리
+    int start = (page - 1) * pageSize;
+    int end = Math.min(start + pageSize, postSearchDtoList.size());
+
+    List<PostSearchDto> pagedResult = postSearchDtoList.subList(start, end);
+
+    return ResponseEntity.ok(pagedResult);
+
   }
 }
