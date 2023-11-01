@@ -68,9 +68,7 @@ public class KakaoOauth implements SocialOauth {
     } catch (IOException e) {
       throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "sendRedirectFail");
     }
-
   }
-
 
   private String getRedirectUrl() {
 
@@ -87,7 +85,11 @@ public class KakaoOauth implements SocialOauth {
 
   @Override
   public OAuthToken getAccessToken(ResponseEntity<String> response) throws JsonProcessingException {
-    return objectMapper.readValue(response.getBody(), OAuthToken.class);
+    OAuthToken oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+    if (oAuthToken.getAccess_token().isEmpty()) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "토큰값이 유효하지 않습니다. 중복토큰 혹은 토큰값 오류");
+    }
+    return oAuthToken;
   }
 
   @Override
@@ -110,14 +112,8 @@ public class KakaoOauth implements SocialOauth {
     log.info("CLIENT_SECRET ={}", CLIENT_SECRET);
     log.info("CALLBACK_URL ={}", REDIRECT_URI);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(uriBuilder.toUriString(),
+    return restTemplate.postForEntity(uriBuilder.toUriString(),
         new HttpEntity(headers), String.class);
-
-    if (response.getStatusCode() != OK) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "accessToken 응답에러");
-    }
-
-    return response;
   }
 
 
