@@ -1,5 +1,9 @@
 package com.example.mentoringproject.post.post.controller;
 
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.post.img.service.S3Service;
+import com.example.mentoringproject.post.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.post.model.PostUpdateDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.post.model.PostDto;
@@ -64,15 +68,16 @@ public class PostController {
   // 전체 목록 조회
   @GetMapping
   public ResponseEntity<Page<PostDto>> getAllPosts(
+
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "8") int pageSize,
       @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "DESC") String sortDirection) {
+
     Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.fromString(sortDirection), sortBy);
 
     return ResponseEntity.ok(postService.findAllPosts(pageable).map(PostDto::fromEntity));
 
   }
-
 
 }

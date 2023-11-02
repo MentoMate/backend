@@ -6,6 +6,9 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.service.MentoringService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +43,8 @@ public class MentoringController {
       @PathVariable Long mentoringId,
       @RequestBody MentoringDto mentoringDto
   ) {
+
+    String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(mentoringId, mentoringDto)));
   }
 
@@ -58,4 +63,13 @@ public class MentoringController {
     return ResponseEntity.ok(MentoringInfo.from(mentoringService.mentoringInfo(mentoringId)));
   }
 
+  @GetMapping("/main")
+  public ResponseEntity<Map<String, List<?>>> getMentoringMain() {
+    Map<String, List<?>> mentoringMainPageDtoMap = new HashMap<>();
+    mentoringMainPageDtoMap.put("MentoringByCountWatch", mentoringService.getMentoringByCountWatch());
+    mentoringMainPageDtoMap.put("MentorByRating", mentoringService.getMentorByRating());
+    mentoringMainPageDtoMap.put("PostRegisterDateTime", mentoringService.getPostByRegisterDateTime());
+    mentoringMainPageDtoMap.put("MentoringByEndDate", mentoringService.getMentoringByEndDate());
+    return ResponseEntity.ok(mentoringMainPageDtoMap);
+  }
 }

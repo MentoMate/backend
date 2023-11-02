@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.post.service;
 
-
+import com.example.mentoringproject.ElasticSearch.post.entity.PostSearchDocumment;
+import com.example.mentoringproject.ElasticSearch.post.repository.PostSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
@@ -32,6 +33,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final UserRepository userRepository;
+  private final PostSearchRepository postSearchRepository;
   private final ImgRepository imgRepository;
   private final S3Service s3Service;
 
@@ -43,6 +45,8 @@ public class PostService {
     Post post = Post.from(user, postRegisterRequest);
 
     postRepository.save(post);
+
+    postSearchRepository.save(PostSearchDocumment.fromEntity(post));
 
     if (multipartFiles != null) {
       List<S3FileDto> s3FileDto = s3Service.upload(multipartFiles, "post", "img");
@@ -83,7 +87,11 @@ public class PostService {
 
     postRepository.save(post);
 
+    postSearchRepository.deleteById(postId);
+    postSearchRepository.save(PostSearchDocumment.fromEntity(post));
+
     return post;
+
   }
 
   // 포스팅 삭제
@@ -105,6 +113,9 @@ public class PostService {
     s3Service.deleteFile(s3FileDtoList);
 
     postRepository.deleteById(postId);
+    postSearchRepository.deleteById(postId);
+
+    postSearchRepository.deleteById(postId);
   }
 
   // 모든 포스트 조회
