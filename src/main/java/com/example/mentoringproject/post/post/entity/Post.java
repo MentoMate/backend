@@ -2,7 +2,7 @@ package com.example.mentoringproject.post.post.entity;
 
 import com.example.mentoringproject.post.comment.entity.Comment;
 import com.example.mentoringproject.post.img.entity.Img;
-import com.example.mentoringproject.post.post.model.PostRegisterDto;
+import com.example.mentoringproject.post.post.model.PostRegisterRequest;
 import com.example.mentoringproject.post.postLikes.entity.PostLikes;
 import com.example.mentoringproject.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,6 +46,8 @@ public class Post {
   private String title;
   private String content;
 
+  private int postLikesCount;
+
   @CreatedDate
   private LocalDateTime registerDatetime;
   @LastModifiedDate
@@ -67,12 +69,13 @@ public class Post {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   List<Img> imgs = new ArrayList<>();
 
-  public static Post from (User user, PostRegisterDto postRegisterDto) {
+  public static Post from (User user, PostRegisterRequest postRegisterRequest) {
     return Post.builder()
         .user(user)
         .category(postRegisterDto.getCategory())
         .title(postRegisterDto.getTitle())
         .content(postRegisterDto.getContent())
+        .postLikesCount(0)
         .build();
   }
 

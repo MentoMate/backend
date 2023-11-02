@@ -2,6 +2,7 @@ package com.example.mentoringproject.user.repository;
 
 import com.example.mentoringproject.user.entity.SocialType;
 import com.example.mentoringproject.user.entity.User;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -24,9 +25,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   boolean existsByIdAndNameIsNotNull(Long id);
 
+  List<User> findTop50ByOrderByRatingDesc();
+
   Optional<User> findByNickNameAndRegisterDateIsNotNull(String nickname);
 
   Optional<User> findBySocialIdAndSocialType(String socialId, SocialType socialType);
 
   Page<User> findByNameIsNotNull(Pageable pageable);
+
 }

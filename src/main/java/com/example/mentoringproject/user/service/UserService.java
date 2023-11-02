@@ -1,5 +1,7 @@
 package com.example.mentoringproject.user.service;
 
+import com.example.mentoringproject.ElasticSearch.mentor.entity.MentorSearchDocumment;
+import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
@@ -18,6 +20,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,8 +42,8 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
+  private final MentorSearchRepository mentorSearchRepository;
   private final S3Service s3Service;
-
 
   //인증 확인 이메일을 보내고 DB에 저장
   @Transactional
@@ -132,12 +136,16 @@ public class UserService {
 
     setProfile(user, userProfile);
 
+    mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
+
+
     if(multipartFile != null){
       List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
       user.setImgUrl(s3FileDto.get(0).getUploadUrl());
     }
 
     return userRepository.save(user);
+
   }
 
   @Transactional
@@ -148,6 +156,10 @@ public class UserService {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
     setProfile(user, userProfile);
+
+    mentorSearchRepository.deleteByName(user.getName());
+    mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
+
     return userRepository.save(user);
   }
 

@@ -9,46 +9,34 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class PostDto {
-
+public class PostByRegisterDateDto {
   private Long id;
-
   private Category category;
   private String title;
   private String content;
-
+  private int postLikesCount;
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
-  public static List<PostDto> fromEntity(Page<Post> page) {
-    return page.getContent().stream()
-        .map(post -> PostDto.builder()
+
+  public static List<PostByRegisterDateDto> fromEntity(List<Post> postList) {
+    return postList.stream()
+        .map(post -> PostByRegisterDateDto.builder()
             .id(post.getId())
             .category(post.getCategory())
             .title(post.getTitle())
             .content(post.getContent())
+            .postLikesCount(post.getPostLikesCount())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
-            .build()
-        )
+            .build())
         .collect(Collectors.toList());
   }
 
-  public static PostDto fromEntity(Post post) {
-    return PostDto.builder()
-            .id(post.getId())
-            .category(post.getCategory())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .registerDatetime(post.getRegisterDatetime())
-            .updateDatetime(post.getUpdateDatetime())
-            .build();
-  }
 
 }
