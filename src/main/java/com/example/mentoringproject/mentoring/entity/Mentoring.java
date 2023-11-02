@@ -43,13 +43,18 @@ public class Mentoring {
   private MentoringStatus status;
   private String category;
 
+  private String uploadPath;
+  private String uploadName;
+  private String uploadUrl;
+
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
 
   private int countWatch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "mentoring")
+  @OneToMany(mappedBy = "mentoring")
   private List<MentoringImg> mentoringImgList = new ArrayList<>();
 
 
@@ -57,6 +62,8 @@ public class Mentoring {
   private LocalDateTime registerDate;
   @LastModifiedDate
   private LocalDateTime updateDate;
+  private LocalDateTime deleteDate;
+
 
   public static Mentoring from(User user, MentoringDto mentoringDto) {
     return Mentoring.builder()
@@ -68,6 +75,9 @@ public class Mentoring {
         .amount(mentoringDto.getAmount())
         .status(mentoringDto.getStatus())
         .category(mentoringDto.getCategory())
+        .uploadPath(mentoringDto.getUploadPath())
+        .uploadName(mentoringDto.getUploadName())
+        .uploadUrl(mentoringDto.getUploadUrl())
         .user(user)
         .build();
   }
