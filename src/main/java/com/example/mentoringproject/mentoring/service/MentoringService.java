@@ -82,9 +82,11 @@ public class MentoringService {
   }
 
   @Transactional
-  public Mentoring updateMentoring(Long mentoringId, MentoringDto mentoringDto){
+  public Mentoring updateMentoring(String email, Long mentoringId, MentoringDto mentoringDto){
 
     Mentoring mentoring = getMentoring(mentoringId);
+    User user = userService.profileInfo(userService.getUser(email).getId());
+
 
     mentoring.setTitle(mentoringDto.getTitle());
     mentoring.setContent(mentoringDto.getContent());

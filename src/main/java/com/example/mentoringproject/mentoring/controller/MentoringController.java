@@ -40,7 +40,7 @@ public class MentoringController {
   ) {
 
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(mentoringId, mentoringDto)));
+    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(email, mentoringId, mentoringDto)));
   }
 
   @DeleteMapping("/{mentoringId}")

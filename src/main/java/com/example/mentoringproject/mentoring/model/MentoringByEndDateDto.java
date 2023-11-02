@@ -24,7 +24,7 @@ public class MentoringByEndDateDto {
   private int amount;
   private MentoringStatus status;
   private String category;
-  private String imgUrl;
+  private String uploadUrl;
 
   public static List<MentoringByEndDateDto> fromEntity(List<Mentoring> mentoringList) {
     return mentoringList.stream()
@@ -37,7 +37,7 @@ public class MentoringByEndDateDto {
             .amount(mentoring.getAmount())
             .status(mentoring.getStatus())
             .category(mentoring.getCategory())
-            .imgUrl(mentoring.getImgUrl())
+            .uploadUrl(mentoring.getUploadUrl())
             .build())
         .collect(Collectors.toList());
   }

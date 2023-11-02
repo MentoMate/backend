@@ -23,7 +23,7 @@ public class MentoringByCountWatchDto {
   private int amount;
   private MentoringStatus status;
   private String category;
-  private String imgUrl;
+  private String uploadUrl;
 
   public static List<MentoringByCountWatchDto> fromEntity(List<Mentoring> mentoringList) {
     return mentoringList.stream()
@@ -36,7 +36,7 @@ public class MentoringByCountWatchDto {
             .amount(mentoring.getAmount())
             .status(mentoring.getStatus())
             .category(mentoring.getCategory())
-            .imgUrl(mentoring.getImgUrl())
+            .uploadUrl(mentoring.getUploadUrl())
             .build())
         .collect(Collectors.toList());
   }

@@ -72,9 +72,9 @@ public class Post {
   public static Post from (User user, PostRegisterRequest postRegisterRequest) {
     return Post.builder()
         .user(user)
-        .category(postRegisterDto.getCategory())
-        .title(postRegisterDto.getTitle())
-        .content(postRegisterDto.getContent())
+        .category(postRegisterRequest.getCategory())
+        .title(postRegisterRequest.getTitle())
+        .content(postRegisterRequest.getContent())
         .postLikesCount(0)
         .build();
   }

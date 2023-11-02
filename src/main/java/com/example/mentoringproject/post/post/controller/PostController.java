@@ -1,9 +1,5 @@
 package com.example.mentoringproject.post.post.controller;
 
-import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.post.img.service.S3Service;
-import com.example.mentoringproject.post.post.model.PostRegisterDto;
-import com.example.mentoringproject.post.post.model.PostUpdateDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.post.model.PostDto;
