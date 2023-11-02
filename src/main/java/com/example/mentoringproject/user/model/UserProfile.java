@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 @Getter
 @Builder
@@ -30,8 +31,8 @@ public class UserProfile {
         .build();
   }
 
-  public static List<UserProfile> from(Page<User> page){
-    return page.getContent().stream()
+  public static Page<UserProfile> from(Page<User> page){
+   List<UserProfile> userProfiles =  page.getContent().stream()
         .map(user -> UserProfile.builder()
             .name(user.getName())
             .career(user.getCareer())
@@ -41,5 +42,8 @@ public class UserProfile {
             .imgUrl(user.getImgUrl())
             .build()
         ).collect(Collectors.toList());
+
+    return new PageImpl<>(userProfiles, page.getPageable(), page.getTotalElements());
+
   }
 }
