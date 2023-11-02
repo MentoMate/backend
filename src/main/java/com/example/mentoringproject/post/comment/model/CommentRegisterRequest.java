@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-public class CommentRegisterDto {
+public class CommentRegisterRequest {
   private String comment;
 
 }

@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.postLikes.service;
 
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.post.postLikes.entity.PostLikes;
@@ -10,6 +11,7 @@ import com.example.mentoringproject.user.repository.UserRepository;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,11 +27,11 @@ public class PostLikesService {
     User user = getUser(email);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Not Found Post"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
     Optional<PostLikes> postLikes = postLikesRepository.findByUserAndPost(user, post);
     if(postLikes.isEmpty()){
-      PostLikes Likes = PostLikes.from(user, post);
-      postLikesRepository.save(Likes);
+      PostLikes likes = PostLikes.from(user, post);
+      postLikesRepository.save(likes);
     } else {
       postLikesRepository.delete(postLikes.get());
     }
@@ -37,7 +39,7 @@ public class PostLikesService {
 
   private User getUser(String email) {
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("Not Found User"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found User"));
   }
 
 }
