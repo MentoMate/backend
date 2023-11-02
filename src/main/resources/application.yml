@@ -2,7 +2,10 @@ spring:
   datasource:
     hikari:
       maximum-pool-size: 20
-
+  data:
+    redis:
+      repositories:
+        enabled: false
   profiles:
     include:
       - jwt.yml
@@ -18,8 +21,9 @@ spring:
   #      - application-s3.yml
   #      - application-db-local.yml
   redis:
-    host: localhost
+    host: 43.202.208.73
     port: 6379
+    password: '1234'
 logging:
   level:
     com:
