@@ -18,10 +18,9 @@ public class PostLikesController {
 
   // 좋아요 등록/취소
   @PostMapping
-  public ResponseEntity<?> PostLikes(@PathVariable Long postId) {
+  public ResponseEntity<String> PostLikes(@PathVariable Long postId) {
     String email = SpringSecurityUtil.getLoginEmail();
     postLikesService.switchPostLikes(email, postId);
-    return ResponseEntity.ok("postLikes successfully!");
+    return ResponseEntity.ok("Success");
   }
-
 }

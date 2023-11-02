@@ -1,7 +1,8 @@
-package com.example.mentoringproject.post.img.entity;
+package com.example.mentoringproject.mentoring.img.entity;
 
-import com.example.mentoringproject.post.post.entity.Post;
+import com.example.mentoringproject.mentoring.entity.Mentoring;
 import java.time.LocalDateTime;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -10,27 +11,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PreRemove;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Setter
 @Getter
-@Builder
-@Entity
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity(name = "img_mentoring")
 @EntityListeners(AuditingEntityListener.class)
-public class Img {
-
+public class MentoringImg {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "img_id")
@@ -41,15 +37,10 @@ public class Img {
   private String uploadUrl;
 
   @CreatedDate
-  private LocalDateTime registerDatetime;
-  @LastModifiedDate
-  private LocalDateTime updateDatetime;
-  private LocalDateTime deleteDatetime;
+  private LocalDateTime registerDate;
 
-
-  @ManyToOne
-  @JoinColumn(name = "post_id")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private Post post;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "mentoring_id")
+  private Mentoring mentoring;
 
 }

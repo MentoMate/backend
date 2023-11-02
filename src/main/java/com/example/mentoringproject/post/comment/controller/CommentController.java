@@ -1,10 +1,12 @@
 package com.example.mentoringproject.post.comment.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.post.comment.model.CommentRegisterDto;
-import com.example.mentoringproject.post.comment.model.CommentUpdateDto;
+import com.example.mentoringproject.post.comment.model.CommentDto;
+import com.example.mentoringproject.post.comment.model.CommentRegisterRequest;
+import com.example.mentoringproject.post.comment.model.CommentUpdateRequest;
 import com.example.mentoringproject.post.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,40 +30,45 @@ public class CommentController {
 
   // 댓글 등록
   @PostMapping
-  public ResponseEntity<?> createComment(@PathVariable Long postId, @RequestBody CommentRegisterDto commentRegisterDto) {
+  public ResponseEntity<CommentDto> createComment(@PathVariable Long postId,
+      @RequestBody CommentRegisterRequest commentRegisterRequest) {
     String email = SpringSecurityUtil.getLoginEmail();
-    commentService.createComment(email, postId, commentRegisterDto);
-    return ResponseEntity.ok("comment created successfully!");
+
+    return ResponseEntity.ok(
+        CommentDto.fromEntity(commentService.createComment(email, postId, commentRegisterRequest)));
   }
 
   // 댓글 수정
   @PutMapping("/{commentId}")
-  public ResponseEntity<?> updatePost(@PathVariable Long postId, @PathVariable Long commentId,
-      @RequestBody CommentUpdateDto commentUpdateDto) {
+  public ResponseEntity<CommentDto> updatePost(@PathVariable Long postId,
+      @PathVariable Long commentId,
+      @RequestBody CommentUpdateRequest commentUpdateRequest) {
     String email = SpringSecurityUtil.getLoginEmail();
-    commentService.updateComment(email, postId, commentId, commentUpdateDto);
-    return ResponseEntity.ok("comment updated successfully!");
+
+    return ResponseEntity.ok(CommentDto.fromEntity(
+        commentService.updateComment(email, postId, commentId, commentUpdateRequest)));
   }
 
   // 글 삭제
   @DeleteMapping("/{commentId}")
-  public ResponseEntity<?> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
+  public ResponseEntity<Void> deleteComment(@PathVariable Long postId,
+      @PathVariable Long commentId) {
     String email = SpringSecurityUtil.getLoginEmail();
     commentService.deleteComment(email, postId, commentId);
-    return ResponseEntity.ok("comment deleted successfully!");
+    return ResponseEntity.ok().build();
   }
 
   // 전체 목록 조회
   @GetMapping
-  public ResponseEntity<?> getAllComments(
+  public ResponseEntity<Page<CommentDto>> getAllComments(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "8") int pageSize,
       @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "DESC") String sortDirection) {
-    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.fromString(sortDirection),
+        sortBy);
 
-    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortBy);
-    return ResponseEntity.ok(commentService.findAllComments(pageable));
+    return ResponseEntity.ok(commentService.findAllComments(pageable).map(CommentDto::fromEntity));
   }
 
 }

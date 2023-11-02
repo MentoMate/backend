@@ -41,8 +41,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
   private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-          throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+      FilterChain filterChain)
+      throws ServletException, IOException {
 
     Optional<String> header = resolveToken(request);
     if (header.isPresent()) {
@@ -52,31 +53,31 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
       }
 
       String refreshToken = jwtService.extractRefreshToken(request)
-              .filter(jwtService::isTokenValid)
-              .orElse(null);
+          .filter(jwtService::isTokenValid)
+          .orElse(null);
       if (refreshToken == null) {
         checkAccessTokenAndAuthentication(request, response, filterChain);
-      }
-      if (refreshToken != null) {
+      } else {
         checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
-        return;
       }
+    } else {
+      filterChain.doFilter(request, response);
     }
-    filterChain.doFilter(request, response);
   }
 
-  private Optional<String> resolveToken(HttpServletRequest request){
+  private Optional<String> resolveToken(HttpServletRequest request) {
 
     String authToken = request.getHeader(AUTHORIZATION_HEADER);
     log.debug("authToken: " + authToken);
-    if(StringUtils.hasText(authToken)){
+    if (StringUtils.hasText(authToken)) {
       return Optional.of(authToken);
     } else {
       return Optional.empty();
     }
   }
 
-  public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
+  public void checkAccessTokenAndAuthentication(HttpServletRequest request,
+      HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
     log.info("checkAccessTokenAndAuthentication() 호출");
 
@@ -98,23 +99,25 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-            .username(myUser.getEmail())
-            .password(password)
-            .authorities("USER")
-            .build();
+        .username(myUser.getEmail())
+        .password(password)
+        .authorities("USER")
+        .build();
 
     Authentication authentication =
-            new UsernamePasswordAuthenticationToken(userDetailsUser, null,
-                    authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
+        new UsernamePasswordAuthenticationToken(userDetailsUser, null,
+            authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 
-  public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
+  public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response,
+      String refreshToken) {
     userRepository.findByRefreshToken(refreshToken)
         .ifPresent(user -> {
           String reIssuedRefreshToken = reIssueRefreshToken(user);
-          jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getEmail()),
+          jwtService.sendAccessAndRefreshToken(response,
+              jwtService.createAccessToken(user.getEmail()),
               reIssuedRefreshToken);
         });
   }

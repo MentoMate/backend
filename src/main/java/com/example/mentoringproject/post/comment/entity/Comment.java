@@ -1,6 +1,6 @@
 package com.example.mentoringproject.post.comment.entity;
 
-import com.example.mentoringproject.post.comment.model.CommentRegisterDto;
+import com.example.mentoringproject.post.comment.model.CommentRegisterRequest;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDateTime;
@@ -51,11 +51,11 @@ public class Comment {
   private Post post;
 
 
-  public static Comment from (User user, Post post, CommentRegisterDto commentRegisterDto) {
+  public static Comment from (User user, Post post, CommentRegisterRequest commentRegisterRequest) {
     return Comment.builder()
         .user(user)
         .post(post)
-        .comment(commentRegisterDto.getComment())
+        .comment(commentRegisterRequest.getComment())
         .build();
   }
 
