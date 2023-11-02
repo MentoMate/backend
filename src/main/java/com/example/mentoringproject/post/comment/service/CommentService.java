@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.comment.service;
 
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.post.comment.entity.Comment;
 import com.example.mentoringproject.post.comment.model.CommentRegisterRequest;
 import com.example.mentoringproject.post.comment.model.CommentUpdateRequest;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,7 @@ public class CommentService {
     User user = getUser(email);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Not Found Post"));
+        .orElseThrow(() ->  new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
     Comment comment = commentRepository.save(Comment.from(user, post, commentRegisterRequest));
 
@@ -38,20 +40,20 @@ public class CommentService {
 
   private User getUser(String email) {
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("Not Found User"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found User"));
   }
 
   // 댓글 수정
   @Transactional
   public Comment updateComment(String email, Long postId, Long commentId, CommentUpdateRequest commentUpdateRequest) {
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Not Found Post"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("Not Found Comment"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Comment"));
 
     if (!post.getUser().getEmail().equals(email)) {
-      throw new RuntimeException("Not wirter of post");
+      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
 
     comment.setComment(commentUpdateRequest.getComment());
@@ -67,13 +69,13 @@ public class CommentService {
   @Transactional
   public void deleteComment(String email, Long postId, Long commentId) {
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Not Found Post"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("Not Found Comment"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Comment"));
 
     if (!post.getUser().getEmail().equals(email)) {
-      throw new RuntimeException("Not wirter of post");
+      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
 
     commentRepository.deleteById(commentId);

@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.post.service;
 
 
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.post.img.entity.Img;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,17 +63,17 @@ public class PostService {
 
   private User getUser(String email) {
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("Not Found User"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found User"));
   }
 
   // 포스팅 수정
   @Transactional
   public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest) {
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Not Found Post"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
     if (!post.getUser().getEmail().equals(email)) {
-      throw new RuntimeException("Not wirter of post");
+      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
 
     post.setCategory(postUpdateRequest.getCategory());
@@ -88,10 +90,10 @@ public class PostService {
   @Transactional
   public void deletePost(String email, Long postId) {
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Not Found Post"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
     if (!post.getUser().getEmail().equals(email)) {
-      throw new RuntimeException("Not wirter of post");
+      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
 
     List<S3FileDto> s3FileDtoList = post.getImgs().stream()
