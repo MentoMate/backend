@@ -22,7 +22,6 @@ public class CommentDto {
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
-  private LocalDateTime deleteDatetime;
 
   public static List<CommentDto> fromEntity(Page<Comment> page) {
     return page.getContent().stream()
@@ -34,6 +33,15 @@ public class CommentDto {
             .build()
         )
         .collect(Collectors.toList());
+  }
+
+  public static CommentDto fromEntity(Comment comment) {
+    return CommentDto.builder()
+            .id(comment.getId())
+            .comment(comment.getComment())
+            .registerDatetime(comment.getRegisterDatetime())
+            .updateDatetime(comment.getUpdateDatetime())
+            .build();
   }
 
 }

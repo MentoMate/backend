@@ -58,6 +58,8 @@ public class User {
   private String middleCategory;
   private String imgUrl;
 
+  private Double rating; // 평점
+
   @CreatedDate
   private LocalDateTime registerDate;
   @LastModifiedDate

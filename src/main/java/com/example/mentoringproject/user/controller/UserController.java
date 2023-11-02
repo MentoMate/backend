@@ -1,11 +1,16 @@
 package com.example.mentoringproject.user.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.mentoring.model.MentoringList;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,10 +80,22 @@ public class UserController {
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfile)));
   }
-  @GetMapping("/profile")
+  @GetMapping("/profile/{userId}")
   public ResponseEntity<UserProfile>  profileInfo(
-      @PathVariable String email
+      @PathVariable Long userId
   ) {
-    return ResponseEntity.ok(UserProfile.from(userService.profileInfo(email)));
+    return ResponseEntity.ok(UserProfile.from(userService.profileInfo(userId)));
+  }
+
+  @GetMapping("/profile")
+  public ResponseEntity<Page<UserProfile>> getProfileList(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "5") int pageSize,
+          @RequestParam(defaultValue = "id") String sortId,
+          @RequestParam(defaultValue = "DESC") String sortDirection) {
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
+
+    return ResponseEntity.ok(UserProfile.from(userService.getProfileList(pageable)));
   }
 }

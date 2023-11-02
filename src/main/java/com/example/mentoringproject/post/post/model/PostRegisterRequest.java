@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-public class PostUpdateDto {
+public class PostRegisterRequest {
   private Category category;
   private String title;
   private String content;
-  private String imgUrl;
 
 }

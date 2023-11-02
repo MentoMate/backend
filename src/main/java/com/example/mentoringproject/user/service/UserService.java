@@ -1,9 +1,13 @@
 package com.example.mentoringproject.user.service;
 
+import com.example.mentoringproject.ElasticSearch.mentor.entity.MentorSearchDocumment;
+import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
+import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
@@ -14,15 +18,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,8 +42,8 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder encoder;
   private final MailComponents mailComponents;
+  private final MentorSearchRepository mentorSearchRepository;
   private final S3Service s3Service;
-
 
   //인증 확인 이메일을 보내고 DB에 저장
   @Transactional
@@ -131,13 +136,16 @@ public class UserService {
 
     setProfile(user, userProfile);
 
+    mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
+
+
     if(multipartFile != null){
       List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
-
       user.setImgUrl(s3FileDto.get(0).getUploadUrl());
     }
 
     return userRepository.save(user);
+
   }
 
   @Transactional
@@ -148,21 +156,28 @@ public class UserService {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
     setProfile(user, userProfile);
+
+    mentorSearchRepository.deleteByName(user.getName());
+    mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
+
     return userRepository.save(user);
   }
 
-  public User profileInfo(String email){
-    User user = getUser(email);
+  public User profileInfo(Long userId){
+
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
-    return user;
+
+    return  user;
   }
 
-
-  public User getUser(String email){
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+  @Transactional(readOnly = true)
+  public Page<User> getProfileList(Pageable pageable) {
+    return userRepository.findByNameIsNotNull(pageable);
   }
 
   private User setProfile(User user, UserProfile userProfile){
@@ -172,9 +187,13 @@ public class UserService {
     user.setIntroduce(userProfile.getIntroduce());
     user.setMainCategory(userProfile.getMainCategory());
     user.setMiddleCategory(userProfile.getMiddleCategory());
-    user.setImgUrl(userProfile.getImgUrl());
 
     return  user;
+  }
+
+  public User getUser(String email){
+    return userRepository.findByEmail(email)
+            .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
   
 }
