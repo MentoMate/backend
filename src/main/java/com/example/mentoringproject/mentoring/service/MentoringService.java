@@ -64,16 +64,8 @@ public class MentoringService {
 
 
     if(multipartFiles != null){
-      s3FileDto = s3Service.upload(multipartFiles,"mentoring","img");
-      Set<MentoringImg> mentoringImgList = s3FileDto.stream()
-          .map(s3File -> MentoringImg.builder()
-              .mentoring(mentoring)
-              .uploadName(s3File.getUploadName())
-              .uploadPath(s3File.getUploadPath())
-              .uploadUrl(s3File.getUploadUrl())
-              .build())
-          .collect(Collectors.toSet());
-      mentoringImgRepository.saveAll(mentoringImgList);
+      List<S3FileDto> s3FileDtoList = s3Service.upload(multipartFiles,"mentoring","img");
+      mentoringImgRepository.saveAll(MentoringImg.from(s3FileDtoList, mentoring));
     }
     
      mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
@@ -82,11 +74,13 @@ public class MentoringService {
   }
 
   @Transactional
-  public Mentoring updateMentoring(String email, Long mentoringId, MentoringDto mentoringDto){
+  public Mentoring updateMentoring(String email, Long mentoringId, MentoringDto mentoringDto, List<MultipartFile> thumbNailImg, List<MultipartFile> multipartFiles){
 
     Mentoring mentoring = getMentoring(mentoringId);
     User user = userService.profileInfo(userService.getUser(email).getId());
 
+    s3Service.deleteFile(S3FileDto.from(mentoring));
+    mentoringImgRepository.deleteByMentoring_Id(mentoring.getId());
 
     mentoring.setTitle(mentoringDto.getTitle());
     mentoring.setContent(mentoringDto.getContent());
@@ -98,11 +92,22 @@ public class MentoringService {
 
     mentoringSearchRepository.deleteById(mentoringId);
     mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
-    
+
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,"mentoring","img");
+    mentoring.setUploadPath(s3FileDto.get(0).getUploadPath());
+    mentoring.setUploadName(s3FileDto.get(0).getUploadName());
+    mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+
+    if(multipartFiles != null){
+      List<S3FileDto> s3FileDtoList = s3Service.upload(multipartFiles,"mentoring","img");
+      mentoringImgRepository.saveAll(MentoringImg.from(s3FileDtoList, mentoring));
+    }
+
     return mentoringRepository.save(mentoring);
 
   }
-  @Transactional
+
+
   public void deleteMentoring(Long mentoringId){
 
     Mentoring mentoring = getMentoring(mentoringId);
