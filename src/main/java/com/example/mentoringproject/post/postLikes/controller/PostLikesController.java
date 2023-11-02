@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.postLikes.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.post.postLikes.model.PostLikesDto;
 import com.example.mentoringproject.post.postLikes.service.PostLikesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ public class PostLikesController {
 
   // 좋아요 등록/취소
   @PostMapping
-  public ResponseEntity<?> PostLikes(@PathVariable Long postId) {
+  public ResponseEntity<PostLikesDto> PostLikes(@PathVariable Long postId) {
     String email = SpringSecurityUtil.getLoginEmail();
-    postLikesService.switchPostLikes(email, postId);
-    return ResponseEntity.ok("postLikes successfully!");
+
+    return ResponseEntity.ok(PostLikesDto.fromEntity(postLikesService.switchPostLikes(email, postId)));
   }
 
 }

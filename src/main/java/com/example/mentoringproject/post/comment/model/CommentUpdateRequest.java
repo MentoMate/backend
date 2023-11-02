@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-public class CommentUpdateDto {
+public class CommentUpdateRequest {
   private String comment;
 }

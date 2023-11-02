@@ -6,13 +6,11 @@ import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.post.img.entity.Img;
 import com.example.mentoringproject.post.img.repository.ImgRepository;
 import com.example.mentoringproject.post.post.entity.Post;
-import com.example.mentoringproject.post.post.model.PostDto;
-import com.example.mentoringproject.post.post.model.PostRegisterDto;
-import com.example.mentoringproject.post.post.model.PostUpdateDto;
+import com.example.mentoringproject.post.post.model.PostRegisterRequest;
+import com.example.mentoringproject.post.post.model.PostUpdateRequest;
 import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,15 +34,15 @@ public class PostService {
   private final S3Service s3Service;
 
   // 포스팅 등록
-  public void createPost(String email, PostRegisterDto postRegisterDto,
+  public Post createPost(String email, PostRegisterRequest postRegisterRequest,
       List<MultipartFile> multipartFiles) {
     User user = getUser(email);
 
-    Post post = Post.from(user, postRegisterDto);
+    Post post = Post.from(user, postRegisterRequest);
 
-    postRepository.save(post); // 엔티티를 저장하고 반환
+    postRepository.save(post);
 
-    if(multipartFiles != null) {
+    if (multipartFiles != null) {
       List<S3FileDto> s3FileDto = s3Service.upload(multipartFiles, "post", "img");
       Set<Img> ImgList = s3FileDto.stream()
           .map(s3File -> Img.builder()
@@ -58,6 +55,7 @@ public class PostService {
 
       imgRepository.saveAll(ImgList);
     }
+    return post;
   }
 
 
@@ -68,7 +66,7 @@ public class PostService {
 
   // 포스팅 수정
   @Transactional
-  public void updatePost(String email, Long postId, PostUpdateDto postUpdateDto) {
+  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Not Found Post"));
 
@@ -76,14 +74,14 @@ public class PostService {
       throw new RuntimeException("Not wirter of post");
     }
 
-    post.setCategory(postUpdateDto.getCategory());
-    post.setTitle(postUpdateDto.getTitle());
-    post.setContent(postUpdateDto.getContent());
-    //post.setImgUrl(postUpdateDto.getImgUrl());
+    post.setCategory(postUpdateRequest.getCategory());
+    post.setTitle(postUpdateRequest.getTitle());
+    post.setContent(postUpdateRequest.getContent());
     post.setUpdateDatetime(LocalDateTime.now());
 
     postRepository.save(post);
 
+    return post;
   }
 
   // 포스팅 삭제
@@ -109,11 +107,7 @@ public class PostService {
 
   // 모든 포스트 조회
   @Transactional(readOnly = true)
-  public Page<PostDto> findAllPosts(Pageable pageable) {
-    Page<Post> posts = postRepository.findAll(pageable);
-    List<PostDto> postDtos = PostDto.fromEntity(posts);
-    return new PageImpl<>(postDtos, pageable, posts.getTotalElements());
+  public Page<Post> findAllPosts(Pageable pageable) {
+    return postRepository.findAll(pageable);
   }
-
-
 }

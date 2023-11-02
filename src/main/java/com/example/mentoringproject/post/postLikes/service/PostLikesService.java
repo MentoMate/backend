@@ -21,7 +21,7 @@ public class PostLikesService {
 
   // 좋아요 등록 / 취소
   @Transactional
-  public void switchPostLikes(String email, Long postId) {
+  public PostLikes switchPostLikes(String email, Long postId) {
     User user = getUser(email);
 
     Post post = postRepository.findById(postId)
@@ -30,8 +30,10 @@ public class PostLikesService {
     if(postLikes.isEmpty()){
       PostLikes Likes = PostLikes.from(user, post);
       postLikesRepository.save(Likes);
+      return Likes;
     } else {
       postLikesRepository.delete(postLikes.get());
+      return null;
     }
   }
 

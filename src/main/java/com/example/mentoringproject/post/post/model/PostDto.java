@@ -22,11 +22,9 @@ public class PostDto {
   private Category category;
   private String title;
   private String content;
-  private String imgUrl;
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
-  private LocalDateTime deleteDatetime;
 
   public static List<PostDto> fromEntity(Page<Post> page) {
     return page.getContent().stream()
@@ -40,6 +38,17 @@ public class PostDto {
             .build()
         )
         .collect(Collectors.toList());
+  }
+
+  public static PostDto fromEntity(Post post) {
+    return PostDto.builder()
+            .id(post.getId())
+            .category(post.getCategory())
+            .title(post.getTitle())
+            .content(post.getContent())
+            .registerDatetime(post.getRegisterDatetime())
+            .updateDatetime(post.getUpdateDatetime())
+            .build();
   }
 
 }
