@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -32,6 +33,7 @@ public class S3Service {
   private String bucket;
   private static final Set<String> fileExtensions = new HashSet<>(Arrays.asList(".jpg", ".jpeg", ".png"));
   private static final String VALIDATION_CHECK_EXTENSION = "img";
+
   public List<S3FileDto> upload(List<MultipartFile> multipartFile, String folderName, String fileType) {
     List<S3FileDto> s3FileDtoList = new ArrayList<>();
 

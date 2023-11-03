@@ -36,11 +36,13 @@ public class MentoringController {
   @PutMapping("/{mentoringId}")
   public ResponseEntity<MentoringDto> updateMentoring(
       @PathVariable Long mentoringId,
-      @RequestBody MentoringDto mentoringDto
+      @RequestPart MentoringDto mentoringDto,
+      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg,
+      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFiles
   ) {
 
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(email, mentoringId, mentoringDto)));
+    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(email, mentoringId, mentoringDto, thumbNailImg, multipartFiles)));
   }
 
   @DeleteMapping("/{mentoringId}")

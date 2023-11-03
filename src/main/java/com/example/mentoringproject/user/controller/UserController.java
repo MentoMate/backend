@@ -67,7 +67,7 @@ public class UserController {
   @PostMapping("/profile")
   public ResponseEntity<UserProfile> createProfile(
       @RequestPart UserProfile userProfile,
-      @RequestPart(name = "img", required = false) List<MultipartFile > multipartFile
+      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFile
 
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
@@ -75,10 +75,11 @@ public class UserController {
   }
   @PutMapping("/profile")
   public ResponseEntity<UserProfile> updateProfile(
-      @RequestBody UserProfile userProfile
+      @RequestPart UserProfile userProfile,
+      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFile
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfile)));
+    return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfile, multipartFile)));
   }
   @GetMapping("/profile/{userId}")
   public ResponseEntity<UserProfile>  profileInfo(
@@ -89,10 +90,10 @@ public class UserController {
 
   @GetMapping("/profile")
   public ResponseEntity<Page<UserProfile>> getProfileList(
-          @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "5") int pageSize,
-          @RequestParam(defaultValue = "id") String sortId,
-          @RequestParam(defaultValue = "DESC") String sortDirection) {
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int pageSize,
+      @RequestParam(defaultValue = "id") String sortId,
+      @RequestParam(defaultValue = "DESC") String sortDirection) {
     Sort.Direction direction = Sort.Direction.fromString(sortDirection);
     Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
 

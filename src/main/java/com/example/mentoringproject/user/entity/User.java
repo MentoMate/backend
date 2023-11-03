@@ -56,7 +56,10 @@ public class User {
   private String introduce;
   private String mainCategory;
   private String middleCategory;
-  private String imgUrl;
+
+  private String uploadPath;
+  private String uploadName;
+  private String uploadUrl;
 
   private Double rating; // 평점
 
@@ -78,7 +81,7 @@ public class User {
   @OneToMany(mappedBy = "user")
   List<PostLikes> postLikes = new ArrayList<>();
 
- 
+
   public void updateRefreshToken(String updateRefreshToken) {
     this.refreshToken = updateRefreshToken;
   }

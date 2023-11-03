@@ -1,7 +1,11 @@
 package com.example.mentoringproject.mentoring.img.entity;
 
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,8 +43,18 @@ public class MentoringImg {
   @CreatedDate
   private LocalDateTime registerDate;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   @JoinColumn(name = "mentoring_id")
   private Mentoring mentoring;
 
+  public static Set<MentoringImg> from(List<S3FileDto> s3FileDto, Mentoring mentoring){
+    return s3FileDto.stream()
+        .map(s3File -> MentoringImg.builder()
+            .mentoring(mentoring)
+            .uploadName(s3File.getUploadName())
+            .uploadPath(s3File.getUploadPath())
+            .uploadUrl(s3File.getUploadUrl())
+            .build())
+        .collect(Collectors.toSet());
+  }
 }

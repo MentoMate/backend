@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MentoringImgRepository extends JpaRepository<MentoringImg, Long> {
+  void deleteByMentoring_Id(Long mentoringId);
 }
