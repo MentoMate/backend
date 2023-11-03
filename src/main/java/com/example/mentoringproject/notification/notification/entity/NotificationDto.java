@@ -16,7 +16,7 @@ public class NotificationDto {
   private String content;
   private Boolean isRead;
   private NotificationType notificationType;
-  private LocalDateTime registerDate;
+  private String registerDate;
 
   public static NotificationDto from(Notification notification) {
     return NotificationDto.builder()
@@ -25,19 +25,18 @@ public class NotificationDto {
         .content(notification.getContent())
         .isRead(notification.getIsRead())
         .notificationType(notification.getNotificationType())
-        .registerDate(notification.getRegisterDate())
+        .registerDate(String.valueOf(notification.getRegisterDate()))
         .build();
   }
 
   public static Page<NotificationDto> from(Page<Notification> notificationPage) {
     return notificationPage.map(
-            notification -> NotificationDto.builder()
-                    .notificationId(notification.getId())
-                    .receiverEmail(notification.getReceiverEmail())
-                    .content(notification.getContent())
-                    .isRead(notification.getIsRead())
-                    .registerDate(notification.getRegisterDate())
-                    .build()
-    );
+        notification -> NotificationDto.builder()
+            .notificationId(notification.getId())
+            .receiverEmail(notification.getReceiverEmail())
+            .content(notification.getContent())
+            .isRead(notification.getIsRead())
+            .registerDate(String.valueOf(notification.getRegisterDate()))
+            .build());
   }
 }

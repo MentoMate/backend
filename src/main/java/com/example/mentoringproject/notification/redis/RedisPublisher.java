@@ -16,11 +16,10 @@ public class RedisPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
     private final NotificationService notificationService;
 
-    public void publishNotification(ChannelTopic topic, NotificationDto notificationDto) {
+    public void publishNotification(ChannelTopic topic, NotificationDto parameter) {
         log.debug("notification save");
-        notificationService.saveNotification(notificationDto);
+        NotificationDto notificationDto = notificationService.saveNotification(parameter);
         log.debug("notification convertAndSend to redis");
         redisTemplate.convertAndSend(topic.getTopic(), notificationDto);
     }
-
 }
