@@ -7,17 +7,18 @@ import com.example.mentoringproject.notification.notification.entity.Notificatio
 import com.example.mentoringproject.notification.notification.repository.NotificationRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
 
@@ -63,6 +64,7 @@ public class NotificationService {
           .data(data));
     } catch (IOException exception) {
       //emitter가 타임 아웃 난 경우 에러가 남, emitterRepository에서 제거
+      log.debug("emitter timeout error");
       emitterRepository.deleteById(emitterId);
     }
   }
@@ -77,21 +79,24 @@ public class NotificationService {
         .build());
   }
 
-  public List<NotificationDto> getNotification(String email, Pageable pageable) {
-    List<Notification> notificationList = notificationRepository.
-        findAllByReceiverEmailAndIsReadOrderByRegisterDateDesc(email, false);
-    List<NotificationDto> notificationDtoList = new ArrayList<>();
-
-    for (Notification notification : notificationList) {
-      notificationDtoList.add(NotificationDto.from(notification));
-    }
-    return notificationDtoList;
+  public Page<NotificationDto> getNotification(String email, Pageable pageable) {
+    Page<Notification> notificationPage = notificationRepository.findAllByReceiverEmail(email, pageable);
+    return NotificationDto.from(notificationPage);
   }
 
   @Transactional
-  public void readNotification(Long id) {
-    Notification notification = notificationRepository.findById(id)
+  public NotificationDto readNotification(Long notificationId) {
+    Notification notification = notificationRepository.findById(notificationId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Notification Not found"));
     notification.setIsRead(true);
+    return NotificationDto.from(notification);
+  }
+
+  @Transactional
+  public void deleteNotification(Long notificationId) {
+    if (!notificationRepository.existsById(notificationId)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 공지 아이디입니다");
+    }
+    notificationRepository.deleteById(notificationId);
   }
 }
