@@ -87,7 +87,6 @@ public class PostService {
 
     postRepository.save(post);
 
-    postSearchRepository.deleteById(postId);
     postSearchRepository.save(PostSearchDocumment.fromEntity(post));
 
     return post;

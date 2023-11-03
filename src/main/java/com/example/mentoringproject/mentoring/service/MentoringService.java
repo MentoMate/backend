@@ -90,7 +90,6 @@ public class MentoringService {
     mentoring.setAmount(mentoringDto.getAmount());
     mentoring.setCategory(mentoringDto.getCategory());
 
-    mentoringSearchRepository.deleteById(mentoringId);
     mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
 
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,"mentoring","img");
