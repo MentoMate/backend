@@ -58,7 +58,6 @@ public class MentoringService {
     mentoringDto.setUploadPath(s3FileDto.get(0).getUploadPath());
     mentoringDto.setUploadName(s3FileDto.get(0).getUploadName());
     mentoringDto.setUploadUrl(s3FileDto.get(0).getUploadUrl());
-    mentoringDto.setStatus(MentoringStatus.PROGRESS);
 
     Mentoring mentoring = mentoringRepository.save(Mentoring.from(user, mentoringDto));
 
