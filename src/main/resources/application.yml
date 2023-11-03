@@ -14,14 +14,14 @@ spring:
       - s3.yml
       - db-dev.yml
       - redis.yml
-  config:
-      import:
-        - application-jwt.yml
-        - application-mail.yml
-        - application-oauth.yml
-        - application-s3.yml
-        - application-db-local.yml
-        - application-redis.yml
+  # config:
+  #     import:
+  #       - application-jwt.yml
+  #       - application-mail.yml
+  #       - application-oauth.yml
+  #       - application-s3.yml
+  #       - application-db-local.yml
+  #       - application-redis.yml
 
 logging:
   level:
