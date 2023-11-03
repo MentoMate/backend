@@ -13,20 +13,19 @@ spring:
       - oauth.yml
       - s3.yml
       - db-dev.yml
-  # config:
-  #    import:
-  #      - application-jwt.yml
-  #      - application-mail.yml
-  #      - application-oauth.yml
-  #      - application-s3.yml
-  #      - application-db-local.yml
-  redis:
-    host: 43.202.208.73
-    port: 6379
-    password: '1234'
+#  config:
+#      import:
+#        - application-jwt.yml
+#        - application-mail.yml
+#        - application-oauth.yml
+#        - application-s3.yml
+#        - application-db-local.yml
+
 logging:
   level:
     com:
+      example:
+        mentoringproject: debug
       amazonaws:
         util:
           EC2MetadataUtils: error

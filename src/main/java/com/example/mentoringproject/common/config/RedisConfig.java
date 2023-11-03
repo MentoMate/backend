@@ -1,4 +1,4 @@
-package com.example.mentoringproject.notification.redis.config;
+package com.example.mentoringproject.common.config;
 
 import com.example.mentoringproject.notification.redis.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
