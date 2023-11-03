@@ -86,7 +86,6 @@ public class PostService {
       postImgRepository.saveAll(PostImg.from(s3FileDtoLists, post));
     }
 
-    postSearchRepository.deleteById(postId);
     postSearchRepository.save(PostSearchDocumment.fromEntity(post));
 
     return post;

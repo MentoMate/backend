@@ -155,7 +155,7 @@ public class UserService {
     setProfile(user, userProfile);
     s3Service.deleteFile(S3FileDto.from(user));
     ImgUpload(multipartFile, user);
-    mentorSearchRepository.deleteByName(user.getName());
+
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
 
     return userRepository.save(user);
