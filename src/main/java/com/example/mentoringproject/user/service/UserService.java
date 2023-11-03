@@ -70,10 +70,10 @@ public class UserService {
     //만약 이미 이메일이 존재하면 회원가입이 완료된 이메일인지 확인
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."));
-    
+
     //회원가입이 완료된 이메일이면 exception
     if (user.getRegisterDate()!=null) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다.");    
+      throw new AppException(HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다.");
     }
 
     //회원가입이 완료되지 않은 이메일이면 삭제해야됨
@@ -135,28 +135,26 @@ public class UserService {
     }
 
     setProfile(user, userProfile);
-
+    ImgUpload(multipartFile, user);
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
-
-
-    if(multipartFile != null){
-      List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
-      user.setImgUrl(s3FileDto.get(0).getUploadUrl());
-    }
 
     return userRepository.save(user);
 
   }
 
+
+
   @Transactional
-  public User updateProfile(String email, UserProfile userProfile) {
+  public User updateProfile(String email, UserProfile userProfile, List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
-    setProfile(user, userProfile);
 
+    setProfile(user, userProfile);
+    s3Service.deleteFile(S3FileDto.from(user));
+    ImgUpload(multipartFile, user);
     mentorSearchRepository.deleteByName(user.getName());
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
 
@@ -166,7 +164,7 @@ public class UserService {
   public User profileInfo(Long userId){
 
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
 
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
@@ -193,7 +191,21 @@ public class UserService {
 
   public User getUser(String email){
     return userRepository.findByEmail(email)
-            .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
-  
+
+  private void ImgUpload(List<MultipartFile> multipartFile, User user) {
+    if(multipartFile != null){
+      List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
+      user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+      user.setUploadPath(s3FileDto.get(0).getUploadPath());
+      user.setUploadName(s3FileDto.get(0).getUploadName());
+    }
+    else{
+      user.setUploadName(null);
+      user.setUploadUrl(null);
+      user.setUploadPath(null);
+    }
+  }
+
 }

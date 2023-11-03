@@ -3,6 +3,8 @@ package com.example.mentoringproject.common.s3.Model;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import java.util.Collections;
 import java.util.Optional;
+
+import com.example.mentoringproject.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -32,6 +34,15 @@ public class S3FileDto {
         .uploadPath(mentoring.getUploadPath())
         .uploadUrl(mentoring.getUploadUrl()).build());
     return s3FileDtoList;
+  }
+
+  public static List<S3FileDto> from (User user){
+    List<S3FileDto> s3FileDtoList = new ArrayList<>();
+    s3FileDtoList.add(S3FileDto.builder()
+        .uploadName(user.getUploadName())
+        .uploadPath(user.getUploadPath())
+        .uploadUrl(user.getUploadUrl()).build());
+    return  s3FileDtoList;
   }
 
 }

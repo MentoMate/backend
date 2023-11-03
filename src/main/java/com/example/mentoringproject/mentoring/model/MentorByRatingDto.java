@@ -30,7 +30,7 @@ public class MentorByRatingDto {
             .introduce(user.getIntroduce())
             .mainCategory(user.getMainCategory())
             .middleCategory(user.getMiddleCategory())
-            .imgUrl(user.getImgUrl())
+            .imgUrl(user.getUploadUrl())
             .build())
         .collect(Collectors.toList());
   }
