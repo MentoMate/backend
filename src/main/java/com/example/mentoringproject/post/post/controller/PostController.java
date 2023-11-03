@@ -37,20 +37,23 @@ public class PostController {
   // 글 등록
   @PostMapping
   public ResponseEntity<PostDto> createPost(@RequestPart PostRegisterRequest postRegisterRequest,
-      @RequestPart(name = "imgUrl", required = false) List<MultipartFile> multipartFiles) throws IOException {
+      @RequestPart(name = "imgUrl", required = false) List<MultipartFile> multipartFiles)
+      throws IOException {
     String email = SpringSecurityUtil.getLoginEmail();
 
-    return ResponseEntity.ok(PostDto.fromEntity(postService.createPost(email, postRegisterRequest, multipartFiles)));
+    return ResponseEntity.ok(
+        PostDto.fromEntity(postService.createPost(email, postRegisterRequest, multipartFiles)));
   }
 
   // 글 수정
-  @PutMapping("/{postId}")
+  @GetMapping("/{postId}")
   public ResponseEntity<PostDto> updatePost(@PathVariable Long postId,
-      @RequestBody PostUpdateRequest postUpdateRequest) {
+      @RequestPart PostUpdateRequest postUpdateRequest,
+      @RequestPart(name = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
     String email = SpringSecurityUtil.getLoginEmail();
 
     return ResponseEntity.ok(PostDto.fromEntity(postService.updatePost(email, postId,
-        postUpdateRequest)));
+        postUpdateRequest, multipartFiles)));
   }
 
   // 글 삭제
@@ -70,7 +73,8 @@ public class PostController {
       @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "DESC") String sortDirection) {
 
-    Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.fromString(sortDirection), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.fromString(sortDirection),
+        sortBy);
 
     return ResponseEntity.ok(postService.findAllPosts(pageable).map(PostDto::fromEntity));
 

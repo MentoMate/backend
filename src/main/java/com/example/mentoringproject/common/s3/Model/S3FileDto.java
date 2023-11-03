@@ -1,6 +1,8 @@
 package com.example.mentoringproject.common.s3.Model;
 
 import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.post.img.entity.PostImg;
+import com.example.mentoringproject.post.post.entity.Post;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -43,6 +45,31 @@ public class S3FileDto {
         .uploadPath(user.getUploadPath())
         .uploadUrl(user.getUploadUrl()).build());
     return  s3FileDtoList;
+  }
+
+  public static List<S3FileDto> from(Post post){
+    List<S3FileDto> s3FileDtoList = Optional.ofNullable(post.getImgs())
+        .orElse(Collections.emptyList())
+        .stream()
+        .map(postImg -> S3FileDto.builder()
+            .uploadName(postImg.getUploadName())
+            .uploadPath(postImg.getUploadPath())
+            .uploadUrl(postImg.getUploadUrl())
+            .build())
+        .collect(Collectors.toList());
+    return s3FileDtoList;
+  }
+
+  public static List<S3FileDto> fromEntity(List<PostImg> postImgList) {
+    return Optional.ofNullable(postImgList)
+        .orElse(Collections.emptyList())
+        .stream()
+        .map(postImg -> S3FileDto.builder()
+            .uploadName(postImg.getUploadName())
+            .uploadPath(postImg.getUploadPath())
+            .uploadUrl(postImg.getUploadUrl())
+            .build())
+        .collect(Collectors.toList());
   }
 
 }
