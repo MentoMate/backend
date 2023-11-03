@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -69,14 +70,14 @@ public class NotificationService {
     }
   }
 
-  public void saveNotification(NotificationDto notificationDto) {
-    notificationRepository.save(Notification.builder()
-        .receiverEmail(notificationDto.getReceiverEmail())
-        .content(notificationDto.getContent())
-        .notificationType(notificationDto.getNotificationType())
+  public NotificationDto saveNotification(NotificationDto parameter) {
+    return NotificationDto.from(notificationRepository.save(Notification.builder()
+        .receiverEmail(parameter.getReceiverEmail())
+        .content(parameter.getContent())
+        .notificationType(parameter.getNotificationType())
         .isRead(false)
         .registerDate(LocalDateTime.now())
-        .build());
+        .build()));
   }
 
   public Page<NotificationDto> getNotification(String email, Pageable pageable) {

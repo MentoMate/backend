@@ -31,6 +31,5 @@ public class RedisSubscriber implements MessageListener {
     } catch (IOException e) {
       throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
-
   }
 }
