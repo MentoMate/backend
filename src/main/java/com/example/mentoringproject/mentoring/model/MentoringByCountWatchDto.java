@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class MentoringByCountWatchDto {
+  private Long mentoringId;
   private String title;
   private String content;
   private LocalDate startDate;
@@ -25,9 +26,13 @@ public class MentoringByCountWatchDto {
   private String category;
   private String uploadUrl;
 
+  private Double rating;
+  private String name;
+
   public static List<MentoringByCountWatchDto> fromEntity(List<Mentoring> mentoringList) {
     return mentoringList.stream()
         .map(mentoring -> MentoringByCountWatchDto.builder()
+            .mentoringId(mentoring.getId())
             .title(mentoring.getTitle())
             .content(mentoring.getContent())
             .startDate(mentoring.getStartDate())
@@ -37,6 +42,8 @@ public class MentoringByCountWatchDto {
             .status(mentoring.getStatus())
             .category(mentoring.getCategory())
             .uploadUrl(mentoring.getUploadUrl())
+            .rating(mentoring.getUser().getRating())
+            .name(mentoring.getUser().getName())
             .build())
         .collect(Collectors.toList());
   }

@@ -78,6 +78,7 @@ public class MentoringController {
     mentoringMainPageDtoMap.put("MentorByRating", mentoringService.getMentorByRating());
     mentoringMainPageDtoMap.put("PostRegisterDateTime", mentoringService.getPostByRegisterDateTime());
     mentoringMainPageDtoMap.put("MentoringByEndDate", mentoringService.getMentoringByEndDate());
+    mentoringMainPageDtoMap.put("Count",mentoringService.getCount());
     return ResponseEntity.ok(mentoringMainPageDtoMap);
   }
 }

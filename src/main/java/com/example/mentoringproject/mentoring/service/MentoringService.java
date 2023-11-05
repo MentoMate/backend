@@ -4,6 +4,7 @@ import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSear
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.model.CountDto;
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
@@ -211,6 +212,17 @@ public class MentoringService {
     }
 
     return randomMentorings;
+  }
+
+  public List<CountDto> getCount() {
+    List<CountDto> countDtoList = new ArrayList<>();
+
+    CountDto countDto = new CountDto();
+    countDto.setMentoringCount(mentoringRepository.count());
+    countDto.setMentorCount(userRepository.countByNameIsNotNull());
+    countDtoList.add(countDto);
+
+    return countDtoList;
   }
 
 

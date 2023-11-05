@@ -123,6 +123,7 @@ public class UserService {
     user.setNickName(parameter.getNickName());
     user.setPassword(encoder.encode(parameter.getPassword()));
     user.setRegisterDate(LocalDateTime.now());
+    user.setRating(0.0);
 
   }
 
