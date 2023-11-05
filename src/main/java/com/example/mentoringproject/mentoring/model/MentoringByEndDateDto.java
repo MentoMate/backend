@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class MentoringByEndDateDto {
 
+  private Long mentoringId;
   private String title;
   private String content;
   private LocalDate startDate;
@@ -26,9 +27,13 @@ public class MentoringByEndDateDto {
   private String category;
   private String uploadUrl;
 
+  private Double rating;
+  private String name;
+
   public static List<MentoringByEndDateDto> fromEntity(List<Mentoring> mentoringList) {
     return mentoringList.stream()
         .map(mentoring -> MentoringByEndDateDto.builder()
+            .mentoringId(mentoring.getId())
             .title(mentoring.getTitle())
             .content(mentoring.getContent())
             .startDate(mentoring.getStartDate())
@@ -38,6 +43,8 @@ public class MentoringByEndDateDto {
             .status(mentoring.getStatus())
             .category(mentoring.getCategory())
             .uploadUrl(mentoring.getUploadUrl())
+            .rating(mentoring.getUser().getRating())
+            .name(mentoring.getUser().getName())
             .build())
         .collect(Collectors.toList());
   }

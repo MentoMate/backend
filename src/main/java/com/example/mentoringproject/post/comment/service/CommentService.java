@@ -35,6 +35,10 @@ public class CommentService {
 
     Comment comment = commentRepository.save(Comment.from(user, post, commentRegisterRequest));
 
+    post.setCommentCount(post.getCommentCount()+1);
+
+    int count = post.getCommentCount();
+
     return comment;
   }
 
@@ -77,6 +81,8 @@ public class CommentService {
     if (!post.getUser().getEmail().equals(email)) {
       throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
+
+    post.setCommentCount(post.getCommentCount() - 1);
 
     commentRepository.deleteById(commentId);
   }

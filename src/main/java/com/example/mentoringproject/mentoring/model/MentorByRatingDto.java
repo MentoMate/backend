@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class MentorByRatingDto {
+  private Long mentorId;
   private String name;
   private int career;
   private String introduce;
@@ -25,12 +26,14 @@ public class MentorByRatingDto {
   public static List<MentorByRatingDto> fromEntity(List<User> userList) {
     return userList.stream()
         .map(user -> MentorByRatingDto.builder()
+            .mentorId(user.getId())
             .name(user.getName())
             .career(user.getCareer())
             .introduce(user.getIntroduce())
             .mainCategory(user.getMainCategory())
             .middleCategory(user.getMiddleCategory())
             .imgUrl(user.getUploadUrl())
+            .rating(user.getRating())
             .build())
         .collect(Collectors.toList());
   }

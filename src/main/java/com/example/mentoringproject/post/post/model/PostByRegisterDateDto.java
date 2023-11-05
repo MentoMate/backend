@@ -15,11 +15,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class PostByRegisterDateDto {
-  private Long id;
+  private Long postId;
   private Category category;
   private String title;
   private String content;
   private int postLikesCount;
+  private int commentCount;
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
@@ -27,11 +28,12 @@ public class PostByRegisterDateDto {
   public static List<PostByRegisterDateDto> fromEntity(List<Post> postList) {
     return postList.stream()
         .map(post -> PostByRegisterDateDto.builder()
-            .id(post.getId())
+            .postId(post.getId())
             .category(post.getCategory())
             .title(post.getTitle())
             .content(post.getContent())
             .postLikesCount(post.getPostLikesCount())
+            .commentCount(post.getCommentCount())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
             .build())

@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -42,6 +44,7 @@ public class PostLikes {
 
   @ManyToOne
   @JoinColumn(name = "post_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Post post;
 
 
