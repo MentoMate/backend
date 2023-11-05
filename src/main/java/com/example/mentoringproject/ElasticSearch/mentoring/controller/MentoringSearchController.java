@@ -34,7 +34,7 @@ public class MentoringSearchController {
     if ("title".equals(searchType)) {
       mentoringSearchDtoList = mentoringSearchService.searchTitleAndCategory(searchText,
           searchCategory);
-    } else if ("content".equals(searchType)) {
+    } else if ("writer".equals(searchType)) {
       mentoringSearchDtoList = mentoringSearchService.searchWriterAndCategory(searchText,
           searchCategory);
     } else {

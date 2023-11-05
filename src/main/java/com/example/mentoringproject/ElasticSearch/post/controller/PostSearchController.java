@@ -33,7 +33,7 @@ public class PostSearchController {
 
     if ("title".equals(searchType)) {
       postSearchDtoList = postSearchService.searchTitle(searchText);
-    } else if ("content".equals(searchType)) {
+    } else if ("writer".equals(searchType)) {
       postSearchDtoList = postSearchService.searchWriter(searchText);
     } else {
       return ResponseEntity.badRequest().build();
@@ -42,7 +42,7 @@ public class PostSearchController {
     // 인기순, 최신순 정렬
     if ("likes".equals(sortBy)) {
       postSearchDtoList.sort(
-          Comparator.comparing(PostSearchDto::getPostLikesCounty).reversed());
+          Comparator.comparing(PostSearchDto::getPostLikesCount).reversed());
     } else if ("latest".equals(sortBy)) {
       postSearchDtoList.sort(Comparator.comparing(PostSearchDto::getId).reversed());
     }

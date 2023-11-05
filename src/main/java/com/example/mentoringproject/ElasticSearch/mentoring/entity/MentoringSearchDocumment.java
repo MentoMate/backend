@@ -34,7 +34,7 @@ public class MentoringSearchDocumment {
   public static MentoringSearchDocumment fromEntity(User user, Mentoring mentoring) {
     return MentoringSearchDocumment.builder()
         .id(mentoring.getId())
-        .writer(user.getEmail())
+        .writer(user.getName())
         .title(mentoring.getTitle())
         .content(mentoring.getCategory())
         .numberOfPeople(mentoring.getNumberOfPeople())
