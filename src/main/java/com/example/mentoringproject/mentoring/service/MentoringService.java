@@ -4,6 +4,7 @@ import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSear
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.model.CountDto;
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
@@ -191,6 +192,7 @@ public class MentoringService {
     return randomMentorings;
   }
 
+
   private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
     String uploadPath = FOLDER + "/" + mentoringSave.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
@@ -205,6 +207,18 @@ public class MentoringService {
 
     s3Service.fileClear(uploadPath, imgList);
   }
+
+  public List<CountDto> getCount() {
+    List<CountDto> countDtoList = new ArrayList<>();
+
+    CountDto countDto = new CountDto();
+    countDto.setMentoringCount(mentoringRepository.count());
+    countDto.setMentorCount(userRepository.countByNameIsNotNull());
+    countDtoList.add(countDto);
+
+    return countDtoList;
+  }
+
 
 }
 

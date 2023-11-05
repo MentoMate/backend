@@ -48,6 +48,8 @@ public class Post {
 
   private int postLikesCount;
 
+  private int commentCount;
+
   @CreatedDate
   private LocalDateTime registerDatetime;
   @LastModifiedDate
@@ -58,11 +60,11 @@ public class Post {
   private User user;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "post")
+  @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
   List<Comment> comments = new ArrayList<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "post")
+  @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
   List<PostLikes> postLikes = new ArrayList<>();
 
 
@@ -74,6 +76,7 @@ public class Post {
         .content(postRegisterRequest.getContent())
         .uploadFolder(postRegisterRequest.getUploadFolder())
         .postLikesCount(0)
+        .commentCount(0)
         .build();
   }
 
