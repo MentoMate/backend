@@ -36,24 +36,22 @@ public class PostController {
 
   // 글 등록
   @PostMapping
-  public ResponseEntity<PostDto> createPost(@RequestPart PostRegisterRequest postRegisterRequest,
-      @RequestPart(name = "imgUrl", required = false) List<MultipartFile> multipartFiles)
+  public ResponseEntity<PostDto> createPost(@RequestBody PostRegisterRequest postRegisterRequest)
       throws IOException {
     String email = SpringSecurityUtil.getLoginEmail();
 
     return ResponseEntity.ok(
-        PostDto.fromEntity(postService.createPost(email, postRegisterRequest, multipartFiles)));
+        PostDto.fromEntity(postService.createPost(email, postRegisterRequest)));
   }
 
   // 글 수정
   @GetMapping("/{postId}")
   public ResponseEntity<PostDto> updatePost(@PathVariable Long postId,
-      @RequestPart PostUpdateRequest postUpdateRequest,
-      @RequestPart(name = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
+      @RequestBody PostUpdateRequest postUpdateRequest) {
     String email = SpringSecurityUtil.getLoginEmail();
 
     return ResponseEntity.ok(PostDto.fromEntity(postService.updatePost(email, postId,
-        postUpdateRequest, multipartFiles)));
+        postUpdateRequest)));
   }
 
   // 글 삭제

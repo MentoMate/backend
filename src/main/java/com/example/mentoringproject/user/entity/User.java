@@ -57,9 +57,8 @@ public class User {
   private String mainCategory;
   private String middleCategory;
 
-  private String uploadPath;
-  private String uploadName;
   private String uploadUrl;
+  private String uploadFolder;
 
   private Double rating; // 평점
 

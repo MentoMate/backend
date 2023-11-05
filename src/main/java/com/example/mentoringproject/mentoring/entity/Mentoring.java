@@ -1,12 +1,9 @@
 package com.example.mentoringproject.mentoring.entity;
 
-import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
-import com.example.mentoringproject.mentoring.model.MentoringDto;
+import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -43,20 +40,14 @@ public class Mentoring {
   private MentoringStatus status;
   private String category;
 
-  private String uploadPath;
-  private String uploadName;
   private String uploadUrl;
-
+  private String uploadFolder;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
 
   private int countWatch;
-
-  @OneToMany(mappedBy = "mentoring")
-  private List<MentoringImg> mentoringImgList = new ArrayList<>();
-
 
   @CreatedDate
   private LocalDateTime registerDate;
@@ -65,19 +56,16 @@ public class Mentoring {
   private LocalDateTime deleteDate;
 
 
-  public static Mentoring from(User user, MentoringDto mentoringDto) {
+  public static Mentoring from(User user, MentoringSave mentoringSave) {
     return Mentoring.builder()
-        .title(mentoringDto.getTitle())
-        .content(mentoringDto.getContent())
-        .startDate(mentoringDto.getStartDate())
-        .endDate(mentoringDto.getEndDate())
-        .numberOfPeople(mentoringDto.getNumberOfPeople())
-        .amount(mentoringDto.getAmount())
-        .status(mentoringDto.getStatus())
-        .category(mentoringDto.getCategory())
-        .uploadPath(mentoringDto.getUploadPath())
-        .uploadName(mentoringDto.getUploadName())
-        .uploadUrl(mentoringDto.getUploadUrl())
+        .title(mentoringSave.getTitle())
+        .content(mentoringSave.getContent())
+        .startDate(mentoringSave.getStartDate())
+        .endDate(mentoringSave.getEndDate())
+        .numberOfPeople(mentoringSave.getNumberOfPeople())
+        .amount(mentoringSave.getAmount())
+        .category(mentoringSave.getCategory())
+        .uploadFolder(mentoringSave.getUploadFolder())
         .user(user)
         .build();
   }

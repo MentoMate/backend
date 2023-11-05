@@ -1,15 +1,18 @@
 package com.example.mentoringproject.common.s3.Service;
 
-import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -35,7 +37,7 @@ public class S3Service {
   private static final String VALIDATION_CHECK_EXTENSION = "img";
 
   public List<S3FileDto> upload(List<MultipartFile> multipartFile, String folderName, String fileType) {
-    List<S3FileDto> s3FileDtoList = new ArrayList<>();
+    List<S3FileDto> s3FileDto = new ArrayList<>();
 
     String filePath = folderName + "/" ;
     String fileName;
@@ -58,22 +60,20 @@ public class S3Service {
         throw new AppException(HttpStatus.BAD_REQUEST,"UPLOAD_ERROR");
       }
 
-      s3FileDtoList.add(
+      s3FileDto.add(
           S3FileDto.builder()
-              .uploadPath(filePath)
-              .uploadName(fileName)
               .uploadUrl(amazonS3.getUrl(bucket, filePath+fileName).toString())
               .build());
     }
 
-    return s3FileDtoList;
+    return s3FileDto;
   }
 
 
   public void deleteFile(List<S3FileDto> s3FileDtoList) {
     String keyName;
     for (S3FileDto s3FileDto : s3FileDtoList) {
-      keyName = s3FileDto.getUploadPath() + s3FileDto.getUploadName();
+      keyName = extractFileName(s3FileDto.getUploadUrl());
       try {
         if (amazonS3.doesObjectExist(bucket, keyName)) {
           amazonS3.deleteObject(bucket, keyName);
@@ -85,8 +85,28 @@ public class S3Service {
     }
   }
 
-  private String createFileName(String fileName) {
-    return UUID.randomUUID().toString().concat(fileName);
+  public void fileClear(String folder, List<String> imgUrl){
+    String keyName;
+
+    ObjectListing objectListing = amazonS3.listObjects(bucket,folder);
+
+    List<S3ObjectSummary> objectSummaries = objectListing.getObjectSummaries();
+    for (S3ObjectSummary objectSummary : objectSummaries) {
+      keyName = objectSummary.getKey();
+      if (!imgUrl.contains(encode(extractFileName(keyName)))){
+        if (amazonS3.doesObjectExist(bucket, keyName)) {
+          amazonS3.deleteObject(bucket, keyName);
+        }
+      }
+    }
+  }
+
+  public void folderChk(String folder){
+    ObjectListing objectListing = amazonS3.listObjects(bucket,folder);
+    List<S3ObjectSummary> objectSummaries = objectListing.getObjectSummaries();
+    if(objectSummaries.size() != 0){
+      throw new AppException(HttpStatus.BAD_REQUEST, "해당 폴더는 존재합니다.");
+    }
   }
 
   private void imageFileExtensionChk(String fileName) {
@@ -96,6 +116,20 @@ public class S3Service {
   }
   private String fileNameChk(String fileName){
     if (fileName == null || fileName.length() == 0) throw new AppException(HttpStatus.BAD_REQUEST,"WRONG_INPUT_IMAGE");
-    return fileName;
+    return encode(fileName);
+  }
+  public String extractFileName(String s3Url) {
+    String[] parts = s3Url.split("/");
+    return parts[parts.length - 1];
+  }
+  private String createFileName(String fileName) {
+    return  UUID.randomUUID().toString().concat(fileName);
+  }
+  private String encode(String fileName) {
+    try {
+      return URLEncoder.encode(fileName, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return  fileName;
+    }
   }
 }

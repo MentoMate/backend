@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -31,14 +30,10 @@ public class MentoringInfo {
   Set<String> mentoringImgList;
   private int leftPeople;
   private int followers;
-  private int grade;
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
   public static MentoringInfo from(Mentoring mentoring) {
-    Set<String> mentoringImgUrls = mentoring.getMentoringImgList().stream()
-            .map(MentoringImg::getUploadUrl)
-            .collect(Collectors.toSet());
 
     return MentoringInfo.builder()
         .mentoringId(mentoring.getId())
@@ -54,7 +49,6 @@ public class MentoringInfo {
         .name(mentoring.getUser().getName())
         .countWatch(mentoring.getCountWatch())
         .thumbNailImg(mentoring.getUploadUrl())
-        .mentoringImgList(mentoringImgUrls)
         .leftPeople(6)
         .followers(12)
         .registerDate(mentoring.getRegisterDate())
