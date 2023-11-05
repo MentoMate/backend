@@ -34,16 +34,16 @@ public class PostSearchDocumment {
   private Category category;
 
   @Field(type = FieldType.Long)
-  private int postLikesCounty;
+  private int postLikesCount;
 
   public static PostSearchDocumment fromEntity(Post post) {
     return PostSearchDocumment.builder()
         .id(post.getId())
-        .writer(post.getUser().getEmail())
+        .writer(post.getUser().getNickName())
         .category(post.getCategory())
         .title(post.getTitle())
         .content(post.getContent())
-        .postLikesCounty(post.getPostLikesCount())
+        .postLikesCount(post.getPostLikesCount())
         .build();
   }
 }
