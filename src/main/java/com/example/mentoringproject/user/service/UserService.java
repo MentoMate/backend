@@ -6,30 +6,21 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
-import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
-import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
+import com.example.mentoringproject.user.model.UserProfileSave;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Value;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +36,8 @@ public class UserService {
   private final MentorSearchRepository mentorSearchRepository;
   private final S3Service s3Service;
 
+  private static final String FOLDER = "profile";
+  private static final String FILE_TYPE = "img";
   //인증 확인 이메일을 보내고 DB에 저장
   @Transactional
   public void sendEmailAuth(String email) {
@@ -127,15 +120,15 @@ public class UserService {
   }
 
   @Transactional
-  public User createProfile(String email, UserProfile userProfile, List<MultipartFile> multipartFile) {
+  public User createProfile(String email, UserProfileSave userProfileSave, List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
     if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있습니다.");
     }
 
-    setProfile(user, userProfile);
-    ImgUpload(multipartFile, user);
+    setProfile(user, userProfileSave);
+    ImgUpload(multipartFile, user, userProfileSave);
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
 
     return userRepository.save(user);
@@ -145,17 +138,15 @@ public class UserService {
 
 
   @Transactional
-  public User updateProfile(String email, UserProfile userProfile, List<MultipartFile> multipartFile) {
+  public User updateProfile(String email, UserProfileSave userProfileSave, List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
     if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
 
-    setProfile(user, userProfile);
-    s3Service.deleteFile(S3FileDto.from(user));
-    ImgUpload(multipartFile, user);
-
+    setProfile(user, userProfileSave);
+    ImgUpload(multipartFile, user, userProfileSave);
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
 
     return userRepository.save(user);
@@ -178,13 +169,14 @@ public class UserService {
     return userRepository.findByNameIsNotNull(pageable);
   }
 
-  private User setProfile(User user, UserProfile userProfile){
+  private User setProfile(User user, UserProfileSave userProfileSave){
 
-    user.setName(userProfile.getName());
-    user.setCareer(userProfile.getCareer());
-    user.setIntroduce(userProfile.getIntroduce());
-    user.setMainCategory(userProfile.getMainCategory());
-    user.setMiddleCategory(userProfile.getMiddleCategory());
+    user.setName(userProfileSave.getName());
+    user.setCareer(userProfileSave.getCareer());
+    user.setIntroduce(userProfileSave.getIntroduce());
+    user.setMainCategory(userProfileSave.getMainCategory());
+    user.setMiddleCategory(userProfileSave.getMiddleCategory());
+    user.setUploadFolder(userProfileSave.getUploadFolder());
 
     return  user;
   }
@@ -194,18 +186,19 @@ public class UserService {
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 
-  private void ImgUpload(List<MultipartFile> multipartFile, User user) {
-    if(multipartFile != null){
-      List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,"profile","img");
-      user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
-      user.setUploadPath(s3FileDto.get(0).getUploadPath());
-      user.setUploadName(s3FileDto.get(0).getUploadName());
-    }
-    else{
-      user.setUploadName(null);
-      user.setUploadUrl(null);
-      user.setUploadPath(null);
-    }
+  private void ImgUpload(List<MultipartFile> multipartFile, User user, UserProfileSave userProfile) {
+    String uploadPath = FOLDER + "/" + user.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);
+    user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+
+    List<String> imgList = Optional.ofNullable(userProfile.getUploadImg())
+        .orElse(Collections.emptyList())
+        .stream()
+        .map(s3Service::extractFileName)
+        .collect(Collectors.toList());
+    imgList.add(s3Service.extractFileName(user.getUploadUrl()));
+
+    s3Service.fileClear(uploadPath, imgList);
   }
 
 }

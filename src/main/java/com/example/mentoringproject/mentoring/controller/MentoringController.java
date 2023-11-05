@@ -1,8 +1,7 @@
 package com.example.mentoringproject.mentoring.controller;
 
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
-import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringList;
@@ -10,7 +9,6 @@ import com.example.mentoringproject.mentoring.service.MentoringService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -25,24 +23,21 @@ public class MentoringController {
 
   @PostMapping
   public ResponseEntity<MentoringDto> createMentoring(
-      @RequestPart MentoringDto mentoringDto,
-      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg,
-      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFiles
+      @RequestPart MentoringSave mentoringSave,
+      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringDto.from(mentoringService.createMentoring(email, mentoringDto, thumbNailImg, multipartFiles)));
+    return ResponseEntity.ok(MentoringDto.from(mentoringService.createMentoring(email, mentoringSave, thumbNailImg)));
   }
 
-  @PutMapping("/{mentoringId}")
+  @PutMapping
   public ResponseEntity<MentoringDto> updateMentoring(
-      @PathVariable Long mentoringId,
-      @RequestPart MentoringDto mentoringDto,
-      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg,
-      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFiles
+      @RequestPart MentoringSave mentoringSave,
+      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg
   ) {
 
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(email, mentoringId, mentoringDto, thumbNailImg, multipartFiles)));
+    return ResponseEntity.ok(MentoringDto.from(mentoringService.updateMentoring(email, mentoringSave, thumbNailImg)));
   }
 
   @DeleteMapping("/{mentoringId}")

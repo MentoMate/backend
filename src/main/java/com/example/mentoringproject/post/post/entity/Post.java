@@ -1,7 +1,6 @@
 package com.example.mentoringproject.post.post.entity;
 
 import com.example.mentoringproject.post.comment.entity.Comment;
-import com.example.mentoringproject.post.img.entity.PostImg;
 import com.example.mentoringproject.post.post.model.PostRegisterRequest;
 import com.example.mentoringproject.post.postLikes.entity.PostLikes;
 import com.example.mentoringproject.user.entity.User;
@@ -45,6 +44,7 @@ public class Post {
   private Category category;
   private String title;
   private String content;
+  private String uploadFolder;
 
   private int postLikesCount;
 
@@ -65,8 +65,6 @@ public class Post {
   @OneToMany(mappedBy = "post")
   List<PostLikes> postLikes = new ArrayList<>();
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-  List<PostImg> imgs = new ArrayList<>();
 
   public static Post from (User user, PostRegisterRequest postRegisterRequest) {
     return Post.builder()
@@ -74,6 +72,7 @@ public class Post {
         .category(postRegisterRequest.getCategory())
         .title(postRegisterRequest.getTitle())
         .content(postRegisterRequest.getContent())
+        .uploadFolder(postRegisterRequest.getUploadFolder())
         .postLikesCount(0)
         .build();
   }
