@@ -11,6 +11,7 @@ import com.example.mentoringproject.mentoring.model.CountDto;
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
+import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.pay.entity.Pay;
@@ -105,10 +106,16 @@ public class MentoringService {
   }
 
   @Transactional
-  public Mentoring mentoringInfo(Long mentoringId){
-      mentoringRepository.updateCount(mentoringId);
+  public MentoringInfo mentoringInfo(String email, Long mentoringId){
 
-    return  getMentoring(mentoringId);
+    Mentoring mentoring = getMentoring(mentoringId);
+    boolean isOwner = false;
+    if (mentoring.getUser().getEmail().equals(email)) {
+      isOwner = true;
+    }
+    mentoringRepository.updateCount(mentoringId);
+
+    return MentoringInfo.from(mentoring, isOwner);
   }
 
   public Mentoring getMentoring(Long mentoringId){

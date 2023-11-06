@@ -57,7 +57,8 @@ public class MentoringController {
   public ResponseEntity<MentoringInfo> MentoringInfo(
       @PathVariable Long mentoringId
   ) {
-    return ResponseEntity.ok(MentoringInfo.from(mentoringService.mentoringInfo(mentoringId)));
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(mentoringService.mentoringInfo(email, mentoringId));
   }
 
   @GetMapping("/main")
