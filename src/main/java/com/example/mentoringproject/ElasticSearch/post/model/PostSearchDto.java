@@ -18,6 +18,7 @@ public class PostSearchDto {
   private String title;
   private String content;
   private String writer;
+  private String uploadUrl;
   private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
@@ -31,6 +32,7 @@ public class PostSearchDto {
         .title(post.getTitle())
         .content(post.getContent())
         .writer(post.getWriter())
+        .uploadUrl(post.getUploadUrl())
         .uploadFolder(post.getUploadFolder())
         .postLikesCount(post.getPostLikesCount())
         .commentCount(post.getCommentCount())

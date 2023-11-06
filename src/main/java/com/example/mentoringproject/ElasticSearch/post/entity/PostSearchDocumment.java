@@ -23,6 +23,7 @@ public class PostSearchDocumment {
   private String title;
   private String content;
   private String writer;
+  private String uploadUrl;
   private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
@@ -37,6 +38,7 @@ public class PostSearchDocumment {
         .title(post.getTitle())
         .content(post.getContent())
         .writer(post.getUser().getNickName())
+        .uploadUrl(post.getUploadUrl())
         .uploadFolder(post.getUploadFolder())
         .postLikesCount(post.getPostLikesCount())
         .commentCount(post.getCommentCount())

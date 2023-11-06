@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-
 public class PostInfoResponseDto {
 
   private Long id;
