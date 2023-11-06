@@ -3,6 +3,7 @@ package com.example.mentoringproject.post.post.service;
 import com.example.mentoringproject.ElasticSearch.post.entity.PostSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.post.repository.PostSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.model.PostRegisterRequest;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -35,10 +37,14 @@ public class PostService {
   private static final String FILE_TYPE = "img";
 
   // 포스팅 등록
-  public Post createPost(String email, PostRegisterRequest postRegisterRequest) {
+  public Post createPost(String email, PostRegisterRequest postRegisterRequest, List<MultipartFile> thumbNailImg) {
     User user = getUser(email);
 
     Post post = Post.from(user, postRegisterRequest);
+
+    String uploadPath = FOLDER + "/" + postRegisterRequest.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     postRepository.save(post);
 
@@ -49,6 +55,7 @@ public class PostService {
         .stream()
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
+    imgList.add(s3Service.extractFileName(post.getUploadUrl()));
     s3Service.fileClear(FOLDER + "/" + postRegisterRequest.getUploadFolder(), imgList);
 
     return post;
@@ -62,7 +69,7 @@ public class PostService {
 
   // 포스팅 수정
   @Transactional
-  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest) {
+  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest, List<MultipartFile> thumbNailImg) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
@@ -75,6 +82,10 @@ public class PostService {
     post.setContent(postUpdateRequest.getContent());
     post.setUpdateDatetime(LocalDateTime.now());
 
+    String uploadPath = FOLDER + "/" + postUpdateRequest.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+
     postRepository.save(post);
 
     postSearchRepository.save(PostSearchDocumment.fromEntity(post));
@@ -84,6 +95,7 @@ public class PostService {
         .stream()
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
+    imgList.add(s3Service.extractFileName(post.getUploadUrl()));
     s3Service.fileClear(FOLDER + "/" + postUpdateRequest.getUploadFolder(), imgList);
 
     return post;
@@ -115,4 +127,5 @@ public class PostService {
   public Post getPost(Long postId){
     return postRepository.findById(postId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 글 입니다."));
   }
+
 }

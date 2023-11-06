@@ -44,6 +44,7 @@ public class Post {
   private Category category;
   private String title;
   private String content;
+  private String uploadUrl;
   private String uploadFolder;
 
   private int postLikesCount;
