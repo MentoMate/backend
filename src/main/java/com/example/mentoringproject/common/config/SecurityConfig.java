@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -49,6 +50,8 @@ public class SecurityConfig {
         .and()
         .authorizeRequests()
         .antMatchers("/", "/user/login/**", "/user/join/**").permitAll()
+        .antMatchers(HttpMethod.POST, "/mentor/search","/mentoring/search").permitAll()
+        .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts", "/{postId}/comments").permitAll()
         .anyRequest().authenticated();
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.addFilterBefore(jwtAuthenticationProcessingFilter(),
