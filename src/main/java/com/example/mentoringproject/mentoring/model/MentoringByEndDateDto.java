@@ -3,6 +3,7 @@ package com.example.mentoringproject.mentoring.model;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,10 @@ public class MentoringByEndDateDto {
   private String uploadFolder;
   private int countWatch;
 
+  private LocalDateTime registerDate;
+  private LocalDateTime updateDate;
+  private LocalDateTime deleteDate;
+
   private Double rating;
   private String name;
 
@@ -47,6 +52,9 @@ public class MentoringByEndDateDto {
             .uploadUrl(mentoring.getUploadUrl())
             .uploadFolder(mentoring.getUploadFolder())
             .countWatch(mentoring.getCountWatch())
+            .registerDate(mentoring.getRegisterDate())
+            .updateDate(mentoring.getUpdateDate())
+            .deleteDate(mentoring.getDeleteDate())
             .rating(mentoring.getUser().getRating())
             .name(mentoring.getUser().getName())
             .build())
