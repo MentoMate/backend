@@ -3,18 +3,21 @@ package com.example.mentoringproject.mentoring.model;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 public class MentoringByCountWatchDto {
+  private Long mentoringId;
   private String title;
   private String content;
   private LocalDate startDate;
@@ -24,10 +27,20 @@ public class MentoringByCountWatchDto {
   private MentoringStatus status;
   private String category;
   private String uploadUrl;
+  private String uploadFolder;
+  private int countWatch;
+
+  private Double rating;
+  private String name;
+
+  private LocalDateTime registerDate;
+  private LocalDateTime updateDate;
+  private LocalDateTime deleteDate;
 
   public static List<MentoringByCountWatchDto> fromEntity(List<Mentoring> mentoringList) {
     return mentoringList.stream()
         .map(mentoring -> MentoringByCountWatchDto.builder()
+            .mentoringId(mentoring.getId())
             .title(mentoring.getTitle())
             .content(mentoring.getContent())
             .startDate(mentoring.getStartDate())
@@ -37,6 +50,13 @@ public class MentoringByCountWatchDto {
             .status(mentoring.getStatus())
             .category(mentoring.getCategory())
             .uploadUrl(mentoring.getUploadUrl())
+            .uploadFolder(mentoring.getUploadFolder())
+            .countWatch(mentoring.getCountWatch())
+            .rating(mentoring.getUser().getRating())
+            .name(mentoring.getUser().getName())
+            .registerDate(mentoring.getRegisterDate())
+            .updateDate(mentoring.getUpdateDate())
+            .deleteDate(mentoring.getDeleteDate())
             .build())
         .collect(Collectors.toList());
   }

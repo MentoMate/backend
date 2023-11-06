@@ -49,7 +49,7 @@ public class CommentController {
         commentService.updateComment(email, postId, commentId, commentUpdateRequest)));
   }
 
-  // 글 삭제
+  // 댓글 삭제
   @DeleteMapping("/{commentId}")
   public ResponseEntity<Void> deleteComment(@PathVariable Long postId,
       @PathVariable Long commentId) {
@@ -58,7 +58,7 @@ public class CommentController {
     return ResponseEntity.ok().build();
   }
 
-  // 전체 목록 조회
+  // 전체 댓글 조회
   @GetMapping
   public ResponseEntity<Page<CommentDto>> getAllComments(
       @RequestParam(defaultValue = "1") int page,

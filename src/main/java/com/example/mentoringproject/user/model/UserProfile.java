@@ -19,37 +19,28 @@ import org.springframework.data.domain.PageImpl;
 @NoArgsConstructor
 public class UserProfile {
 
+  private Long userId;
   private String name;
   private int career;
   private String introduce;
   private String mainCategory;
   private String middleCategory;
-  private String imgUrl;
+  private String uploadUrl;
+  private String uploadFolder;
+  private int followers;
 
   public static UserProfile from(User user){
     return UserProfile.builder()
+        .userId(user.getId())
         .name(user.getName())
         .career(user.getCareer())
         .introduce(user.getIntroduce())
         .mainCategory(user.getMainCategory())
         .middleCategory(user.getMiddleCategory())
-        .imgUrl(user.getUploadUrl())
+        .uploadFolder(user.getUploadFolder())
+        .uploadUrl(user.getUploadUrl())
+        .followers(1)
         .build();
   }
 
-  public static Page<UserProfile> from(Page<User> page){
-   List<UserProfile> userProfiles =  page.getContent().stream()
-        .map(user -> UserProfile.builder()
-            .name(user.getName())
-            .career(user.getCareer())
-            .introduce(user.getIntroduce())
-            .mainCategory(user.getMainCategory())
-            .middleCategory(user.getMiddleCategory())
-            .imgUrl(user.getUploadUrl())
-            .build()
-        ).collect(Collectors.toList());
-
-    return new PageImpl<>(userProfiles, page.getPageable(), page.getTotalElements());
-
-  }
 }

@@ -4,6 +4,8 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.model.MentoringList;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
+import com.example.mentoringproject.user.model.UserProfileList;
+import com.example.mentoringproject.user.model.UserProfileSave;
 import com.example.mentoringproject.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -66,20 +68,20 @@ public class UserController {
 
   @PostMapping("/profile")
   public ResponseEntity<UserProfile> createProfile(
-      @RequestPart UserProfile userProfile,
-      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFile
+      @RequestPart UserProfileSave userProfileSave,
+      @RequestPart(name = "img") List<MultipartFile> multipartFile
 
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(UserProfile.from(userService.createProfile(email, userProfile, multipartFile)));
+    return ResponseEntity.ok(UserProfile.from(userService.createProfile(email, userProfileSave, multipartFile)));
   }
   @PutMapping("/profile")
   public ResponseEntity<UserProfile> updateProfile(
-      @RequestPart UserProfile userProfile,
-      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFile
+      @RequestPart UserProfileSave userProfileSave,
+      @RequestPart(name = "img") List<MultipartFile> multipartFile
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfile, multipartFile)));
+    return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfileSave, multipartFile)));
   }
   @GetMapping("/profile/{userId}")
   public ResponseEntity<UserProfile>  profileInfo(
@@ -89,7 +91,7 @@ public class UserController {
   }
 
   @GetMapping("/profile")
-  public ResponseEntity<Page<UserProfile>> getProfileList(
+  public ResponseEntity<Page<UserProfileList>> getProfileList(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int pageSize,
       @RequestParam(defaultValue = "id") String sortId,
@@ -97,6 +99,6 @@ public class UserController {
     Sort.Direction direction = Sort.Direction.fromString(sortDirection);
     Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
 
-    return ResponseEntity.ok(UserProfile.from(userService.getProfileList(pageable)));
+    return ResponseEntity.ok(UserProfileList.from(userService.getProfileList(pageable)));
   }
 }

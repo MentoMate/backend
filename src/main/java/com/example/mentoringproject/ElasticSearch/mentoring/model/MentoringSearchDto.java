@@ -21,7 +21,6 @@ public class MentoringSearchDto {
   private int amount;
   private MentoringStatus status;
   private String category;
-  private String imgUrl;
 
   private Double rating;
 

@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,25 +20,29 @@ public class MentoringSearchController {
   private final MentoringSearchService mentoringSearchService;
 
 
-  @PostMapping("search")
+  @GetMapping("search")
   public ResponseEntity<List<MentoringSearchDto>> searchMentoring(
-      @RequestParam(required = true) String searchType,
-      @RequestParam(required = true) String searchText,
+      @RequestParam(required = false) String searchType,
+      @RequestParam(required = false) String searchText,
       @RequestParam(required = true) String sortBy,
-      @RequestParam(required = true) String searchCategory,
+      @RequestParam(required = false) String searchCategory,
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "4") int pageSize) {
+      @RequestParam(defaultValue = "8") int pageSize) {
 
     List<MentoringSearchDto> mentoringSearchDtoList = new ArrayList<>();
 
-    if ("title".equals(searchType)) {
-      mentoringSearchDtoList = mentoringSearchService.searchTitleAndCategory(searchText,
-          searchCategory);
-    } else if ("content".equals(searchType)) {
-      mentoringSearchDtoList = mentoringSearchService.searchWriterAndCategory(searchText,
-          searchCategory);
+    if (searchType != null) {
+      if ("title".equals(searchType)) {
+        mentoringSearchDtoList = mentoringSearchService.searchTitleAndCategory(searchText,
+            searchCategory);
+      } else if ("writer".equals(searchType)) {
+        mentoringSearchDtoList = mentoringSearchService.searchWriterAndCategory(searchText,
+            searchCategory);
+      } else {
+        return ResponseEntity.badRequest().build();
+      }
     } else {
-      return ResponseEntity.badRequest().build();
+      mentoringSearchDtoList = mentoringSearchService.searchAll();
     }
 
     // 평점순, 최신순, 금액순 정렬

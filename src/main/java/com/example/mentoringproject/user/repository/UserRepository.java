@@ -33,4 +33,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Page<User> findByNameIsNotNull(Pageable pageable);
 
+  Long countByNameIsNotNull();
+
 }

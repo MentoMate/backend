@@ -17,6 +17,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -37,6 +39,11 @@ public class Comment {
 
   private String comment;
 
+  private String nickName;
+  private String uploadUrl;
+  private String uploadFolder;
+
+
   @CreatedDate
   private LocalDateTime registerDatetime;
   @LastModifiedDate
@@ -48,6 +55,7 @@ public class Comment {
 
   @ManyToOne
   @JoinColumn(name = "post_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Post post;
 
 
@@ -56,6 +64,7 @@ public class Comment {
         .user(user)
         .post(post)
         .comment(commentRegisterRequest.getComment())
+        .nickName(user.getNickName())
         .build();
   }
 

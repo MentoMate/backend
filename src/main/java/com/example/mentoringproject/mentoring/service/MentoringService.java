@@ -12,7 +12,17 @@ import com.example.mentoringproject.mentoring.img.repository.MentoringImgReposit
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
+import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.model.CountDto;
+import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
+import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
+import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
+import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
+import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.post.post.entity.Post;
@@ -24,7 +34,9 @@ import com.example.mentoringproject.user.service.UserService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -43,63 +55,51 @@ public class MentoringService {
   private final MentoringSearchRepository mentoringSearchRepository;
   private final PostRepository postRepository;
   private final UserRepository userRepository;
-  private final MentoringImgRepository mentoringImgRepository;
   private final UserService userService;
   private final S3Service s3Service;
+
+  private static final String  FOLDER = "mentoring";
+  private static final String FILE_TYPE = "img";
   @Transactional
-  public Mentoring createMentoring(String email, MentoringDto mentoringDto, List<MultipartFile> thumbNailImg, List<MultipartFile> multipartFiles){
+  public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
     User user = userService.profileInfo(userService.getUser(email).getId());
 
-    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,"mentoring","img");
-    mentoringDto.setUploadPath(s3FileDto.get(0).getUploadPath());
-    mentoringDto.setUploadName(s3FileDto.get(0).getUploadName());
-    mentoringDto.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+    Mentoring mentoring = Mentoring.from(user, mentoringSave);
+    mentoring.setStatus(MentoringStatus.PROGRESS);
 
-    Mentoring mentoring = mentoringRepository.save(Mentoring.from(user, mentoringDto));
+    imgUpload(mentoringSave, mentoring, thumbNailImg);
 
+    mentoringRepository.save(mentoring);
 
-    if(multipartFiles != null){
-      List<S3FileDto> s3FileDtoList = s3Service.upload(multipartFiles,"mentoring","img");
-      mentoringImgRepository.saveAll(MentoringImg.from(s3FileDtoList, mentoring));
-    }
-    
-     mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
+    mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
 
-    return  mentoring;
+    return mentoring;
   }
 
   @Transactional
-  public Mentoring updateMentoring(String email, Long mentoringId, MentoringDto mentoringDto, List<MultipartFile> thumbNailImg, List<MultipartFile> multipartFiles){
+  public Mentoring updateMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
-    Mentoring mentoring = getMentoring(mentoringId);
+    Mentoring mentoring = getMentoring(mentoringSave.getMentoringId());
     User user = userService.profileInfo(userService.getUser(email).getId());
 
-    s3Service.deleteFile(S3FileDto.from(mentoring));
-    mentoringImgRepository.deleteByMentoring_Id(mentoring.getId());
+    mentoring.setTitle(mentoringSave.getTitle());
+    mentoring.setContent(mentoringSave.getContent());
+    mentoring.setStartDate(mentoringSave.getStartDate());
+    mentoring.setEndDate(mentoringSave.getEndDate());
+    mentoring.setNumberOfPeople(mentoringSave.getNumberOfPeople());
+    mentoring.setAmount(mentoringSave.getAmount());
+    mentoring.setCategory(mentoringSave.getCategory());
 
-    mentoring.setTitle(mentoringDto.getTitle());
-    mentoring.setContent(mentoringDto.getContent());
-    mentoring.setStartDate(mentoringDto.getStartDate());
-    mentoring.setEndDate(mentoringDto.getEndDate());
-    mentoring.setNumberOfPeople(mentoringDto.getNumberOfPeople());
-    mentoring.setAmount(mentoringDto.getAmount());
-    mentoring.setCategory(mentoringDto.getCategory());
 
-    mentoringSearchRepository.deleteById(mentoringId);
+
+    imgUpload(mentoringSave, mentoring, thumbNailImg);
+
+    mentoringRepository.save(mentoring);
+
     mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
 
-    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,"mentoring","img");
-    mentoring.setUploadPath(s3FileDto.get(0).getUploadPath());
-    mentoring.setUploadName(s3FileDto.get(0).getUploadName());
-    mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
-
-    if(multipartFiles != null){
-      List<S3FileDto> s3FileDtoList = s3Service.upload(multipartFiles,"mentoring","img");
-      mentoringImgRepository.saveAll(MentoringImg.from(s3FileDtoList, mentoring));
-    }
-
-    return mentoringRepository.save(mentoring);
+    return mentoring;
 
   }
 
@@ -128,11 +128,6 @@ public class MentoringService {
     return mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
   }
 
-
-  @Transactional(readOnly = true)
-  public Page<Mentoring> getMentoringList(Pageable pageable) {
-    return mentoringRepository.findByStatus(MentoringStatus.PROGRESS, pageable);
-  }
 
   public List<MentoringByCountWatchDto> getMentoringByCountWatch(){
     List<Mentoring> top50MentoringList = mentoringRepository.findTop50ByOrderByCountWatchDesc();
@@ -212,10 +207,39 @@ public class MentoringService {
   }
 
 
+
   @Transactional
   public void deleteMentoringUserByCancelPayment(Pay pay) {
     Mentoring mentoring = pay.getMentoring();
     mentoring.getMenteeList().removeIf(user -> user.equals(pay.getUser()));
   }
+
+  private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
+    String uploadPath = FOLDER + "/" + mentoringSave.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+
+    List<String> imgList = Optional.ofNullable(mentoringSave.getUploadImg())
+        .orElse(Collections.emptyList())
+        .stream()
+        .map(s3Service::extractFileName)
+        .collect(Collectors.toList());
+    imgList.add(s3Service.extractFileName(mentoring.getUploadUrl()));
+
+    s3Service.fileClear(uploadPath, imgList);
+  }
+
+  public List<CountDto> getCount() {
+    List<CountDto> countDtoList = new ArrayList<>();
+
+    CountDto countDto = new CountDto();
+    countDto.setMentoringCount(mentoringRepository.count());
+    countDto.setMentorCount(userRepository.countByNameIsNotNull());
+    countDtoList.add(countDto);
+
+    return countDtoList;
+  }
+
+
 }
 
