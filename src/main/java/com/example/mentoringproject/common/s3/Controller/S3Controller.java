@@ -20,11 +20,11 @@ public class S3Controller {
   private final S3Service s3Service;
   private static final String UPLOAD_FILETYPE = "img";
   @PostMapping
-  public ResponseEntity<List<S3FileDto>> upload(
+  public ResponseEntity<String> upload(
       @RequestParam("key") String key,
       @RequestPart(name = "img", required = false) List<MultipartFile> multipartFiles
   ){
-    return ResponseEntity.ok(s3Service.upload(multipartFiles, key,UPLOAD_FILETYPE));
+    return ResponseEntity.ok(s3Service.upload(multipartFiles, key,UPLOAD_FILETYPE).get(0).getUploadUrl());
   }
 
   @GetMapping
