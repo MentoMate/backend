@@ -8,6 +8,8 @@ spring:
       - db-dev
       - redis
       - log
+      - iamport
+      
 #  config:
 #      import:
 #        - application-jwt.yml

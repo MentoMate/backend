@@ -43,11 +43,18 @@ public class Mentoring {
   private String uploadUrl;
   private String uploadFolder;
 
-  private int countWatch;
-
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+
+  private int countWatch;
+
+  @OneToMany(mappedBy = "mentoring")
+  private List<MentoringImg> mentoringImgList = new ArrayList<>();
+
+  @OneToMany(fetch = FetchType.LAZY)
+  private List<User> menteeList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;

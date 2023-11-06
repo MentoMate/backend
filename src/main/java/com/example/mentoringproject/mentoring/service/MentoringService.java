@@ -2,6 +2,16 @@ package com.example.mentoringproject.mentoring.service;
 
 import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
+import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.img.entity.MentoringImg;
+import com.example.mentoringproject.mentoring.img.repository.MentoringImgRepository;
+import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
+import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
+import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.model.CountDto;
@@ -14,14 +24,15 @@ import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
+import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.model.PostByRegisterDateDto;
 import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import com.example.mentoringproject.user.service.UserService;
-import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +43,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -195,6 +206,13 @@ public class MentoringService {
     return randomMentorings;
   }
 
+
+
+  @Transactional
+  public void deleteMentoringUserByCancelPayment(Pay pay) {
+    Mentoring mentoring = pay.getMentoring();
+    mentoring.getMenteeList().removeIf(user -> user.equals(pay.getUser()));
+  }
 
   private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
     String uploadPath = FOLDER + "/" + mentoringSave.getUploadFolder();
