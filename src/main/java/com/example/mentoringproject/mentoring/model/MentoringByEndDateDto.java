@@ -26,6 +26,8 @@ public class MentoringByEndDateDto {
   private MentoringStatus status;
   private String category;
   private String uploadUrl;
+  private String uploadFolder;
+  private int countWatch;
 
   private Double rating;
   private String name;
@@ -43,6 +45,8 @@ public class MentoringByEndDateDto {
             .status(mentoring.getStatus())
             .category(mentoring.getCategory())
             .uploadUrl(mentoring.getUploadUrl())
+            .uploadFolder(mentoring.getUploadFolder())
+            .countWatch(mentoring.getCountWatch())
             .rating(mentoring.getUser().getRating())
             .name(mentoring.getUser().getName())
             .build())

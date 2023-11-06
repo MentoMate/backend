@@ -19,8 +19,10 @@ public class PostByRegisterDateDto {
   private Category category;
   private String title;
   private String content;
+  private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
+  private int countWatch;
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
@@ -32,8 +34,10 @@ public class PostByRegisterDateDto {
             .category(post.getCategory())
             .title(post.getTitle())
             .content(post.getContent())
+            .uploadFolder(post.getUploadFolder())
             .postLikesCount(post.getPostLikesCount())
             .commentCount(post.getCommentCount())
+            .countWatch(post.getCountWatch())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
             .build())

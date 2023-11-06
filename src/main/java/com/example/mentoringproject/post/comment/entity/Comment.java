@@ -39,6 +39,11 @@ public class Comment {
 
   private String comment;
 
+  private String nickName;
+  private String uploadUrl;
+  private String uploadFolder;
+
+
   @CreatedDate
   private LocalDateTime registerDatetime;
   @LastModifiedDate
@@ -59,6 +64,7 @@ public class Comment {
         .user(user)
         .post(post)
         .comment(commentRegisterRequest.getComment())
+        .nickName(user.getNickName())
         .build();
   }
 

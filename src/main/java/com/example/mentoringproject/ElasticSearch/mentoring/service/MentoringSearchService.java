@@ -31,4 +31,12 @@ public class MentoringSearchService {
         .map(MentoringSearchDto::fromDocument)
         .collect(Collectors.toList());
   }
+
+  public List<MentoringSearchDto> searchAll() {
+    List<MentoringSearchDocumment> MentoringSearchDocumments = metoringSearchRepository.findAll();
+
+    return MentoringSearchDocumments.stream()
+        .map(MentoringSearchDto::fromDocument)
+        .collect(Collectors.toList());
+  }
 }

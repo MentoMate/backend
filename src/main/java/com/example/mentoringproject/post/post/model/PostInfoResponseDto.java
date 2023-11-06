@@ -1,22 +1,20 @@
-package com.example.mentoringproject.ElasticSearch.post.entity;
+package com.example.mentoringproject.post.post.model;
 
 import com.example.mentoringproject.post.post.entity.Category;
 import com.example.mentoringproject.post.post.entity.Post;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
 
-@Document(indexName = "post")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class PostSearchDocumment {
 
-  @Id
+public class PostInfoResponseDto {
+
   private Long id;
 
   private Category category;
@@ -26,11 +24,13 @@ public class PostSearchDocumment {
   private int postLikesCount;
   private int commentCount;
   private int countWatch;
-  private String writer;
+  private String nickName;
 
+  private LocalDateTime registerDatetime;
+  private LocalDateTime updateDatetime;
 
-  public static PostSearchDocumment fromEntity(Post post) {
-    return PostSearchDocumment.builder()
+  public static PostInfoResponseDto fromEntity(Post post) {
+    return PostInfoResponseDto.builder()
         .id(post.getId())
         .category(post.getCategory())
         .title(post.getTitle())
@@ -39,7 +39,10 @@ public class PostSearchDocumment {
         .postLikesCount(post.getPostLikesCount())
         .commentCount(post.getCommentCount())
         .countWatch(post.getCountWatch())
-        .writer(post.getUser().getNickName())
+        .nickName(post.getUser().getNickName())
+        .registerDatetime(post.getRegisterDatetime())
+        .updateDatetime(post.getUpdateDatetime())
         .build();
   }
+
 }
