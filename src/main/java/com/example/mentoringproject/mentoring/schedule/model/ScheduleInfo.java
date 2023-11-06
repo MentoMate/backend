@@ -5,6 +5,9 @@ import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,4 +45,19 @@ public class ScheduleInfo {
         .build();
   }
 
+  public static List<ScheduleInfo> from(List<Schedule> scheduleList) {
+    return scheduleList.stream()
+            .map(schedule -> ScheduleInfo.builder()
+                    .id(schedule.getId())
+                    .title(schedule.getTitle())
+                    .content(schedule.getContent())
+                    .startDate(schedule.getStartDate())
+                    .endDate(schedule.getEndDate())
+                    .mentoringId(schedule.getMentoring().getId())
+                    .userId(schedule.getMentoring().getUser().getId())
+                    .registerDate(schedule.getRegisterDate())
+                    .updateDate(schedule.getUpdateDate())
+                    .build())
+            .collect(Collectors.toList());
+  }
 }

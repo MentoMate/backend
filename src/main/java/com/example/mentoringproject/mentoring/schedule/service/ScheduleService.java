@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class ScheduleService {
   public Schedule createSchedule(String email, Long mentoringId, ScheduleSave scheduleSave){
     Mentoring mentoring = mentoringService.getMentoring(mentoringId);
 
-    mentoringChk( email, mentoring);
+    scheduleRegisterAuth(email, mentoring);
 
     return scheduleRepository.save(Schedule.from(scheduleSave));
   }
@@ -32,7 +35,7 @@ public class ScheduleService {
   public Schedule updateSchedule(String email, Long mentoringId, ScheduleSave scheduleSave){
     Mentoring mentoring = mentoringService.getMentoring(mentoringId);
 
-    mentoringChk(email,mentoring);
+    scheduleRegisterAuth(email,mentoring);
     Schedule schedule = scheduleChk(scheduleSave.getId());
 
     schedule.setTitle(scheduleSave.getTitle());
@@ -43,16 +46,27 @@ public class ScheduleService {
     return scheduleRepository.save(schedule);
   }
 
-  public void deleteSchedule(Long scheduleId){
+  public void deleteSchedule(String email, Long mentoringId,  Long scheduleId){
+    Mentoring mentoring = mentoringService.getMentoring(mentoringId);
+    scheduleRegisterAuth(email, mentoring);
+
     Schedule schedule = scheduleChk(scheduleId);
     scheduleRepository.delete(schedule);
   }
 
-  private void mentoringChk(String email, Mentoring mentoring){
+  public Schedule scheduleInfo(Long scheduleId){
+    return  scheduleChk(scheduleId);
+  }
+
+  public List<Schedule> scheduleInfoByPeriod(Long mentoringId, LocalDate startDate, LocalDate endDate){
+      return  scheduleRepository.findByMentoring_IdAndStartDateBetween(mentoringId, startDate, endDate);
+  }
+
+  private void scheduleRegisterAuth(String email, Mentoring mentoring){
     User user = userService.getUser(email);
 
     if(user.getId() != mentoring.getUser().getId()){
-      throw new AppException(HttpStatus.BAD_REQUEST, "일정은 멘토만 등록 할 수 있습니다.");
+      throw new AppException(HttpStatus.BAD_REQUEST, "일정은 멘토만 추가 및 삭제 할 수 있습니다.");
     }
   }
 
