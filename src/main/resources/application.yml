@@ -19,4 +19,5 @@ spring:
 #        - application-db-local.yml
 #        - application-redis-local.yml
 #        - application-log.yml
+#        - application-iamport.yml
 

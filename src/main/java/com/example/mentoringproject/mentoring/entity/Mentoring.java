@@ -4,6 +4,8 @@ import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -49,9 +51,6 @@ public class Mentoring {
 
 
   private int countWatch;
-
-  @OneToMany(mappedBy = "mentoring")
-  private List<MentoringImg> mentoringImgList = new ArrayList<>();
 
   @OneToMany(fetch = FetchType.LAZY)
   private List<User> menteeList = new ArrayList<>();
