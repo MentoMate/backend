@@ -23,8 +23,8 @@ public class MentoringSearchDocumment {
   private String writer;
   private String title;
   private String content;
-  private LocalDate startDate;
-  private LocalDate endDate;
+  //private LocalDate startDate;
+  //private LocalDate endDate;
   private int numberOfPeople;
   private int amount;
   private MentoringStatus status;
@@ -44,8 +44,8 @@ public class MentoringSearchDocumment {
         .writer(user.getName())
         .title(mentoring.getTitle())
         .content(mentoring.getCategory())
-        .startDate(mentoring.getStartDate())
-        .endDate(mentoring.getEndDate())
+        //.startDate(mentoring.getStartDate())
+        //.endDate(mentoring.getEndDate())
         .numberOfPeople(mentoring.getNumberOfPeople())
         .amount(mentoring.getAmount())
         .status(mentoring.getStatus())

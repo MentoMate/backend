@@ -22,11 +22,12 @@ public class PostSearchDocumment {
   private Category category;
   private String title;
   private String content;
+  private String writer;
   private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
   private int countWatch;
-  private String writer;
+
 
 
   public static PostSearchDocumment fromEntity(Post post) {
@@ -35,11 +36,11 @@ public class PostSearchDocumment {
         .category(post.getCategory())
         .title(post.getTitle())
         .content(post.getContent())
+        .writer(post.getUser().getNickName())
         .uploadFolder(post.getUploadFolder())
         .postLikesCount(post.getPostLikesCount())
         .commentCount(post.getCommentCount())
         .countWatch(post.getCountWatch())
-        .writer(post.getUser().getNickName())
         .build();
   }
 }
