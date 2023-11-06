@@ -1,16 +1,16 @@
 package com.example.mentoringproject.user.model;
 
 
-import com.example.mentoringproject.user.entity.User;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserProfileSave {
   private Long userId;
   private String name;

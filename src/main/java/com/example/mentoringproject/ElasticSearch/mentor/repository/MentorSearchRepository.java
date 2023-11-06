@@ -7,7 +7,9 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface MentorSearchRepository extends
     ElasticsearchRepository<MentorSearchDocumment, Long> {
 
-  List<MentorSearchDocumment> findAllByNameAndMiddleCategory(String name, String middleCategory);
+  List<MentorSearchDocumment> findAllByNameContainingAndMiddleCategory(String name, String middleCategory);
+
+  List<MentorSearchDocumment> findAll();
 
   void deleteByName(String name);
 }

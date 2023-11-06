@@ -11,6 +11,7 @@ import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.post.post.entity.Post;
@@ -57,9 +58,12 @@ public class MentoringService {
     mentoring.setStatus(MentoringStatus.PROGRESS);
 
     imgUpload(mentoringSave, mentoring, thumbNailImg);
+
+    mentoringRepository.save(mentoring);
+
     mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
 
-    return  mentoringRepository.save(mentoring);
+    return mentoring;
   }
 
   @Transactional
@@ -76,11 +80,15 @@ public class MentoringService {
     mentoring.setAmount(mentoringSave.getAmount());
     mentoring.setCategory(mentoringSave.getCategory());
 
-    mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
+
 
     imgUpload(mentoringSave, mentoring, thumbNailImg);
 
-    return mentoringRepository.save(mentoring);
+    mentoringRepository.save(mentoring);
+
+    mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
+
+    return mentoring;
 
   }
 
@@ -109,11 +117,6 @@ public class MentoringService {
     return mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
   }
 
-
-  @Transactional(readOnly = true)
-  public Page<Mentoring> getMentoringList(Pageable pageable) {
-    return mentoringRepository.findByStatus(MentoringStatus.PROGRESS, pageable);
-  }
 
   public List<MentoringByCountWatchDto> getMentoringByCountWatch(){
     List<Mentoring> top50MentoringList = mentoringRepository.findTop50ByOrderByCountWatchDesc();

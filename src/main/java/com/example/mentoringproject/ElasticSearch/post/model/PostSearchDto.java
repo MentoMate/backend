@@ -19,6 +19,7 @@ public class PostSearchDto {
   private String writer;
   private Category category;
   private int postLikesCount;
+  private int countWatch;
 
 
   public static PostSearchDto fromDocument(PostSearchDocumment post) {
@@ -29,6 +30,7 @@ public class PostSearchDto {
         .writer(post.getWriter())
         .category(post.getCategory())
         .postLikesCount(post.getPostLikesCount())
+        .countWatch(post.getCountWatch())
         .build();
   }
 }

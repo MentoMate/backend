@@ -43,11 +43,11 @@ public class Mentoring {
   private String uploadUrl;
   private String uploadFolder;
 
+  private int countWatch;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
-
-  private int countWatch;
 
   @CreatedDate
   private LocalDateTime registerDate;

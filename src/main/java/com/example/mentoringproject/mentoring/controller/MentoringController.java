@@ -1,18 +1,23 @@
 package com.example.mentoringproject.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
-import com.example.mentoringproject.mentoring.model.MentoringList;
+import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.service.MentoringService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -55,17 +60,6 @@ public class MentoringController {
     return ResponseEntity.ok(MentoringInfo.from(mentoringService.mentoringInfo(mentoringId)));
   }
 
-  @GetMapping
-  public ResponseEntity<Page<MentoringList>> getMentoringList(
-          @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "5") int pageSize,
-          @RequestParam(defaultValue = "id") String sortId,
-          @RequestParam(defaultValue = "DESC") String sortDirection) {
-    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
-
-    return ResponseEntity.ok(MentoringList.from(mentoringService.getMentoringList(pageable)));
-}
   @GetMapping("/main")
   public ResponseEntity<Map<String, List<?>>> getMentoringMain() {
     Map<String, List<?>> mentoringMainPageDtoMap = new HashMap<>();
