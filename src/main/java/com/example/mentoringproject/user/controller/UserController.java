@@ -69,7 +69,7 @@ public class UserController {
   @PostMapping("/profile")
   public ResponseEntity<UserProfile> createProfile(
       @RequestPart UserProfileSave userProfileSave,
-      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFile
+      @RequestPart(name = "img") List<MultipartFile> multipartFile
 
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
@@ -78,7 +78,7 @@ public class UserController {
   @PutMapping("/profile")
   public ResponseEntity<UserProfile> updateProfile(
       @RequestPart UserProfileSave userProfileSave,
-      @RequestPart(name = "img", required = false) List<MultipartFile> multipartFile
+      @RequestPart(name = "img") List<MultipartFile> multipartFile
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(UserProfile.from(userService.updateProfile(email, userProfileSave, multipartFile)));
