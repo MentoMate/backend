@@ -47,7 +47,6 @@ public class Mentoring {
   private String uploadName;
   private String uploadUrl;
 
-
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
@@ -57,6 +56,8 @@ public class Mentoring {
   @OneToMany(mappedBy = "mentoring")
   private List<MentoringImg> mentoringImgList = new ArrayList<>();
 
+  @OneToMany(fetch = FetchType.LAZY)
+  private List<User> menteeList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;
