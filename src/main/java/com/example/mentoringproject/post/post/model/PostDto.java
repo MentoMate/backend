@@ -19,6 +19,7 @@ public class PostDto {
   private Category category;
   private String title;
   private String content;
+  private String uploadUrl;
   private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
@@ -33,6 +34,7 @@ public class PostDto {
             .category(post.getCategory())
             .title(post.getTitle())
             .content(post.getContent())
+            .uploadUrl(post.getUploadUrl())
             .uploadFolder(post.getUploadFolder())
             .postLikesCount(post.getPostLikesCount())
             .commentCount(post.getCommentCount())
