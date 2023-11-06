@@ -18,8 +18,8 @@ public class MentoringSearchDto {
   private String writer;
   private String title;
   private String content;
-  //private LocalDate startDate;
-  //private LocalDate endDate;
+  private LocalDate startDate;
+  private LocalDate endDate;
   private int numberOfPeople;
   private int amount;
   private MentoringStatus status;
@@ -39,8 +39,8 @@ public class MentoringSearchDto {
         .writer(mentoringSearchDocumment.getWriter())
         .title(mentoringSearchDocumment.getTitle())
         .content(mentoringSearchDocumment.getContent())
-        //.startDate(mentoringSearchDocumment.getStartDate())
-        //.endDate(mentoringSearchDocumment.getEndDate())
+        .startDate(mentoringSearchDocumment.getStartDate())
+        .endDate(mentoringSearchDocumment.getEndDate())
         .numberOfPeople(mentoringSearchDocumment.getNumberOfPeople())
         .amount(mentoringSearchDocumment.getAmount())
         .status(mentoringSearchDocumment.getStatus())

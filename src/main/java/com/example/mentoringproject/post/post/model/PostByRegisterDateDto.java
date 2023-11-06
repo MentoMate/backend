@@ -25,6 +25,7 @@ public class PostByRegisterDateDto {
   private int countWatch;
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
+  private String writer;
 
 
   public static List<PostByRegisterDateDto> fromEntity(List<Post> postList) {
@@ -40,6 +41,7 @@ public class PostByRegisterDateDto {
             .countWatch(post.getCountWatch())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
+            .writer(post.getUser().getName())
             .build())
         .collect(Collectors.toList());
   }
