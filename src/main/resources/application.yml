@@ -1,33 +1,21 @@
 spring:
-  datasource:
-    hikari:
-      maximum-pool-size: 20
-  data:
-    redis:
-      repositories:
-        enabled: false
   profiles:
     include:
-      - jwt.yml
-      - mail.yml
-      - oauth.yml
-      - s3.yml
-      - db-dev.yml
-      - redis.yml
-  # config:
-  #     import:
-  #       - application-jwt.yml
-  #       - application-mail.yml
-  #       - application-oauth.yml
-  #       - application-s3.yml
-  #       - application-db-local.yml
-  #       - application-redis.yml
-
-logging:
-  level:
-    com:
-      example:
-        mentoringproject: debug
-      amazonaws:
-        util:
-          EC2MetadataUtils: error
+      - jwt
+      - mail
+      - oauth-dev
+      - s3
+      - db-dev
+      - redis
+      - log
+      - iamport
+  config:
+      import:
+        - application-jwt.yml
+        - application-mail.yml
+        - application-oauth-local.yml
+        - application-s3.yml
+        - application-db-local.yml
+        - application-redis-local.yml
+        - application-log.yml
+        - application-iamport.yml
