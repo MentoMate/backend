@@ -4,9 +4,7 @@ import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -30,10 +28,11 @@ public class MentoringInfo {
   Set<String> mentoringImgList;
   private int leftPeople;
   private int followers;
+  private boolean isOwner;
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
-  public static MentoringInfo from(Mentoring mentoring) {
+  public static MentoringInfo from(Mentoring mentoring, boolean isOwner) {
 
     return MentoringInfo.builder()
         .mentoringId(mentoring.getId())
@@ -51,6 +50,7 @@ public class MentoringInfo {
         .thumbNailImg(mentoring.getUploadUrl())
         .leftPeople(6)
         .followers(12)
+        .isOwner(isOwner)
         .registerDate(mentoring.getRegisterDate())
         .updateDate(mentoring.getUpdateDate())
         .build();
