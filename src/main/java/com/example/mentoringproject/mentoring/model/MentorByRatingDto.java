@@ -19,7 +19,9 @@ public class MentorByRatingDto {
   private String introduce;
   private String mainCategory;
   private String middleCategory;
-  private String imgUrl;
+
+  private String uploadUrl;
+  private String uploadFolder;
 
   private Double rating; // 평점
 
@@ -32,7 +34,8 @@ public class MentorByRatingDto {
             .introduce(user.getIntroduce())
             .mainCategory(user.getMainCategory())
             .middleCategory(user.getMiddleCategory())
-            .imgUrl(user.getUploadUrl())
+            .uploadUrl(user.getUploadUrl())
+            .uploadFolder(user.getUploadFolder())
             .rating(user.getRating())
             .build())
         .collect(Collectors.toList());
