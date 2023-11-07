@@ -14,21 +14,29 @@ import lombok.NoArgsConstructor;
 public class PostSearchDto {
 
   private Long id;
+  private Category category;
   private String title;
   private String content;
   private String writer;
-  private Category category;
+  private String uploadUrl;
+  private String uploadFolder;
   private int postLikesCount;
+  private int commentCount;
+  private int countWatch;
 
 
   public static PostSearchDto fromDocument(PostSearchDocumment post) {
     return PostSearchDto.builder()
         .id(post.getId())
+        .category(post.getCategory())
         .title(post.getTitle())
         .content(post.getContent())
         .writer(post.getWriter())
-        .category(post.getCategory())
+        .uploadUrl(post.getUploadUrl())
+        .uploadFolder(post.getUploadFolder())
         .postLikesCount(post.getPostLikesCount())
+        .commentCount(post.getCommentCount())
+        .countWatch(post.getCountWatch())
         .build();
   }
 }

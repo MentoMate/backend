@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-public class PostDto {
+public class PostInfoResponseDto {
 
   private Long id;
 
@@ -24,24 +24,26 @@ public class PostDto {
   private int postLikesCount;
   private int commentCount;
   private int countWatch;
+  private String nickName;
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
-  public static PostDto fromEntity(Post post) {
-    return PostDto.builder()
-            .id(post.getId())
-            .category(post.getCategory())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .uploadUrl(post.getUploadUrl())
-            .uploadFolder(post.getUploadFolder())
-            .postLikesCount(post.getPostLikesCount())
-            .commentCount(post.getCommentCount())
-            .countWatch(post.getCountWatch())
-            .registerDatetime(post.getRegisterDatetime())
-            .updateDatetime(post.getUpdateDatetime())
-            .build();
+  public static PostInfoResponseDto fromEntity(Post post) {
+    return PostInfoResponseDto.builder()
+        .id(post.getId())
+        .category(post.getCategory())
+        .title(post.getTitle())
+        .content(post.getContent())
+        .uploadUrl(post.getUploadUrl())
+        .uploadFolder(post.getUploadFolder())
+        .postLikesCount(post.getPostLikesCount())
+        .commentCount(post.getCommentCount())
+        .countWatch(post.getCountWatch())
+        .nickName(post.getUser().getNickName())
+        .registerDatetime(post.getRegisterDatetime())
+        .updateDatetime(post.getUpdateDatetime())
+        .build();
   }
 
 }

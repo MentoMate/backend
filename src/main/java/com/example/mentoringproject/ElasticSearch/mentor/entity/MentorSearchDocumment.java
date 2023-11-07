@@ -23,6 +23,9 @@ public class MentorSearchDocumment {
   private String mainCategory;
   private String middleCategory;
 
+  private String uploadUrl;
+  private String uploadFolder;
+
   private Double rating;
 
   public static MentorSearchDocumment fromEntity(User user) {
@@ -33,6 +36,8 @@ public class MentorSearchDocumment {
         .introduce(user.getIntroduce())
         .mainCategory(user.getMainCategory())
         .middleCategory(user.getMiddleCategory())
+        .uploadUrl(user.getUploadUrl())
+        .uploadFolder(user.getUploadFolder())
         .rating(user.getRating())
         .build();
   }

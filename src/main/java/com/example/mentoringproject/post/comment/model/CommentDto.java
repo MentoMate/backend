@@ -1,6 +1,7 @@
 package com.example.mentoringproject.post.comment.model;
 
 import com.example.mentoringproject.post.comment.entity.Comment;
+import com.example.mentoringproject.post.post.entity.Post;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,11 @@ public class CommentDto {
 
   private String comment;
 
+  private String nickName;
+  private String uploadUrl;
+  private String uploadFolder;
+  private Post post;
+
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
@@ -28,6 +34,10 @@ public class CommentDto {
         .map(comment -> CommentDto.builder()
             .id(comment.getId())
             .comment(comment.getComment())
+            .nickName(comment.getNickName())
+            .uploadUrl(comment.getUploadUrl())
+            .uploadFolder(comment.getUploadFolder())
+            .post(comment.getPost())
             .registerDatetime(comment.getRegisterDatetime())
             .updateDatetime(comment.getUpdateDatetime())
             .build()
@@ -39,6 +49,10 @@ public class CommentDto {
     return CommentDto.builder()
             .id(comment.getId())
             .comment(comment.getComment())
+            .nickName(comment.getNickName())
+            .uploadUrl(comment.getUploadUrl())
+            .uploadFolder(comment.getUploadFolder())
+            .post(comment.getPost())
             .registerDatetime(comment.getRegisterDatetime())
             .updateDatetime(comment.getUpdateDatetime())
             .build();

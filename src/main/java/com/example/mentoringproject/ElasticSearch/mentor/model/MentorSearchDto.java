@@ -19,6 +19,9 @@ public class MentorSearchDto {
   private String mainCategory;
   private String middleCategory;
 
+  private String uploadUrl;
+  private String uploadFolder;
+
   private Double rating;
 
   public static MentorSearchDto fromDocument(MentorSearchDocumment mentorSearchDocumment) {
@@ -29,6 +32,8 @@ public class MentorSearchDto {
         .introduce(mentorSearchDocumment.getIntroduce())
         .mainCategory(mentorSearchDocumment.getMainCategory())
         .middleCategory(mentorSearchDocumment.getMiddleCategory())
+        .uploadUrl(mentorSearchDocumment.getUploadUrl())
+        .uploadFolder(mentorSearchDocumment.getUploadFolder())
         .rating(mentorSearchDocumment.getRating())
         .build();
   }

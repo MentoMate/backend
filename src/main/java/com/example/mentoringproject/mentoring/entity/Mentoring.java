@@ -4,6 +4,8 @@ import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -47,7 +49,11 @@ public class Mentoring {
   @JoinColumn(name = "user_id")
   private User user;
 
+
   private int countWatch;
+
+  @OneToMany(fetch = FetchType.LAZY)
+  private List<User> menteeList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;

@@ -1,6 +1,5 @@
 package com.example.mentoringproject.post.post.service;
 
-import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.post.entity.PostSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.post.repository.PostSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
@@ -19,8 +18,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,11 +35,16 @@ public class PostService {
 
   private static final String FOLDER = "post";
   private static final String FILE_TYPE = "img";
+
   // 포스팅 등록
-  public Post createPost(String email, PostRegisterRequest postRegisterRequest) {
+  public Post createPost(String email, PostRegisterRequest postRegisterRequest, List<MultipartFile> thumbNailImg) {
     User user = getUser(email);
 
     Post post = Post.from(user, postRegisterRequest);
+
+    String uploadPath = FOLDER + "/" + postRegisterRequest.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     postRepository.save(post);
 
@@ -53,6 +55,7 @@ public class PostService {
         .stream()
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
+    imgList.add(s3Service.extractFileName(post.getUploadUrl()));
     s3Service.fileClear(FOLDER + "/" + postRegisterRequest.getUploadFolder(), imgList);
 
     return post;
@@ -66,10 +69,9 @@ public class PostService {
 
   // 포스팅 수정
   @Transactional
-  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest) {
+  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest, List<MultipartFile> thumbNailImg) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
-
 
     if (!post.getUser().getEmail().equals(email)) {
       throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
@@ -80,6 +82,10 @@ public class PostService {
     post.setContent(postUpdateRequest.getContent());
     post.setUpdateDatetime(LocalDateTime.now());
 
+    String uploadPath = FOLDER + "/" + postUpdateRequest.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+
     postRepository.save(post);
 
     postSearchRepository.save(PostSearchDocumment.fromEntity(post));
@@ -89,6 +95,7 @@ public class PostService {
         .stream()
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
+    imgList.add(s3Service.extractFileName(post.getUploadUrl()));
     s3Service.fileClear(FOLDER + "/" + postUpdateRequest.getUploadFolder(), imgList);
 
     return post;
@@ -110,9 +117,15 @@ public class PostService {
     postSearchRepository.deleteById(postId);
   }
 
-  // 모든 포스트 조회
-  @Transactional(readOnly = true)
-  public Page<Post> findAllPosts(Pageable pageable) {
-    return postRepository.findAll(pageable);
+  @Transactional
+  public Post postInfo(Long postId) {
+    postRepository.updateCount(postId);
+
+    return getPost(postId);
   }
+
+  public Post getPost(Long postId){
+    return postRepository.findById(postId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 글 입니다."));
+  }
+
 }

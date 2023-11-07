@@ -19,10 +19,14 @@ public class PostByRegisterDateDto {
   private Category category;
   private String title;
   private String content;
+  private String uploadUrl;
+  private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
+  private int countWatch;
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
+  private String writer;
 
 
   public static List<PostByRegisterDateDto> fromEntity(List<Post> postList) {
@@ -32,10 +36,14 @@ public class PostByRegisterDateDto {
             .category(post.getCategory())
             .title(post.getTitle())
             .content(post.getContent())
+            .uploadUrl(post.getUploadUrl())
+            .uploadFolder(post.getUploadFolder())
             .postLikesCount(post.getPostLikesCount())
             .commentCount(post.getCommentCount())
+            .countWatch(post.getCountWatch())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
+            .writer(post.getUser().getName())
             .build())
         .collect(Collectors.toList());
   }

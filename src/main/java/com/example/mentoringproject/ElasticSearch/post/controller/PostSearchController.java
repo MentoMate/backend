@@ -3,16 +3,22 @@ package com.example.mentoringproject.ElasticSearch.post.controller;
 import com.example.mentoringproject.ElasticSearch.post.model.PostSearchDto;
 import com.example.mentoringproject.ElasticSearch.post.service.PostSearchService;
 import com.example.mentoringproject.post.post.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "게시판 - 검색", description = "게시판 - 검색 API")
 @RequiredArgsConstructor
 @RequestMapping("/post")
 @RestController
@@ -21,22 +27,34 @@ public class PostSearchController {
   private final PostService postService;
   private final PostSearchService postSearchService;
 
-  @PostMapping("/search")
+
+  @Operation(summary = "게시판 - 검색 api", description = "게시판 - 검색 api", responses = {
+      @ApiResponse(responseCode = "200", description = "게시판 - 검색 성공", content =
+      @Content(schema = @Schema(implementation = PostSearchDto.class)))
+  })
+  @GetMapping("/search")
   public ResponseEntity<List<PostSearchDto>> searchPost(
-      @RequestParam(required = true) String searchType,
-      @RequestParam(required = true) String searchText,
+      @RequestParam(required = false) String searchType,
+      @RequestParam(required = false) String searchText,
+      @RequestParam(required = true) String searchCategory,
       @RequestParam(required = true) String sortBy,
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "4") int pageSize) {
+      @RequestParam(defaultValue = "8") int pageSize) {
 
     List<PostSearchDto> postSearchDtoList = new ArrayList<>();
 
-    if ("title".equals(searchType)) {
-      postSearchDtoList = postSearchService.searchTitle(searchText);
-    } else if ("writer".equals(searchType)) {
-      postSearchDtoList = postSearchService.searchWriter(searchText);
+    if (searchType != null) {
+      if ("title".equals(searchType)) {
+        postSearchDtoList = postSearchService.searchTitleAndCategory(searchText,
+            searchCategory);
+      } else if ("writer".equals(searchType)) {
+        postSearchDtoList = postSearchService.searchWriterAndCategory(searchText,
+            searchCategory);
+      } else {
+        return ResponseEntity.badRequest().build();
+      }
     } else {
-      return ResponseEntity.badRequest().build();
+      postSearchDtoList = postSearchService.searchCategory(searchCategory);
     }
 
     // 인기순, 최신순 정렬
@@ -56,4 +74,5 @@ public class PostSearchController {
     return ResponseEntity.ok(pagedResult);
 
   }
+
 }

@@ -32,7 +32,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "posts")
+@Entity(name = "post")
 @EntityListeners(AuditingEntityListener.class)
 public class Post {
 
@@ -44,11 +44,14 @@ public class Post {
   private Category category;
   private String title;
   private String content;
+  private String uploadUrl;
   private String uploadFolder;
 
   private int postLikesCount;
 
   private int commentCount;
+
+  private int countWatch;
 
   @CreatedDate
   private LocalDateTime registerDatetime;
@@ -77,6 +80,7 @@ public class Post {
         .uploadFolder(postRegisterRequest.getUploadFolder())
         .postLikesCount(0)
         .commentCount(0)
+        .countWatch(0)
         .build();
   }
 

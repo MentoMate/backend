@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Document(indexName = "post")
 @AllArgsConstructor
@@ -21,29 +19,30 @@ public class PostSearchDocumment {
   @Id
   private Long id;
 
-  @Field(type = FieldType.Text)
-  private String title;
-
-  @Field(type = FieldType.Text)
-  private String content;
-
-  @Field(type = FieldType.Keyword)
-  private String writer;
-
-  @Field(type = FieldType.Keyword)
   private Category category;
-
-  @Field(type = FieldType.Long)
+  private String title;
+  private String content;
+  private String writer;
+  private String uploadUrl;
+  private String uploadFolder;
   private int postLikesCount;
+  private int commentCount;
+  private int countWatch;
+
+
 
   public static PostSearchDocumment fromEntity(Post post) {
     return PostSearchDocumment.builder()
         .id(post.getId())
-        .writer(post.getUser().getNickName())
         .category(post.getCategory())
         .title(post.getTitle())
         .content(post.getContent())
+        .writer(post.getUser().getNickName())
+        .uploadUrl(post.getUploadUrl())
+        .uploadFolder(post.getUploadFolder())
         .postLikesCount(post.getPostLikesCount())
+        .commentCount(post.getCommentCount())
+        .countWatch(post.getCountWatch())
         .build();
   }
 }
