@@ -30,13 +30,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.auth0:java-jwt:4.2.1'
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.data:spring-data-elasticsearch:4.4.16'
-    implementation 'org.json:json:20230618'
+    implementation 'com.auth0:java-jwt:4.2.1' //jwt
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' //aws s3
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' //redis
+    implementation 'org.springframework.data:spring-data-elasticsearch:4.4.16' //elasticsearch
+    implementation 'org.json:json:20230618' //json파싱
+    implementation 'com.github.iamport:iamport-rest-client-java:0.2.21' //결제
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0' //swagger
 
-    implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

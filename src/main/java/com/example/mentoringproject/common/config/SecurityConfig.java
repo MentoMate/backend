@@ -36,6 +36,10 @@ public class SecurityConfig {
   private final UserRepository userRepository;
   private final ObjectMapper objectMapper;
 
+  private static final String[] PERMIT_URL_ARRAY = {
+          "/v3/api-docs/**",
+          "/swagger-ui/**"
+  };
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
@@ -49,7 +53,8 @@ public class SecurityConfig {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/", "/user/login/**", "/user/join/**").permitAll()
+        .antMatchers("/", "/user/login/**", "/user/join/**", "/swagger-ui.html").permitAll()
+        .antMatchers(PERMIT_URL_ARRAY).permitAll()
         .antMatchers(HttpMethod.POST, "/mentor/search","/mentoring/search").permitAll()
         .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
             "/posts/{postId}/comments", "/posts/{postId}/info","/post/search").permitAll()
