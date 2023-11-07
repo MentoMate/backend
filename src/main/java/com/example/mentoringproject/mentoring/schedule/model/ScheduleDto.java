@@ -27,22 +27,22 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 public class ScheduleDto {
 
-  private Long id;
+  private Long scheduleId;
   private String title;
   private String content;
   private LocalDate startDate;
-  private LocalDate endDate;
   private Mentoring mentoring;
+  private String uploadFolder;
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
   public static ScheduleDto from(Schedule schedule){
     return ScheduleDto.builder()
-        .id(schedule.getId())
+        .scheduleId(schedule.getId())
         .title(schedule.getTitle())
         .content(schedule.getContent())
         .startDate(schedule.getStartDate())
-        .endDate(schedule.getEndDate())
+        .uploadFolder(schedule.getUploadFolder())
         .mentoring(schedule.getMentoring())
         .registerDate(schedule.getRegisterDate())
         .updateDate(schedule.getUpdateDate())

@@ -43,7 +43,7 @@ public class Schedule {
   private String title;
   private String content;
   private LocalDate startDate;
-  private LocalDate endDate;
+  private String uploadFolder;
 
   @ManyToOne
   @JoinColumn(name = "mentoring_id")
@@ -54,12 +54,13 @@ public class Schedule {
   @LastModifiedDate
   private LocalDateTime updateDate;
 
-  public static Schedule from(ScheduleSave scheduleSave){
+  public static Schedule from(ScheduleSave scheduleSave, Mentoring mentoring){
     return Schedule.builder()
         .title(scheduleSave.getTitle())
         .content(scheduleSave.getContent())
         .startDate(scheduleSave.getStartDate())
-        .endDate(scheduleSave.getEndDate())
+        .mentoring(mentoring)
+        .uploadFolder(scheduleSave.getUploadFolder())
         .build();
   }
 

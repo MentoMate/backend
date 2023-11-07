@@ -19,51 +19,38 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mentoring/{mentoringId}/schedule")
+@RequestMapping("/mentoring/schedule")
 public class ScheduleController {
   private  final ScheduleService  scheduleService;
   @PostMapping
   public ResponseEntity<ScheduleInfo> createSchedule(
-      @PathVariable Long mentoringId,
       @RequestBody ScheduleSave scheduleSave
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.createSchedule(email, mentoringId, scheduleSave)));
+    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.createSchedule(email, scheduleSave)));
   }
 
   @PutMapping
   public ResponseEntity<ScheduleInfo> updateSchedule(
-      @PathVariable Long mentoringId,
       @RequestBody ScheduleSave scheduleSave
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.updateSchedule(email, mentoringId, scheduleSave)));
+    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.updateSchedule(email, scheduleSave)));
   }
 
   @DeleteMapping("/{scheduleId}")
   public ResponseEntity<Void> deleteSchedule(
-          @PathVariable Long mentoringId,
           @PathVariable Long scheduleId
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    scheduleService.deleteSchedule(email, mentoringId, scheduleId);
+    scheduleService.deleteSchedule(email, scheduleId);
     return ResponseEntity.ok().build();
   }
 
   @GetMapping("/{scheduleId}")
   public ResponseEntity<ScheduleInfo> scheduleInfo(
-          @PathVariable Long mentoringId,
           @PathVariable Long scheduleId
   ){
     return ResponseEntity.ok(ScheduleInfo.from(scheduleService.scheduleInfo(scheduleId)));
-  }
-
-  @GetMapping
-  public ResponseEntity<List<ScheduleInfo>> scheduleInfoByPeriod(
-          @PathVariable Long mentoringId,
-          @RequestParam("startDate") LocalDate startDate,
-          @RequestParam("endDate") LocalDate endDate
-  ){
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.scheduleInfoByPeriod(mentoringId, startDate, endDate)));
   }
 }

@@ -1,6 +1,7 @@
 package com.example.mentoringproject.mentoring.schedule.service;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
@@ -9,6 +10,9 @@ import com.example.mentoringproject.mentoring.schedule.repository.ScheduleReposi
 import com.example.mentoringproject.mentoring.service.MentoringService;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.service.UserService;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,33 +28,39 @@ public class ScheduleService {
   private final ScheduleRepository scheduleRepository;
   private final MentoringService mentoringService;
   private final UserService userService;
-  public Schedule createSchedule(String email, Long mentoringId, ScheduleSave scheduleSave){
-    Mentoring mentoring = mentoringService.getMentoring(mentoringId);
+  private final S3Service s3Service;
+
+  public static final String FOLDER = "schedule";
+  public Schedule createSchedule(String email, ScheduleSave scheduleSave){
+    Mentoring mentoring = mentoringService.getMentoring(scheduleSave.getMentoringId());
 
     scheduleRegisterAuth(email, mentoring);
 
-    return scheduleRepository.save(Schedule.from(scheduleSave));
-  }
+    s3Service.fileClear(FOLDER + "/" + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
 
-  public Schedule updateSchedule(String email, Long mentoringId, ScheduleSave scheduleSave){
-    Mentoring mentoring = mentoringService.getMentoring(mentoringId);
+    return scheduleRepository.save(Schedule.from(scheduleSave, mentoring));
+  }
+  public Schedule updateSchedule(String email, ScheduleSave scheduleSave){
+    Mentoring mentoring = mentoringService.getMentoring(scheduleSave.getMentoringId());
 
     scheduleRegisterAuth(email,mentoring);
-    Schedule schedule = scheduleChk(scheduleSave.getId());
+    Schedule schedule = scheduleChk(scheduleSave.getScheduleId());
 
     schedule.setTitle(scheduleSave.getTitle());
     schedule.setContent(scheduleSave.getContent());
     schedule.setStartDate(scheduleSave.getStartDate());
-    schedule.setEndDate(scheduleSave.getEndDate());
+
+    s3Service.fileClear(FOLDER + "/" + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
 
     return scheduleRepository.save(schedule);
   }
 
-  public void deleteSchedule(String email, Long mentoringId,  Long scheduleId){
-    Mentoring mentoring = mentoringService.getMentoring(mentoringId);
+  public void deleteSchedule(String email,  Long scheduleId){
+    Schedule schedule = scheduleChk(scheduleId);
+
+    Mentoring mentoring = mentoringService.getMentoring(schedule.getMentoring().getId());
     scheduleRegisterAuth(email, mentoring);
 
-    Schedule schedule = scheduleChk(scheduleId);
     scheduleRepository.delete(schedule);
   }
 
@@ -73,5 +83,13 @@ public class ScheduleService {
   private Schedule scheduleChk(Long scheduleId){
     return scheduleRepository.findById(scheduleId).orElseThrow(
         () -> new AppException(HttpStatus.BAD_REQUEST,"존재하지 않는 일정입니다."));
+  }
+
+  private List<String> imgUrlChange(ScheduleSave scheduleSave){
+    return Optional.ofNullable(scheduleSave.getUploadImg())
+        .orElse(Collections.emptyList())
+        .stream()
+        .map(s3Service::extractFileName)
+        .collect(Collectors.toList());
   }
 }

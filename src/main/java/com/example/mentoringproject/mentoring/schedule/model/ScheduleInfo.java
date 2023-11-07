@@ -21,11 +21,11 @@ import lombok.Setter;
 @Builder
 public class ScheduleInfo {
 
-  private Long id;
+  private Long scheduleId;
   private String title;
   private String content;
   private LocalDate startDate;
-  private LocalDate endDate;
+  private String uploadFolder;
   private Long mentoringId;
   private Long userId;
   private LocalDateTime registerDate;
@@ -33,11 +33,11 @@ public class ScheduleInfo {
 
   public static ScheduleInfo from(Schedule schedule){
     return ScheduleInfo.builder()
-        .id(schedule.getId())
+        .scheduleId(schedule.getId())
         .title(schedule.getTitle())
         .content(schedule.getContent())
         .startDate(schedule.getStartDate())
-        .endDate(schedule.getEndDate())
+        .uploadFolder(schedule.getUploadFolder())
         .mentoringId(schedule.getMentoring().getId())
         .userId(schedule.getMentoring().getUser().getId())
         .registerDate(schedule.getRegisterDate())
@@ -48,11 +48,11 @@ public class ScheduleInfo {
   public static List<ScheduleInfo> from(List<Schedule> scheduleList) {
     return scheduleList.stream()
             .map(schedule -> ScheduleInfo.builder()
-                    .id(schedule.getId())
+                    .scheduleId(schedule.getId())
                     .title(schedule.getTitle())
                     .content(schedule.getContent())
                     .startDate(schedule.getStartDate())
-                    .endDate(schedule.getEndDate())
+                    .uploadFolder(schedule.getUploadFolder())
                     .mentoringId(schedule.getMentoring().getId())
                     .userId(schedule.getMentoring().getUser().getId())
                     .registerDate(schedule.getRegisterDate())
