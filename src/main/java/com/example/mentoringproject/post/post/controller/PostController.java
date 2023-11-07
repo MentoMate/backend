@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "게시판", description = "Post API")
 @RestController
@@ -38,12 +41,13 @@ public class PostController {
       @Content(schema = @Schema(implementation = PostDto.class)))
   })
   @PostMapping
-  public ResponseEntity<PostDto> createPost(@RequestBody PostRegisterRequest postRegisterRequest)
-      throws IOException {
+  public ResponseEntity<PostDto> createPost(
+      @RequestPart PostRegisterRequest postRegisterRequest,
+      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg) throws IOException {
     String email = SpringSecurityUtil.getLoginEmail();
 
     return ResponseEntity.ok(
-        PostDto.fromEntity(postService.createPost(email, postRegisterRequest)));
+        PostDto.fromEntity(postService.createPost(email, postRegisterRequest, thumbNailImg)));
   }
 
   // 글 수정
@@ -53,11 +57,12 @@ public class PostController {
   })
   @GetMapping("/{postId}")
   public ResponseEntity<PostDto> updatePost(@PathVariable Long postId,
-      @RequestBody PostUpdateRequest postUpdateRequest) {
+      @RequestPart PostUpdateRequest postUpdateRequest,
+      @RequestPart(name = "thumbNailImg") List<MultipartFile> thumbNailImg) {
     String email = SpringSecurityUtil.getLoginEmail();
 
     return ResponseEntity.ok(PostDto.fromEntity(postService.updatePost(email, postId,
-        postUpdateRequest)));
+        postUpdateRequest, thumbNailImg)));
   }
 
   // 글 삭제

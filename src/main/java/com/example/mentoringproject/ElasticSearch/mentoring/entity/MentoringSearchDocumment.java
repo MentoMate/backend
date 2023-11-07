@@ -4,12 +4,16 @@ import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Document(indexName = "mentoring")
 @AllArgsConstructor
@@ -23,8 +27,16 @@ public class MentoringSearchDocumment {
   private String writer;
   private String title;
   private String content;
-  private LocalDate startDate;
-  private LocalDate endDate;
+
+  //ex) basic_date =  2023 01 11
+  @Field(name = "product_created_at", type=FieldType.Date, format = DateFormat.basic_date)
+  private LocalDate startDate; // 날짜를 문자열로 저장
+
+  //ex) basic_date =  2023 01 11
+  @Field(name = "product_created_at", type=FieldType.Date, format = DateFormat.basic_date)
+  private LocalDate endDate; // 날짜를 문자열로 저장
+
+
   private int numberOfPeople;
   private int amount;
   private MentoringStatus status;
@@ -38,7 +50,7 @@ public class MentoringSearchDocumment {
   private int countWatch;
 
   public static MentoringSearchDocumment fromEntity(User user, Mentoring mentoring) {
-    System.out.println(mentoring.getId());
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     return MentoringSearchDocumment.builder()
         .id(mentoring.getId())
         .writer(user.getName())

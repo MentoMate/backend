@@ -1,5 +1,6 @@
 package com.example.mentoringproject.post.post.repository;
 
+import com.example.mentoringproject.post.post.entity.Category;
 import com.example.mentoringproject.post.post.entity.Post;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   void updateCount(@Param("id") Long id);
 
   Optional<Post> findById(String postId);
-  List<Post> findTop50ByOrderByRegisterDatetimeDesc();
-
-
+  List<Post> findTop50ByCategoryOrderByRegisterDatetimeDesc(Category category);
 
 
 }

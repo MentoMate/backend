@@ -15,6 +15,7 @@ import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.pay.entity.Pay;
+import com.example.mentoringproject.post.post.entity.Category;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.model.PostByRegisterDateDto;
 import com.example.mentoringproject.post.post.repository.PostRepository;
@@ -157,7 +158,8 @@ public class MentoringService {
   }
 
   public List<PostByRegisterDateDto> getPostByRegisterDateTime() {
-    List<Post> top50PostList = postRepository.findTop50ByOrderByRegisterDatetimeDesc();
+    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(
+        Category.review);
     int totalSize = top50PostList.size();
 
     if (totalSize < 4) {
