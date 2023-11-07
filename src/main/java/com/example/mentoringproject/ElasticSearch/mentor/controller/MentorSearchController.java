@@ -3,7 +3,6 @@ package com.example.mentoringproject.ElasticSearch.mentor.controller;
 
 import com.example.mentoringproject.ElasticSearch.mentor.model.MentorSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentor.service.MentorSearchService;
-import com.example.mentoringproject.ElasticSearch.mentoring.model.MentoringSearchDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,8 +14,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

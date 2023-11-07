@@ -5,7 +5,6 @@ import com.example.mentoringproject.post.comment.model.CommentDto;
 import com.example.mentoringproject.post.comment.model.CommentRegisterRequest;
 import com.example.mentoringproject.post.comment.model.CommentUpdateRequest;
 import com.example.mentoringproject.post.comment.service.CommentService;
-import com.example.mentoringproject.post.post.model.PostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

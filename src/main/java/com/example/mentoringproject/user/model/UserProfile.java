@@ -2,15 +2,11 @@ package com.example.mentoringproject.user.model;
 
 
 import com.example.mentoringproject.user.entity.User;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 @Getter
 @Setter

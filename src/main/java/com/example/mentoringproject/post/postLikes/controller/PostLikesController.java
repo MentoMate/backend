@@ -1,11 +1,8 @@
 package com.example.mentoringproject.post.postLikes.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.post.post.model.PostDto;
 import com.example.mentoringproject.post.postLikes.service.PostLikesService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

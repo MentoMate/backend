@@ -2,7 +2,6 @@ package com.example.mentoringproject.ElasticSearch.post.controller;
 
 import com.example.mentoringproject.ElasticSearch.post.model.PostSearchDto;
 import com.example.mentoringproject.ElasticSearch.post.service.PostSearchService;
-import com.example.mentoringproject.post.post.model.PostDto;
 import com.example.mentoringproject.post.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

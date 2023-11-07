@@ -1,12 +1,6 @@
 package com.example.mentoringproject.common.s3.Controller;
 
-import com.example.mentoringproject.ElasticSearch.mentor.model.MentorSearchDto;
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -5,7 +5,6 @@ import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.service.MentoringService;
-import com.example.mentoringproject.post.post.model.PostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
