@@ -1,6 +1,5 @@
 package com.example.mentoringproject.notification.notification.entity;
 
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

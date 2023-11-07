@@ -36,6 +36,10 @@ public class SecurityConfig {
   private final UserRepository userRepository;
   private final ObjectMapper objectMapper;
 
+  private static final String[] PERMIT_URL_ARRAY = {
+          "/v3/api-docs/**",
+          "/swagger-ui/**"
+  };
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
@@ -50,8 +54,10 @@ public class SecurityConfig {
         .and()
         .authorizeRequests()
         .antMatchers("/", "/user/login/**", "/user/join/**").permitAll()
-        .antMatchers(HttpMethod.GET, "/mentor/search","/mentoring/search","/post/search","/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
-            "/{postId}/comments", "/posts/{postId}/info").permitAll()
+        .antMatchers(PERMIT_URL_ARRAY).permitAll()
+        .antMatchers(HttpMethod.POST, "/mentor/search","/mentoring/search").permitAll()
+        .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
+            "/posts/{postId}/comments", "/posts/{postId}/info","/post/search").permitAll()
         .anyRequest().authenticated();
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.addFilterBefore(jwtAuthenticationProcessingFilter(),
