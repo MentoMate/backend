@@ -47,7 +47,7 @@ public class MentoringService {
   private final UserService userService;
   private final S3Service s3Service;
 
-  private static final String  FOLDER = "mentoring";
+  private static final String  FOLDER = "mentoring/";
   private static final String FILE_TYPE = "img";
   @Transactional
   public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
@@ -213,7 +213,7 @@ public class MentoringService {
   }
 
   private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
-    String uploadPath = FOLDER + "/" + mentoringSave.getUploadFolder();
+    String uploadPath = FOLDER + mentoringSave.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
     mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
