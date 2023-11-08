@@ -49,7 +49,7 @@ public class MentoringService {
   private final UserService userService;
   private final S3Service s3Service;
 
-  private static final String  FOLDER = "mentoring";
+  private static final String  FOLDER = "mentoring/";
   private static final String FILE_TYPE = "img";
   @Transactional
   public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
@@ -122,7 +122,9 @@ public class MentoringService {
   }
 
   public Mentoring getMentoring(Long mentoringId){
-    return mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
+    Mentoring mentoring = mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
+    if(mentoring.getStatus() == MentoringStatus.DELETE) throw  new AppException(HttpStatus.BAD_REQUEST, "삭제된 멘토링 입니다.");
+    return  mentoring;
   }
 
 
@@ -231,7 +233,7 @@ public class MentoringService {
   }
 
   private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
-    String uploadPath = FOLDER + "/" + mentoringSave.getUploadFolder();
+    String uploadPath = FOLDER + mentoringSave.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
     mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 

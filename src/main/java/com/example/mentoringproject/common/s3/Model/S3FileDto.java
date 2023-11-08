@@ -6,6 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class S3FileDto {
+  private String fileName;
   private String uploadUrl;
 
 }

@@ -33,7 +33,7 @@ public class PostService {
   private final PostSearchRepository postSearchRepository;
   private final S3Service s3Service;
 
-  private static final String FOLDER = "post";
+  private static final String FOLDER = "post/";
   private static final String FILE_TYPE = "img";
 
   // 포스팅 등록
@@ -42,7 +42,7 @@ public class PostService {
 
     Post post = Post.from(user, postRegisterRequest);
 
-    String uploadPath = FOLDER + "/" + postRegisterRequest.getUploadFolder();
+    String uploadPath = FOLDER + postRegisterRequest.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
     post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
@@ -56,7 +56,7 @@ public class PostService {
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
     imgList.add(s3Service.extractFileName(post.getUploadUrl()));
-    s3Service.fileClear(FOLDER + "/" + postRegisterRequest.getUploadFolder(), imgList);
+    s3Service.fileClear(FOLDER + postRegisterRequest.getUploadFolder(), imgList);
 
     return post;
   }
@@ -82,7 +82,7 @@ public class PostService {
     post.setContent(postUpdateRequest.getContent());
     post.setUpdateDatetime(LocalDateTime.now());
 
-    String uploadPath = FOLDER + "/" + postUpdateRequest.getUploadFolder();
+    String uploadPath = FOLDER + postUpdateRequest.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
     post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
@@ -96,7 +96,7 @@ public class PostService {
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
     imgList.add(s3Service.extractFileName(post.getUploadUrl()));
-    s3Service.fileClear(FOLDER + "/" + postUpdateRequest.getUploadFolder(), imgList);
+    s3Service.fileClear(FOLDER + postUpdateRequest.getUploadFolder(), imgList);
 
     return post;
 
@@ -112,7 +112,7 @@ public class PostService {
       throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
 
-    s3Service.fileClear(FOLDER + "/" + post.getUploadFolder(), Collections.emptyList());
+    s3Service.fileClear(FOLDER + post.getUploadFolder(), Collections.emptyList());
     postRepository.deleteById(postId);
     postSearchRepository.deleteById(postId);
   }

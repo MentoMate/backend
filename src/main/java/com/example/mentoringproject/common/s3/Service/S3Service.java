@@ -41,12 +41,12 @@ public class S3Service {
 
     String filePath = folderName + "/" ;
     String fileName;
+    String originalFileName;
 
     for (MultipartFile file : multipartFile) {
-
-      String originalFileName = fileNameChk(file.getOriginalFilename());
-      if(fileType.equals(VALIDATION_CHECK_EXTENSION)) imageFileExtensionChk(originalFileName);
-      fileName = createFileName(originalFileName);
+      originalFileName = file.getOriginalFilename();
+      if(fileType.equals(VALIDATION_CHECK_EXTENSION)) imageFileExtensionChk(fileNameChk(originalFileName));
+      fileName = createFileName(fileNameChk(originalFileName));
 
       ObjectMetadata objectMetadata = new ObjectMetadata();
       objectMetadata.setContentLength(file.getSize());
@@ -62,6 +62,7 @@ public class S3Service {
 
       s3FileDto.add(
           S3FileDto.builder()
+              .fileName(originalFileName)
               .uploadUrl(amazonS3.getUrl(bucket, filePath+fileName).toString())
               .build());
     }
