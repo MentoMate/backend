@@ -57,7 +57,7 @@ public class PayController {
   public ResponseEntity<PayDto> paymentCancel(@RequestParam Long payId) {
     String email = SpringSecurityUtil.getLoginEmail();
     //취소 api 진행
-    Pay pay = payService.getIamportAccessToken(email, payId, restApiKey,
+    Pay pay = payService.payCancel(email, payId, restApiKey,
         restApiSecret);
     return ResponseEntity.ok(PayDto.from(pay));
   }
