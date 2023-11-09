@@ -191,7 +191,7 @@ class UserServiceTest {
   }
 
   @Test
-  @DisplayName("회원가입 실패 - 이메일 인증을 안한 경우(emailAuthDate가 null인경우")
+  @DisplayName("회원가입 실패 - 이메일 인증을 안한 경우(emailAuthDate가 null인경우)")
   void joinEmailUserFail_NotEmailAuth() {
     //given
 

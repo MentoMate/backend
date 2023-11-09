@@ -182,32 +182,4 @@ class PayServiceTest {
     assertEquals(exception.getMessage(), "이미 취소된 결제입니다.");
   }
 
-  @Test
-  @DisplayName("결제 취소 실패 - 이미 취소된 결제")
-  void payCancelFail_accessToken() {
-    //given
-    User user = User.builder()
-        .id(1L)
-        .email("user@example.com")
-        .build();
-
-    Pay pay = Pay.builder()
-        .id(1L)
-        .user(user)
-        .payStatus(PayStatus.CANCEL)
-        .build();
-
-    given(payRepository.findById(anyLong()))
-        .willReturn(Optional.of(pay));
-    //when
-    AppException exception = assertThrows(AppException.class, () ->
-        payService.payCancel("user@example.com", 1L, "restApiKey", "restApiSecret"));
-
-    //then
-    assertEquals(exception.getErrorCode(), HttpStatus.BAD_REQUEST);
-    assertEquals(exception.getMessage(), "이미 취소된 결제입니다.");
-  }
-
-
-
 }
