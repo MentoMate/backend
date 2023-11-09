@@ -66,7 +66,7 @@ public class PayService {
   }
 
   @Transactional
-  public Pay getIamportAccessToken(String email, Long payId, String restApiKey, String restApiSecret) {
+  public Pay payCancel(String email, Long payId, String restApiKey, String restApiSecret) {
     Pay pay = getPay(payId);
 
     //결제한 사용자와 결제취소를 요청한 사용자의 정보가 일치하는지 확인
@@ -89,6 +89,30 @@ public class PayService {
     return pay;
   }
 
+  private Pay getPay(Long payId) {
+    return payRepository.findById(payId).orElseThrow(() ->
+        new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 결제 정보입니다."));
+  }
+
+  private static void checkPayUser(String email, Pay pay) {
+    if (!pay.getUser().getEmail().equals(email)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "결제한 사용자와 요청한 사용자의 정보가 다릅니다.");
+    }
+  }
+  private static void checkPayStatus(Pay pay) {
+    if (pay.getPayStatus().equals(PayStatus.CANCEL)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "이미 취소된 결제입니다.");
+    }
+  }
+
+  public String getAccessToken(String restApiKey, String restApiSecret) {
+    try {
+      return getAccessTokenApi(restApiKey, restApiSecret);
+    } catch (Exception e) {
+      log.debug(e.getMessage());
+      throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "iamport accessToken 가져오기 에러");
+    }
+  }
 
   private void cancelPayment(String accessToken, Pay pay) {
     try {
@@ -103,31 +127,6 @@ public class PayService {
       }
     } catch (JsonProcessingException e) {
       throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-    }
-  }
-
-  private String getAccessToken(String restApiKey, String restApiSecret) {
-    try {
-      return getAccessTokenApi(restApiKey, restApiSecret);
-    } catch (Exception e) {
-      log.debug(e.getMessage());
-      throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "iamport accessToken 가져오기 에러");
-    }
-  }
-
-  private Pay getPay(Long payId) {
-    return payRepository.findById(payId).orElseThrow(() ->
-        new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 결제 정보입니다."));
-  }
-
-  private static void checkPayUser(String email, Pay pay) {
-    if (!pay.getUser().getEmail().equals(email)) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "결제한 사용자와 요청한 사용자의 정보가 다릅니다.");
-    }
-  }
-  private static void checkPayStatus(Pay pay) {
-    if (pay.getPayStatus().equals(PayStatus.CANCEL)) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "이미 취소된 결제입니다.");
     }
   }
 
@@ -148,7 +147,7 @@ public class PayService {
     return dto.getResponse().get("access_token").toString();
   }
 
-  private String cancelPaymentApi(String accessToken, String impUid) throws JsonProcessingException {
+  public String cancelPaymentApi(String accessToken, String impUid) throws JsonProcessingException {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("Authorization", accessToken);
