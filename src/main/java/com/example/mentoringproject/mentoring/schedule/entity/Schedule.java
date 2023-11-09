@@ -1,12 +1,14 @@
 package com.example.mentoringproject.mentoring.schedule.entity;
 
 import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
-import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
+import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.user.entity.User;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -17,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,6 +51,9 @@ public class Schedule {
   @ManyToOne
   @JoinColumn(name = "mentoring_id")
   private Mentoring mentoring;
+
+  @OneToMany
+  private List<FileUpload> fileUploadList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;

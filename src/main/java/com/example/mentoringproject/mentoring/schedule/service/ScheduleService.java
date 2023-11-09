@@ -1,9 +1,13 @@
 package com.example.mentoringproject.mentoring.schedule.service;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
+import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.mentoring.schedule.file.repository.FileUploadRepository;
+import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.repository.ScheduleRepository;
@@ -26,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
   private final ScheduleRepository scheduleRepository;
+  private final FileUploadRepository fileUploadRepository;
   private final MentoringService mentoringService;
   private final UserService userService;
   private final S3Service s3Service;
@@ -61,7 +66,10 @@ public class ScheduleService {
     Mentoring mentoring = mentoringService.getMentoring(schedule.getMentoring().getId());
     scheduleRegisterAuth(email, mentoring);
 
+    List<FileUpload>  fileUploadList = fileUploadRepository.findByScheduleId(scheduleId);
+    fileUploadRepository.deleteAllInBatch(fileUploadList);
     scheduleRepository.delete(schedule);
+    s3Service.deleteFile(S3FileDto.from(fileUploadList));
   }
 
   public Schedule scheduleInfo(Long scheduleId){

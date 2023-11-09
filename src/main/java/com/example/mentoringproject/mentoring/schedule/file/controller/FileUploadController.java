@@ -1,6 +1,8 @@
 package com.example.mentoringproject.mentoring.schedule.file.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
@@ -22,13 +24,22 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/schedule/{scheduleId}/file")
 public class FileUploadController {
-  private  final ScheduleService  scheduleService;
+  private  final FileUploadService fileUploadService;
   @PostMapping
-  public ResponseEntity<?> fileUpload(
+  public ResponseEntity<List<FileUpload>> fileUpload(
       @PathVariable Long scheduleId,
-      @RequestPart List<MultipartFile> multipartFileList
+      @RequestPart(name = "file") List<MultipartFile> multipartFileList
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(fileUploadService.fileUpload(email, scheduleId, multipartFileList));
+  }
+
+  @DeleteMapping("/{fileId}")
+  public ResponseEntity<Void> fileDelete(
+      @PathVariable Long fileId
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    fileUploadService.fileDelete(email, fileId);
     return ResponseEntity.ok().build();
   }
 
