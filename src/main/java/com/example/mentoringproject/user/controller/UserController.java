@@ -5,6 +5,7 @@ import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.model.UserProfileList;
 import com.example.mentoringproject.user.model.UserProfileSave;
+import com.example.mentoringproject.user.model.ValidTest;
 import com.example.mentoringproject.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,13 +13,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Tag(name = "User", description = "유저 API")
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -39,39 +46,50 @@ public class UserController {
 
   private final UserService userService;
 
+  @PostMapping("/login/test")
+  public ResponseEntity<?> testUserValidation(@RequestBody @Valid ValidTest validTest) {
+    System.out.println(validTest.getEmail());
+    return ResponseEntity.ok().build();
+  }
+
   @Operation(summary = "이메일 코드번호 전송", description = "이메일 코드번호 전송을 위해 이메일사용", responses = {
       @ApiResponse(responseCode = "200", description = "이메일 코드 전송 성공")
   })
   @PostMapping("/join/email/auth")
-  public ResponseEntity<String> sendEmailAuth(@RequestParam("email") String email) {
+  public ResponseEntity<Boolean> sendEmailAuth(@RequestParam("email")
+  @Email String email) {
+
+    userService.verifyExistEmail(email);
     userService.sendEmailAuth(email);
-    return ResponseEntity.ok("email send success");
+
+    return ResponseEntity.ok(true);
   }
 
   @Operation(summary = "이메일 인증 코드 입력", description = "이메일과 인증코드를 이용해 이메일 확인", responses = {
       @ApiResponse(responseCode = "200", description = "이메일 인증 확인")
   })
+
   @PostMapping("/join/email/auth/verify")
-  public ResponseEntity<String> verifyEmailAuth(@RequestParam("email") String email,
-      @RequestParam("authCode") String authCode) {
-    userService.verifyEmailAuth(email, authCode);
-    return ResponseEntity.ok("email auth verify success");
+  public ResponseEntity<Boolean> verifyEmailAuth(@RequestParam("email")
+  @Email String email,
+      @RequestParam("authCode") @NotBlank String authCode) {
+    return ResponseEntity.ok(userService.verifyEmailAuth(email, authCode));
   }
 
   @Operation(summary = "닉네임 유무 확인", description = "닉네임 유무 확인", responses = {
       @ApiResponse(responseCode = "200", description = "이메일 인증 확인")
   })
   @PostMapping("/join/email/nickname/verify")
-  public ResponseEntity<String> checkDuplicateNickname(@RequestParam("nickName") String nickName) {
-    userService.checkDuplicateNickName(nickName);
-    return ResponseEntity.ok("check nickname success");
+  public ResponseEntity<Boolean> checkDuplicateNickname(@RequestParam ("nickName")
+  @Length(min = 2, max = 10, message = "nickName은 최소 2자 최대 20자 입니다.") String nickName) {
+    return ResponseEntity.ok(userService.checkDuplicateNickName(nickName));
   }
 
   @Operation(summary = "회원가입", description = "닉네임, 이메일, 비밀번호로 회원가입", responses = {
       @ApiResponse(responseCode = "200", description = "회원가입 완료")
   })
   @PostMapping("/join/email")
-  public ResponseEntity<String> joinEmailUser(@RequestBody UserJoinDto parameter) {
+  public ResponseEntity<String> joinEmailUser(@RequestBody @Valid UserJoinDto parameter) {
     userService.joinEmailUser(parameter);
     return ResponseEntity.ok("email join success");
   }
