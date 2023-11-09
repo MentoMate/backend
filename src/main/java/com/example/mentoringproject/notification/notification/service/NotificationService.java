@@ -3,10 +3,10 @@ package com.example.mentoringproject.notification.notification.service;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.notification.notification.emitter.repository.EmitterRepository;
 import com.example.mentoringproject.notification.notification.entity.Notification;
-import com.example.mentoringproject.notification.notification.entity.NotificationDto;
+import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
+import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.repository.NotificationRepository;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class NotificationService {
     return userEmail + "_" + System.currentTimeMillis();
   }
 
-  public void send(NotificationDto notificationDto) {
+  public void send(NotificationResponseDto notificationDto) {
     String receiverEmail = notificationDto.getReceiverEmail();
     String eventId = receiverEmail + "_" + System.currentTimeMillis();
     Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserEmail(
@@ -69,27 +69,26 @@ public class NotificationService {
     }
   }
 
-  public NotificationDto saveNotification(NotificationDto parameter) {
-    return NotificationDto.from(notificationRepository.save(Notification.builder()
+  public NotificationResponseDto saveNotification(NotificationRequestDto parameter) {
+    return NotificationResponseDto.from(notificationRepository.save(Notification.builder()
         .receiverEmail(parameter.getReceiverEmail())
         .content(parameter.getContent())
         .notificationType(parameter.getNotificationType())
         .isRead(false)
-        .registerDate(LocalDateTime.now())
         .build()));
   }
 
-  public Page<NotificationDto> getNotification(String email, Pageable pageable) {
+  public Page<NotificationResponseDto> getNotification(String email, Pageable pageable) {
     Page<Notification> notificationPage = notificationRepository.findAllByReceiverEmail(email, pageable);
-    return NotificationDto.from(notificationPage);
+    return NotificationResponseDto.from(notificationPage);
   }
 
   @Transactional
-  public NotificationDto readNotification(Long notificationId) {
+  public NotificationResponseDto readNotification(Long notificationId) {
     Notification notification = notificationRepository.findById(notificationId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Notification Not found"));
     notification.setIsRead(true);
-    return NotificationDto.from(notification);
+    return NotificationResponseDto.from(notification);
   }
 
   @Transactional
