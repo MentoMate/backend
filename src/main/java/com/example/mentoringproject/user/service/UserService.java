@@ -38,10 +38,33 @@ public class UserService {
   private static final String FOLDER = "profile";
   private static final String FILE_TYPE = "img";
   //인증 확인 이메일을 보내고 DB에 저장
+
+  @Transactional
+  public boolean verifyExistEmail(String email) {
+
+    //이메일이 존재하지 않으면 이메일 인증 가능
+    if (!userRepository.existsByEmail(email)) {
+      return true;
+    }
+
+    //만약 이미 이메일이 존재하면 회원가입이 완료된 이메일인지 확인
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "server error"));
+
+    //회원가입이 완료된 이메일이면 exception
+    if (user.getRegisterDate() != null) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다.");
+    }
+
+    //회원가입이 완료되지 않은 이메일이면 삭제해야됨
+    userRepository.deleteByEmail(email);
+
+    return true;
+  }
+
+
   @Transactional
   public void sendEmailAuth(String email) {
-    verifyExistEmail(email);
-
     String authCode = String.valueOf((int) (Math.random() * 899999) + 100000);
     sendEmailAuth(email, authCode);
     userRepository.save(
@@ -50,27 +73,6 @@ public class UserService {
             .emailAuth(authCode)
             .build()
     );
-  }
-
-  private void verifyExistEmail(String email) {
-
-    //이메일이 존재하지 않으면 이메일 인증 가능
-    if (!userRepository.existsByEmail(email)) {
-      return;
-    }
-
-    //만약 이미 이메일이 존재하면 회원가입이 완료된 이메일인지 확인
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."));
-
-    //회원가입이 완료된 이메일이면 exception
-    if (user.getRegisterDate()!=null) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다.");
-    }
-
-    //회원가입이 완료되지 않은 이메일이면 삭제해야됨
-    userRepository.deleteByEmail(email);
-
   }
 
   //인증을 위한 이메일 보내기
@@ -83,21 +85,20 @@ public class UserService {
 
   //이메일 인증 확인
   @Transactional
-  public void verifyEmailAuth(String email, String authCode) {
+  public Boolean verifyEmailAuth(String email, String authCode) {
     User user = userRepository.findByEmailAndEmailAuth(email, authCode).orElseThrow(
-        () -> new AppException(HttpStatus.BAD_REQUEST, "Not Found email auth")
+        () -> new AppException(HttpStatus.BAD_REQUEST, "이메일과 인증 코드가 일치하지 않습니다.")
     );
-    if (!user.getEmailAuth().equals(authCode)) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "Wrong AuthCode");
-    }
     user.setEmailAuthDate(LocalDateTime.now());
+    return true;
   }
 
-  public void checkDuplicateNickName(String nickName) {
+  public Boolean checkDuplicateNickName(String nickName) {
     Optional<User> user = userRepository.findByNickNameAndRegisterDateIsNotNull(nickName);
     if (user.isPresent()) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
     }
+    return true;
   }
 
 
@@ -106,7 +107,7 @@ public class UserService {
     User user = userRepository.findByEmail(parameter.getEmail())
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
-    if (user.getEmailAuth().isEmpty()) {
+    if (user.getEmailAuthDate()==null) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다.");
     }
 
@@ -120,10 +121,11 @@ public class UserService {
   }
 
   @Transactional
-  public User createProfile(String email, UserProfileSave userProfileSave, List<MultipartFile> multipartFile) {
+  public User createProfile(String email, UserProfileSave userProfileSave,
+      List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
-    if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
+    if (userRepository.existsByIdAndNameIsNotNull(user.getId())) {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있습니다.");
     }
 
@@ -135,13 +137,12 @@ public class UserService {
 
   }
 
-
-
   @Transactional
-  public User updateProfile(String email, UserProfileSave userProfileSave, List<MultipartFile> multipartFile) {
+  public User updateProfile(String email, UserProfileSave userProfileSave,
+      List<MultipartFile> multipartFile) {
     User user = getUser(email);
 
-    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
+    if (!userRepository.existsByIdAndNameIsNotNull(user.getId())) {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
 
@@ -152,16 +153,16 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public User profileInfo(Long userId){
+  public User profileInfo(Long userId) {
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
 
-    if(!userRepository.existsByIdAndNameIsNotNull(user.getId())){
+    if (!userRepository.existsByIdAndNameIsNotNull(user.getId())) {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
 
-    return  user;
+    return user;
   }
 
   @Transactional(readOnly = true)
@@ -169,7 +170,7 @@ public class UserService {
     return userRepository.findByNameIsNotNull(pageable);
   }
 
-  private User setProfile(User user, UserProfileSave userProfileSave){
+  private User setProfile(User user, UserProfileSave userProfileSave) {
 
     user.setName(userProfileSave.getName());
     user.setCareer(userProfileSave.getCareer());
@@ -178,17 +179,18 @@ public class UserService {
     user.setMiddleCategory(userProfileSave.getMiddleCategory());
     user.setUploadFolder(userProfileSave.getUploadFolder());
 
-    return  user;
+    return user;
   }
 
-  public User getUser(String email){
+  public User getUser(String email) {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 
-  private void ImgUpload(List<MultipartFile> multipartFile, User user, UserProfileSave userProfile) {
+  private void ImgUpload(List<MultipartFile> multipartFile, User user,
+      UserProfileSave userProfile) {
     String uploadPath = FOLDER + "/" + user.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);
+    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile, uploadPath, FILE_TYPE);
     user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     List<String> imgList = Optional.ofNullable(userProfile.getUploadImg())
