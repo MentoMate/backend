@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,7 +46,7 @@ public class NotificationController {
       @ApiResponse(responseCode = "200", description = "알림이 연결되면 EventStream Created. [userId=\" + userEmail + \"]")
   })
   @GetMapping(value = "/subscribe", produces = "text/event-stream")
-  public ResponseEntity<SseEmitter> subscribe(@RequestParam String email) {
+  public ResponseEntity<SseEmitter> subscribe(@RequestParam @Email String email) {
     log.debug("call subscribe, user={}", email);
     return ResponseEntity.ok(notificationService.subscribe(email));
   }
@@ -74,8 +76,9 @@ public class NotificationController {
       @ApiResponse(responseCode = "200", description = "알림 읽음", content =
       @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
   })
+
   @PutMapping("/read/notification")
-  public ResponseEntity<NotificationResponseDto> readNotification(@RequestParam("notificationId") Long notificationId) {
+  public ResponseEntity<NotificationResponseDto> readNotification(@RequestParam("notificationId") @Min(1) Long notificationId) {
     return ResponseEntity.ok(notificationService.readNotification(notificationId));
   }
 
