@@ -24,7 +24,6 @@ public class NotificationRequestDto {
   private String content;
 
   @Schema(description = "타입", example = "PAY / CHAT")
-  @NotBlank(message = "notificationType값은 필수입니다.")
   private NotificationType notificationType;
 
 }

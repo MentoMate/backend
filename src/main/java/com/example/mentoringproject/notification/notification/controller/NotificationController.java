@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class NotificationController {
       @ApiResponse(responseCode = "200", description = "대상자에게 알림 푸쉬")
   })
   @PostMapping("/publish/notification")
-  public void pushMessage(@RequestBody NotificationRequestDto parameter) {
+  public void pushMessage(@Valid @RequestBody NotificationRequestDto parameter) {
     log.debug("call publish, notification={}", parameter);
     redisPublisher.publishNotification(myTopic, parameter);
   }
