@@ -15,6 +15,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
@@ -64,8 +65,8 @@ public class UserController {
 
   @PostMapping("/join/email/auth/verify")
   public ResponseEntity<Boolean> verifyEmailAuth(@RequestParam("email")
-  @Email String email,
-      @RequestParam("authCode") @NotBlank String authCode) {
+  @Email @NotBlank(message = "email은 필수값입니다.") String email,
+      @RequestParam("authCode") @NotBlank(message = "authCode는 필수값입니다.") String authCode) {
     return ResponseEntity.ok(userService.verifyEmailAuth(email, authCode));
   }
 
