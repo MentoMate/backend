@@ -5,7 +5,6 @@ import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfile;
 import com.example.mentoringproject.user.model.UserProfileList;
 import com.example.mentoringproject.user.model.UserProfileSave;
-import com.example.mentoringproject.user.model.ValidTest;
 import com.example.mentoringproject.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,12 +44,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
   private final UserService userService;
-
-  @PostMapping("/login/test")
-  public ResponseEntity<?> testUserValidation(@RequestBody @Valid ValidTest validTest) {
-    System.out.println(validTest.getEmail());
-    return ResponseEntity.ok().build();
-  }
 
   @Operation(summary = "이메일 코드번호 전송", description = "이메일 코드번호 전송을 위해 이메일사용", responses = {
       @ApiResponse(responseCode = "200", description = "이메일 코드 전송 성공")
