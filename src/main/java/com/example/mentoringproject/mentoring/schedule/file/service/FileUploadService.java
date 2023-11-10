@@ -51,7 +51,7 @@ public class FileUploadService {
     FileUpload fileUpload = fileUploadRepository.findById(fileId)
         .orElseThrow(()-> new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 파일입니다."));
 
-    if(!user.getId().equals(fileUpload.getUser().getId())){
+    if(!fileUpload.getUser().getId().equals(user.getId())){
       throw new AppException(HttpStatus.BAD_REQUEST, "업로드 작성자만 삭제할 수 있습니다.");
     }
 

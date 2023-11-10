@@ -5,6 +5,7 @@ import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
+import com.example.mentoringproject.mentoring.schedule.model.ScheduleDetailInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
@@ -30,15 +31,15 @@ public class ScheduleController {
       @RequestBody ScheduleSave scheduleSave
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.createSchedule(email, scheduleSave), fileUploadService.fileUploadList(scheduleSave.getScheduleId())));
+    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.createSchedule(email, scheduleSave)));
   }
 
   @PutMapping
-  public ResponseEntity<ScheduleInfo> updateSchedule(
+  public ResponseEntity<ScheduleDetailInfo> updateSchedule(
       @RequestBody ScheduleSave scheduleSave
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.updateSchedule(email, scheduleSave), fileUploadService.fileUploadList(scheduleSave.getScheduleId())));
+    return ResponseEntity.ok(ScheduleDetailInfo.from(scheduleService.updateSchedule(email, scheduleSave), fileUploadService.fileUploadList(scheduleSave.getScheduleId())));
   }
 
   @DeleteMapping("/{scheduleId}")
@@ -51,9 +52,9 @@ public class ScheduleController {
   }
 
   @GetMapping("/{scheduleId}")
-  public ResponseEntity<ScheduleInfo> scheduleInfo(
+  public ResponseEntity<ScheduleDetailInfo> scheduleInfo(
           @PathVariable Long scheduleId
   ){
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.scheduleInfo(scheduleId), fileUploadService.fileUploadList(scheduleId)));
+    return ResponseEntity.ok(ScheduleDetailInfo.from(scheduleService.scheduleInfo(scheduleId), fileUploadService.fileUploadList(scheduleId)));
   }
 }

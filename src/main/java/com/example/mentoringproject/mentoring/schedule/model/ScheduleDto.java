@@ -30,9 +30,11 @@ public class ScheduleDto {
   private Long scheduleId;
   private String title;
   private String content;
-  private LocalDate startDate;
+  private LocalDate start;
   private Mentoring mentoring;
   private String uploadFolder;
+  private String backgroundColor;
+  private String borderColor;
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
@@ -41,9 +43,11 @@ public class ScheduleDto {
         .scheduleId(schedule.getId())
         .title(schedule.getTitle())
         .content(schedule.getContent())
-        .startDate(schedule.getStartDate())
+        .start(schedule.getStart())
         .uploadFolder(schedule.getUploadFolder())
         .mentoring(schedule.getMentoring())
+        .backgroundColor(schedule.getBackgroundColor())
+        .borderColor(schedule.getBorderColor())
         .registerDate(schedule.getRegisterDate())
         .updateDate(schedule.getUpdateDate())
         .build();

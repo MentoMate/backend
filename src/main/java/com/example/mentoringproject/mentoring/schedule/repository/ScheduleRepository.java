@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    List<Schedule> findByMentoring_IdAndStartDateBetween(Long mentoringId, LocalDate startDate, LocalDate endDate);
+    List<Schedule> findByMentoring_IdAndStartBetween(Long mentoringId, LocalDate startDate, LocalDate endDate);
 }

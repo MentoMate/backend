@@ -35,15 +35,14 @@ public class ScheduleService {
   private final UserService userService;
   private final S3Service s3Service;
 
-  public static final String FOLDER = "schedule";
+  public static final String FOLDER = "schedule/";
   public Schedule createSchedule(String email, ScheduleSave scheduleSave){
     Mentoring mentoring = mentoringService.getMentoring(scheduleSave.getMentoringId());
 
     scheduleRegisterAuth(email, mentoring);
+    s3Service.fileClear(FOLDER + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
 
-    s3Service.fileClear(FOLDER + "/" + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
-
-    return scheduleRepository.save(Schedule.from(scheduleSave, mentoring));
+    return  scheduleRepository.save(Schedule.from(scheduleSave, mentoring));
   }
   public Schedule updateSchedule(String email, ScheduleSave scheduleSave){
     Mentoring mentoring = mentoringService.getMentoring(scheduleSave.getMentoringId());
@@ -53,9 +52,9 @@ public class ScheduleService {
 
     schedule.setTitle(scheduleSave.getTitle());
     schedule.setContent(scheduleSave.getContent());
-    schedule.setStartDate(scheduleSave.getStartDate());
+    schedule.setStart(scheduleSave.getStart());
 
-    s3Service.fileClear(FOLDER + "/" + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
+    s3Service.fileClear(FOLDER + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
 
     return scheduleRepository.save(schedule);
   }
@@ -74,7 +73,7 @@ public class ScheduleService {
   }
 
   public List<Schedule> scheduleInfoByPeriod(Long mentoringId, LocalDate startDate, LocalDate endDate){
-      return  scheduleRepository.findByMentoring_IdAndStartDateBetween(mentoringId, startDate, endDate);
+      return  scheduleRepository.findByMentoring_IdAndStartBetween(mentoringId, startDate, endDate);
   }
 
   private void scheduleRegisterAuth(String email, Mentoring mentoring){

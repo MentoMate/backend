@@ -2,6 +2,7 @@ package com.example.mentoringproject.mentoring.schedule.file.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.mentoring.schedule.file.model.FileUploadInfo;
 import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
@@ -26,12 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadController {
   private  final FileUploadService fileUploadService;
   @PostMapping
-  public ResponseEntity<List<FileUpload>> fileUpload(
+  public ResponseEntity<List<FileUploadInfo>> fileUpload(
       @PathVariable Long scheduleId,
       @RequestPart(name = "file") List<MultipartFile> multipartFileList
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(fileUploadService.fileUpload(email, scheduleId, multipartFileList));
+    return ResponseEntity.ok(FileUploadInfo.from(fileUploadService.fileUpload(email, scheduleId, multipartFileList)));
   }
 
   @DeleteMapping("/{fileId}")

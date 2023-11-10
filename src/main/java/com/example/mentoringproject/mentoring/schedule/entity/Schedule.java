@@ -25,6 +25,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -45,8 +47,10 @@ public class Schedule {
 
   private String title;
   private String content;
-  private LocalDate startDate;
+  private LocalDate start;
   private String uploadFolder;
+  private String backgroundColor;
+  private String borderColor;
 
   @ManyToOne
   @JoinColumn(name = "mentoring_id")
@@ -64,8 +68,10 @@ public class Schedule {
     return Schedule.builder()
         .title(scheduleSave.getTitle())
         .content(scheduleSave.getContent())
-        .startDate(scheduleSave.getStartDate())
+        .start(scheduleSave.getStart())
         .mentoring(mentoring)
+        .backgroundColor("#ABDEE6")
+        .borderColor("#ABDEE6")
         .uploadFolder(scheduleSave.getUploadFolder())
         .build();
   }
