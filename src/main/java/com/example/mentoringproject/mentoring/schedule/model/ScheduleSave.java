@@ -15,7 +15,7 @@ public class ScheduleSave {
   private Long mentoringId;
   private String title;
   private String content;
-  private LocalDate startDate;
+  private LocalDate start;
   private String uploadFolder;
   private List<String> uploadImg;
 }

@@ -1,9 +1,13 @@
 package com.example.mentoringproject.mentoring.schedule.service;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
+import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.mentoring.schedule.file.repository.FileUploadRepository;
+import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.repository.ScheduleRepository;
@@ -26,19 +30,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
   private final ScheduleRepository scheduleRepository;
+  private final FileUploadService fileUploadService;
   private final MentoringService mentoringService;
   private final UserService userService;
   private final S3Service s3Service;
 
-  public static final String FOLDER = "schedule";
+  public static final String FOLDER = "schedule/";
   public Schedule createSchedule(String email, ScheduleSave scheduleSave){
     Mentoring mentoring = mentoringService.getMentoring(scheduleSave.getMentoringId());
 
     scheduleRegisterAuth(email, mentoring);
+    s3Service.fileClear(FOLDER + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
 
-    s3Service.fileClear(FOLDER + "/" + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
-
-    return scheduleRepository.save(Schedule.from(scheduleSave, mentoring));
+    return  scheduleRepository.save(Schedule.from(scheduleSave, mentoring));
   }
   public Schedule updateSchedule(String email, ScheduleSave scheduleSave){
     Mentoring mentoring = mentoringService.getMentoring(scheduleSave.getMentoringId());
@@ -48,9 +52,9 @@ public class ScheduleService {
 
     schedule.setTitle(scheduleSave.getTitle());
     schedule.setContent(scheduleSave.getContent());
-    schedule.setStartDate(scheduleSave.getStartDate());
+    schedule.setStart(scheduleSave.getStart());
 
-    s3Service.fileClear(FOLDER + "/" + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
+    s3Service.fileClear(FOLDER + scheduleSave.getUploadFolder(), imgUrlChange(scheduleSave));
 
     return scheduleRepository.save(schedule);
   }
@@ -60,7 +64,7 @@ public class ScheduleService {
 
     Mentoring mentoring = mentoringService.getMentoring(schedule.getMentoring().getId());
     scheduleRegisterAuth(email, mentoring);
-
+    fileUploadService.fileListDelete(scheduleId);
     scheduleRepository.delete(schedule);
   }
 
@@ -69,7 +73,7 @@ public class ScheduleService {
   }
 
   public List<Schedule> scheduleInfoByPeriod(Long mentoringId, LocalDate startDate, LocalDate endDate){
-      return  scheduleRepository.findByMentoring_IdAndStartDateBetween(mentoringId, startDate, endDate);
+      return  scheduleRepository.findByMentoring_IdAndStartBetween(mentoringId, startDate, endDate);
   }
 
   private void scheduleRegisterAuth(String email, Mentoring mentoring){

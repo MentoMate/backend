@@ -12,6 +12,7 @@ import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +64,7 @@ public class S3Service {
       s3FileDto.add(
           S3FileDto.builder()
               .fileName(originalFileName)
+              .uploadFolder(filePath)
               .uploadUrl(amazonS3.getUrl(bucket, filePath+fileName).toString())
               .build());
     }
@@ -74,7 +76,7 @@ public class S3Service {
   public void deleteFile(List<S3FileDto> s3FileDtoList) {
     String keyName;
     for (S3FileDto s3FileDto : s3FileDtoList) {
-      keyName = extractFileName(s3FileDto.getUploadUrl());
+      keyName = s3FileDto.getUploadFolder() + decode(extractFileName(s3FileDto.getUploadUrl()));
       try {
         if (amazonS3.doesObjectExist(bucket, keyName)) {
           amazonS3.deleteObject(bucket, keyName);
@@ -116,7 +118,7 @@ public class S3Service {
     }
   }
   private String fileNameChk(String fileName){
-    if (fileName == null || fileName.length() == 0) throw new AppException(HttpStatus.BAD_REQUEST,"WRONG_INPUT_IMAGE");
+    if (fileName == null || fileName.length() == 0) throw new AppException(HttpStatus.BAD_REQUEST,"WRONG_FILE_NAME");
     return encode(fileName);
   }
   public String extractFileName(String s3Url) {
@@ -129,6 +131,14 @@ public class S3Service {
   private String encode(String fileName) {
     try {
       return URLEncoder.encode(fileName, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return  fileName;
+    }
+  }
+
+  private String decode(String fileName) {
+    try {
+      return URLDecoder.decode(fileName, "UTF-8");
     } catch (UnsupportedEncodingException e) {
       return  fileName;
     }

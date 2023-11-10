@@ -4,6 +4,8 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
+import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
+import com.example.mentoringproject.mentoring.schedule.model.ScheduleDetailInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
@@ -21,7 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/mentoring/schedule")
 public class ScheduleController {
-  private  final ScheduleService  scheduleService;
+  private final ScheduleService  scheduleService;
+  private final FileUploadService fileUploadService;
+
   @PostMapping
   public ResponseEntity<ScheduleInfo> createSchedule(
       @RequestBody ScheduleSave scheduleSave
@@ -31,11 +35,11 @@ public class ScheduleController {
   }
 
   @PutMapping
-  public ResponseEntity<ScheduleInfo> updateSchedule(
+  public ResponseEntity<ScheduleDetailInfo> updateSchedule(
       @RequestBody ScheduleSave scheduleSave
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.updateSchedule(email, scheduleSave)));
+    return ResponseEntity.ok(ScheduleDetailInfo.from(scheduleService.updateSchedule(email, scheduleSave), fileUploadService.fileUploadList(scheduleSave.getScheduleId())));
   }
 
   @DeleteMapping("/{scheduleId}")
@@ -48,9 +52,9 @@ public class ScheduleController {
   }
 
   @GetMapping("/{scheduleId}")
-  public ResponseEntity<ScheduleInfo> scheduleInfo(
+  public ResponseEntity<ScheduleDetailInfo> scheduleInfo(
           @PathVariable Long scheduleId
   ){
-    return ResponseEntity.ok(ScheduleInfo.from(scheduleService.scheduleInfo(scheduleId)));
+    return ResponseEntity.ok(ScheduleDetailInfo.from(scheduleService.scheduleInfo(scheduleId), fileUploadService.fileUploadList(scheduleId)));
   }
 }
