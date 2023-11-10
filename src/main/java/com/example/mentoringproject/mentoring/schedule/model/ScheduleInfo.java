@@ -33,7 +33,7 @@ public class ScheduleInfo {
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
-  public static ScheduleInfo from(Schedule schedule){
+  public static ScheduleInfo from(Schedule schedule, List<FileUpload> fileUploadList){
     return ScheduleInfo.builder()
         .scheduleId(schedule.getId())
         .title(schedule.getTitle())
@@ -41,13 +41,14 @@ public class ScheduleInfo {
         .startDate(schedule.getStartDate())
         .uploadFolder(schedule.getUploadFolder())
         .mentoringId(schedule.getMentoring().getId())
+        .fileUploadList(fileUploadList)
         .userId(schedule.getMentoring().getUser().getId())
         .registerDate(schedule.getRegisterDate())
         .updateDate(schedule.getUpdateDate())
         .build();
   }
 
-  public static List<ScheduleInfo> from(List<Schedule> scheduleList) {
+  public static List<ScheduleInfo> from(List<Schedule> scheduleList, List<FileUpload> fileUploadList) {
     return scheduleList.stream()
             .map(schedule -> ScheduleInfo.builder()
                     .scheduleId(schedule.getId())
@@ -56,6 +57,7 @@ public class ScheduleInfo {
                     .startDate(schedule.getStartDate())
                     .uploadFolder(schedule.getUploadFolder())
                     .mentoringId(schedule.getMentoring().getId())
+                    .fileUploadList(fileUploadList)
                     .userId(schedule.getMentoring().getUser().getId())
                     .registerDate(schedule.getRegisterDate())
                     .updateDate(schedule.getUpdateDate())

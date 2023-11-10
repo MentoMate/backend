@@ -30,7 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
   private final ScheduleRepository scheduleRepository;
-  private final FileUploadRepository fileUploadRepository;
+  private final FileUploadService fileUploadService;
   private final MentoringService mentoringService;
   private final UserService userService;
   private final S3Service s3Service;
@@ -65,11 +65,8 @@ public class ScheduleService {
 
     Mentoring mentoring = mentoringService.getMentoring(schedule.getMentoring().getId());
     scheduleRegisterAuth(email, mentoring);
-
-    List<FileUpload>  fileUploadList = fileUploadRepository.findByScheduleId(scheduleId);
-    fileUploadRepository.deleteAllInBatch(fileUploadList);
+    fileUploadService.fileListDelete(scheduleId);
     scheduleRepository.delete(schedule);
-    s3Service.deleteFile(S3FileDto.from(fileUploadList));
   }
 
   public Schedule scheduleInfo(Long scheduleId){
