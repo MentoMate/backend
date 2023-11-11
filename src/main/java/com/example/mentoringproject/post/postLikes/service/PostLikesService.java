@@ -24,19 +24,21 @@ public class PostLikesService {
 
   // 좋아요 등록 / 취소
   @Transactional
-  public void switchPostLikes(String email, Long postId) {
+  public Optional<PostLikes> switchPostLikes(String email, Long postId) {
     User user = getUser(email);
 
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
     Optional<PostLikes> postLikes = postLikesRepository.findByUserAndPost(user, post);
     if (postLikes.isEmpty()) {
-      PostLikes Likes = PostLikes.from(user, post);
-      postLikesRepository.save(Likes);
+      PostLikes likes = PostLikes.from(user, post);
+      postLikesRepository.save(likes);
       post.setPostLikesCount(post.getPostLikesCount() + 1);
+      return Optional.of(likes);
     } else {
       postLikesRepository.delete(postLikes.get());
       post.setPostLikesCount(post.getPostLikesCount() - 1);
+      return Optional.empty();
     }
   }
 

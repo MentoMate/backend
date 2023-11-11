@@ -3,6 +3,7 @@ package com.example.mentoringproject.ElasticSearch.mentor.controller;
 
 import com.example.mentoringproject.ElasticSearch.mentor.model.MentorSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentor.service.MentorSearchService;
+import com.example.mentoringproject.ElasticSearch.util.SearchResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,7 +32,7 @@ public class MentorSearchController {
       @Content(schema = @Schema(implementation = MentorSearchDto.class)))
   })
   @GetMapping("search")
-  public ResponseEntity<List<MentorSearchDto>> searchMentor(
+  public ResponseEntity<SearchResult<MentorSearchDto>> searchMentor(
       @RequestParam(required = false) String searchCategory,
       @RequestParam(required = false) String searchText,
       @RequestParam(required = true) String sortBy,
@@ -54,12 +55,18 @@ public class MentorSearchController {
     } else if ("latest".equals(sortBy)) {
       mentorSearchDtoList.sort(Comparator.comparing(MentorSearchDto::getId).reversed());
     }
+    // 전체 페이지 수 계산
+    int totalItems = mentorSearchDtoList.size();
+    int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
     // 페이징 처리
     int start = (page - 1) * pageSize;
     int end = Math.min(start + pageSize, mentorSearchDtoList.size());
 
     List<MentorSearchDto> pagedResult = mentorSearchDtoList.subList(start, end);
 
-    return ResponseEntity.ok(pagedResult);
+    SearchResult<MentorSearchDto> searchResult = new SearchResult<>(totalPages, pagedResult);
+
+    return ResponseEntity.ok(searchResult);
   }
 }
