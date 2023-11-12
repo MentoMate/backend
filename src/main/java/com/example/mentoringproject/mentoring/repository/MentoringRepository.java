@@ -3,6 +3,7 @@ package com.example.mentoringproject.mentoring.repository;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ public interface MentoringRepository extends JpaRepository<Mentoring, Long> {
   void updateCount(@Param("id") Long id);
 
 
-  Page<Mentoring> findByStatus(MentoringStatus status, Pageable pageable);
+  Page<Mentoring> findByStatusNotAndFollowerList_Id (MentoringStatus status, Long userId, Pageable pageable);
 
   List<Mentoring> findTop50ByOrderByCountWatchDesc();
 

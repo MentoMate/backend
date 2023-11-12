@@ -24,7 +24,7 @@ public class MentoringList {
     private Long userId;
     private String name;
     private String thumbNailImg;
-    private int grade;
+    private Double grade;
     public static Page<MentoringList> from(Page<Mentoring> page) {
         List<MentoringList> mentoringLists = page.getContent().stream()
                 .map(mentoring -> MentoringList.builder()
@@ -38,7 +38,7 @@ public class MentoringList {
                         .name(mentoring.getUser().getName())
                         .thumbNailImg(mentoring.getUploadUrl())
                         .numberOfPeople(mentoring.getNumberOfPeople())
-                        .grade(5)
+                        .grade(mentoring.getUser().getRating())
                         .build()
 
                 ).collect(Collectors.toList());

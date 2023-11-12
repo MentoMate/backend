@@ -120,6 +120,7 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "프로필 목록 조회 성공", content =
       @Content(schema = @Schema(implementation = UserProfileList.class)))
   })
+
   @GetMapping("/profile")
   public ResponseEntity<Page<UserProfileList>> getProfileList(
       @RequestParam(defaultValue = "1") int page,
@@ -130,5 +131,26 @@ public class UserController {
     Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
 
     return ResponseEntity.ok(UserProfileList.from(userService.getProfileList(pageable)));
+  }
+
+  @PostMapping("/{userId}")
+  public ResponseEntity<Void> mentoringLike(
+      @PathVariable Long userId
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    userService.userFollow(email, userId);
+    return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/profile/follow")
+  public ResponseEntity<Page<UserProfileList>> getFollowProfileList(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int pageSize,
+      @RequestParam(defaultValue = "id") String sortId,
+      @RequestParam(defaultValue = "DESC") String sortDirection) {
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(UserProfileList.from(userService.getFollowProfileList(email,pageable)));
   }
 }

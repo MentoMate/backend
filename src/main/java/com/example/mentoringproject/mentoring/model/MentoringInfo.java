@@ -27,7 +27,6 @@ public class MentoringInfo {
   private Long userId;
   private String name;
   private String thumbNailImg;
-  Set<String> mentoringImgList;
   private int leftPeople;
   private int followers;
   private boolean isOwner;
@@ -52,8 +51,8 @@ public class MentoringInfo {
         .name(mentoring.getUser().getName())
         .countWatch(mentoring.getCountWatch())
         .thumbNailImg(mentoring.getUploadUrl())
-        .leftPeople(6)
-        .followers(12)
+        .leftPeople(mentoring.getNumberOfPeople() - mentoring.getMenteeList().size())
+        .followers(mentoring.getFollowerList().size())
         .isOwner(isOwner)
         .registerDate(mentoring.getRegisterDate())
         .updateDate(mentoring.getUpdateDate())

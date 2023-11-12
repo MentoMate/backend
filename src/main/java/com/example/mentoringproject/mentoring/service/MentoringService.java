@@ -33,6 +33,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -258,6 +260,25 @@ public class MentoringService {
     return countDtoList;
   }
 
+  @Transactional
+  public void mentoringFollow(String email, Long mentoringId){
 
+    User likeUser = userService.getUser(email);
+
+    Mentoring mentoring = getMentoring(mentoringId);
+    List<User> followerList = mentoring.getFollowerList();
+    if (followerList.stream().anyMatch(user -> user.getId().equals(likeUser.getId()))) {
+      followerList.removeIf(user -> user.equals(likeUser));
+    }
+    else{
+      followerList.add(likeUser);
+    }
+  }
+
+  @Transactional
+  public Page<Mentoring> getFollowMentoring(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    return mentoringRepository.findByStatusNotAndFollowerList_Id(MentoringStatus.DELETE, user.getId(), pageable);
+  }
 }
 

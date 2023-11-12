@@ -21,7 +21,7 @@ public class UserProfileList {
   private String middleCategory;
   private String uploadUrl;
   private String uploadFolder;
-  private int grade;
+  private Double grade;
 
   public static Page<UserProfileList> from(Page<User> page){
    List<UserProfileList> userProfiles =  page.getContent().stream()
@@ -32,11 +32,10 @@ public class UserProfileList {
             .introduce(user.getIntroduce())
             .mainCategory(user.getMainCategory())
             .middleCategory(user.getMiddleCategory())
-            .grade(5)
+            .grade(user.getRating())
             .build()
         ).collect(Collectors.toList());
 
     return new PageImpl<>(userProfiles, page.getPageable(), page.getTotalElements());
-
   }
 }
