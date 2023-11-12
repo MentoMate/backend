@@ -3,6 +3,7 @@ package com.example.mentoringproject.post.comment.service;
 
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.post.comment.entity.Comment;
+import com.example.mentoringproject.post.comment.model.CommentDto;
 import com.example.mentoringproject.post.comment.model.CommentRegisterRequest;
 import com.example.mentoringproject.post.comment.model.CommentUpdateRequest;
 import com.example.mentoringproject.post.comment.repository.CommentRepository;
@@ -11,8 +12,11 @@ import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -89,8 +93,15 @@ public class CommentService {
 
   // 모든 댓글 조회
   @Transactional(readOnly = true)
-  public Page<Comment> findAllComments(Pageable pageable) {
+  public Page<CommentDto> findAllCommentsByPostId(Long postId, Pageable pageable, String email) {
 
-    return commentRepository.findAll(pageable);
+    Page<Comment> commentsPage = commentRepository.findByPostId(postId, pageable);
+
+    List<CommentDto> commentDtos = commentsPage.getContent().stream()
+        .map(comment -> CommentDto.fromEntity(comment, email.equals(comment.getUser().getEmail())))
+        .collect(Collectors.toList());
+
+    return new PageImpl<>(commentDtos, pageable, commentsPage.getTotalElements());
   }
+
 }

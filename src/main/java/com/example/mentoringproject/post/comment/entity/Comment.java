@@ -43,6 +43,8 @@ public class Comment {
   private String uploadUrl;
   private String uploadFolder;
 
+  private boolean isOwner;
+
 
   @CreatedDate
   private LocalDateTime registerDatetime;
@@ -65,6 +67,7 @@ public class Comment {
         .post(post)
         .comment(commentRegisterRequest.getComment())
         .nickName(user.getNickName())
+        .isOwner(true)
         .build();
   }
 

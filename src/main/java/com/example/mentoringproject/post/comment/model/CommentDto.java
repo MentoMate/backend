@@ -29,23 +29,22 @@ public class CommentDto {
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
-  public static List<CommentDto> fromEntity(Page<Comment> page) {
-    return page.getContent().stream()
-        .map(comment -> CommentDto.builder()
-            .id(comment.getId())
-            .comment(comment.getComment())
-            .nickName(comment.getNickName())
-            .uploadUrl(comment.getUploadUrl())
-            .uploadFolder(comment.getUploadFolder())
-            .post(comment.getPost())
-            .registerDatetime(comment.getRegisterDatetime())
-            .updateDatetime(comment.getUpdateDatetime())
-            .build()
-        )
-        .collect(Collectors.toList());
-  }
+  private boolean isOwner;
 
   public static CommentDto fromEntity(Comment comment) {
+    return CommentDto.builder()
+        .id(comment.getId())
+        .comment(comment.getComment())
+        .nickName(comment.getNickName())
+        .uploadUrl(comment.getUploadUrl())
+        .uploadFolder(comment.getUploadFolder())
+        .post(comment.getPost())
+        .registerDatetime(comment.getRegisterDatetime())
+        .updateDatetime(comment.getUpdateDatetime())
+        .build();
+  }
+
+  public static CommentDto fromEntity(Comment comment, boolean isOwner) {
     return CommentDto.builder()
             .id(comment.getId())
             .comment(comment.getComment())
@@ -55,6 +54,7 @@ public class CommentDto {
             .post(comment.getPost())
             .registerDatetime(comment.getRegisterDatetime())
             .updateDatetime(comment.getUpdateDatetime())
+            .isOwner(isOwner)
             .build();
   }
 
