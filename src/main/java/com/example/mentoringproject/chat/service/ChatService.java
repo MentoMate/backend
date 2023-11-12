@@ -1,6 +1,8 @@
 package com.example.mentoringproject.chat.service;
 
+import com.example.mentoringproject.chat.entity.ChatMessage;
 import com.example.mentoringproject.chat.entity.ChatRoom;
+import com.example.mentoringproject.chat.repository.ChatMessageRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class ChatService {
 
   private Map<String, ChatRoom> chatRooms;
+  private final ChatMessageRepository chatMessageRepository;
 
   @PostConstruct
   //의존관게 주입완료되면 실행되는 코드
@@ -43,5 +46,9 @@ public class ChatService {
     ChatRoom chatRoom = ChatRoom.create(name);
     chatRooms.put(chatRoom.getRoomId(), chatRoom);
     return chatRoom;
+  }
+
+  public List<ChatMessage> findAllMessagesByRoomId(String roomId) {
+    return chatMessageRepository.findAllByRoomId(roomId);
   }
 }

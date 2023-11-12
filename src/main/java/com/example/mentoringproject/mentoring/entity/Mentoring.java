@@ -1,5 +1,6 @@
 package com.example.mentoringproject.mentoring.entity;
 
+import com.example.mentoringproject.chat.entity.ChatRoom;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.entity.User;
 import java.time.LocalDate;
@@ -54,6 +55,9 @@ public class Mentoring {
 
   @OneToMany(fetch = FetchType.LAZY)
   private List<User> menteeList = new ArrayList<>();
+
+  @OneToOne(mappedBy = "mentoring", cascade = CascadeType.ALL)
+  private ChatRoom chatRoom;
 
   @CreatedDate
   private LocalDateTime registerDate;
