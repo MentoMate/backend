@@ -22,8 +22,8 @@ public class CommentDto {
   private String comment;
 
   private String nickName;
-  private String uploadUrl;
-  private String uploadFolder;
+  private String userUploadUrl;
+  private String userUploadFolder;
   private Post post;
 
   private LocalDateTime registerDatetime;
@@ -35,12 +35,13 @@ public class CommentDto {
     return CommentDto.builder()
         .id(comment.getId())
         .comment(comment.getComment())
-        .nickName(comment.getNickName())
-        .uploadUrl(comment.getUploadUrl())
-        .uploadFolder(comment.getUploadFolder())
+        .nickName(comment.getUser().getNickName())
+        .userUploadUrl(comment.getUser().getUploadUrl())
+        .userUploadFolder(comment.getUser().getUploadFolder())
         .post(comment.getPost())
         .registerDatetime(comment.getRegisterDatetime())
         .updateDatetime(comment.getUpdateDatetime())
+        .isOwner(true)
         .build();
   }
 
@@ -48,9 +49,9 @@ public class CommentDto {
     return CommentDto.builder()
             .id(comment.getId())
             .comment(comment.getComment())
-            .nickName(comment.getNickName())
-            .uploadUrl(comment.getUploadUrl())
-            .uploadFolder(comment.getUploadFolder())
+            .nickName(comment.getUser().getNickName())
+            .userUploadUrl(comment.getUser().getUploadUrl())
+            .userUploadFolder(comment.getUser().getUploadFolder())
             .post(comment.getPost())
             .registerDatetime(comment.getRegisterDatetime())
             .updateDatetime(comment.getUpdateDatetime())

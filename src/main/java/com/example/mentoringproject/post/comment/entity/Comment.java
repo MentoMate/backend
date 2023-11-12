@@ -40,8 +40,6 @@ public class Comment {
   private String comment;
 
   private String nickName;
-  private String uploadUrl;
-  private String uploadFolder;
 
   private boolean isOwner;
 

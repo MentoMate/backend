@@ -60,8 +60,8 @@ public class CommentService {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Comment"));
 
-    if (!post.getUser().getEmail().equals(email)) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
+    if (!comment.getUser().getEmail().equals(email)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of comment");
     }
 
     comment.setComment(commentUpdateRequest.getComment());
@@ -82,8 +82,8 @@ public class CommentService {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Comment"));
 
-    if (!post.getUser().getEmail().equals(email)) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
+    if (!comment.getUser().getEmail().equals(email)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of comment");
     }
 
     post.setCommentCount(post.getCommentCount() - 1);
