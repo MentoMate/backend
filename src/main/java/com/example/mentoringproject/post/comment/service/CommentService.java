@@ -43,6 +43,8 @@ public class CommentService {
 
     int count = post.getCommentCount();
 
+    commentRepository.save(comment);
+
     return comment;
   }
 
