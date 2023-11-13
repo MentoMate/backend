@@ -12,9 +12,13 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -81,6 +85,13 @@ public class User {
   @OneToMany(mappedBy = "user")
   List<PostLikes> postLikes = new ArrayList<>();
 
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "users_follower",
+      joinColumns = @JoinColumn(name = "mentor_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id")
+  )
+  private List<User> followerList = new ArrayList<>();
 
   public void updateRefreshToken(String updateRefreshToken) {
     this.refreshToken = updateRefreshToken;

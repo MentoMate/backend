@@ -21,13 +21,11 @@ public class MentoringInfo {
   private int amount;
   private MentoringStatus status;
   private String category;
-  private String uploadUrl;
   private String uploadFolder;
   private int countWatch;
   private Long userId;
   private String name;
-  private String thumbNailImg;
-  Set<String> mentoringImgList;
+  private String useProfileImg;
   private int leftPeople;
   private int followers;
   private boolean isOwner;
@@ -47,13 +45,12 @@ public class MentoringInfo {
         .status(mentoring.getStatus())
         .category(mentoring.getCategory())
         .uploadFolder(mentoring.getUploadFolder())
-        .uploadUrl(mentoring.getUploadUrl())
         .userId(mentoring.getUser().getId())
         .name(mentoring.getUser().getName())
         .countWatch(mentoring.getCountWatch())
-        .thumbNailImg(mentoring.getUploadUrl())
-        .leftPeople(6)
-        .followers(12)
+        .useProfileImg(mentoring.getUser().getUploadUrl())
+        .leftPeople(mentoring.getNumberOfPeople() - mentoring.getMenteeList().size())
+        .followers(mentoring.getFollowerList().size())
         .isOwner(isOwner)
         .registerDate(mentoring.getRegisterDate())
         .updateDate(mentoring.getUpdateDate())

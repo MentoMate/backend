@@ -6,6 +6,7 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
+import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.model.UserJoinDto;
 import com.example.mentoringproject.user.model.UserProfileSave;
@@ -200,6 +201,26 @@ public class UserService {
     imgList.add(s3Service.extractFileName(user.getUploadUrl()));
 
     s3Service.fileClear(uploadPath, imgList);
+  }
+
+  @Transactional
+  public void userFollow(String email, Long userId){
+
+    User followUser = getUser(email);
+    User mentor = profileInfo(userId);
+    List<User> followerList = mentor.getFollowerList();
+    if (followerList.stream().anyMatch(user -> user.getId().equals(followUser.getId()))) {
+      followerList.removeIf(user -> user.equals(followUser));
+    }
+    else{
+      followerList.add(followUser);
+    }
+  }
+
+  @Transactional(readOnly = true)
+  public Page<User> getFollowProfileList(String email, Pageable pageable) {
+    User user = getUser(email);
+    return userRepository.findByNameIsNotNull(pageable);
   }
 
 }
