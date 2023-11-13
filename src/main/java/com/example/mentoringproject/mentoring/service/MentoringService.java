@@ -280,5 +280,18 @@ public class MentoringService {
     User user = userService.getUser(email);
     return mentoringRepository.findByStatusNotAndFollowerList_Id(MentoringStatus.DELETE, user.getId(), pageable);
   }
+
+  @Transactional
+  public Page<Mentoring> getMentoringHistory(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    return mentoringRepository.findByStatusNotAndUserId(MentoringStatus.DELETE, user.getId(), pageable);
+  }
+
+  @Transactional
+  public Page<Mentoring> getParticipatedMentoringHistory(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    return mentoringRepository.findByStatusNotAndMenteeList_Id(MentoringStatus.DELETE, user.getId(), pageable);
+  }
+
 }
 

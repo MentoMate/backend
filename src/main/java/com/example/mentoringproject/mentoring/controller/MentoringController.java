@@ -144,4 +144,28 @@ public class MentoringController {
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(MentoringList.from(mentoringService.getFollowMentoring(email,pageable)));
   }
+
+  @GetMapping("/history")
+  public ResponseEntity<Page<MentoringList>> getMentoringHistory(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int pageSize,
+      @RequestParam(defaultValue = "id") String sortId,
+      @RequestParam(defaultValue = "DESC") String sortDirection) {
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(MentoringList.from(mentoringService.getMentoringHistory(email,pageable)));
+  }
+
+  @GetMapping("/history/participated")
+  public ResponseEntity<Page<MentoringList>> getParticipatedMentoringHistory(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int pageSize,
+      @RequestParam(defaultValue = "id") String sortId,
+      @RequestParam(defaultValue = "DESC") String sortDirection) {
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(MentoringList.from(mentoringService.getParticipatedMentoringHistory(email,pageable)));
+  }
 }

@@ -30,6 +30,7 @@ public class UserProfileList {
             .name(user.getName())
             .career(user.getCareer())
             .introduce(user.getIntroduce())
+            .uploadUrl(user.getUploadUrl())
             .mainCategory(user.getMainCategory())
             .middleCategory(user.getMiddleCategory())
             .grade(user.getRating())
