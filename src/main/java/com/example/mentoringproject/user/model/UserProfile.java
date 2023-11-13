@@ -35,7 +35,7 @@ public class UserProfile {
         .middleCategory(user.getMiddleCategory())
         .uploadFolder(user.getUploadFolder())
         .uploadUrl(user.getUploadUrl())
-        .followers(1)
+        .followers(user.getFollowerList().size())
         .build();
   }
 

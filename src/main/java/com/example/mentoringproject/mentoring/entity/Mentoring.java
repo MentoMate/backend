@@ -55,6 +55,14 @@ public class Mentoring {
   @OneToMany(fetch = FetchType.LAZY)
   private List<User> menteeList = new ArrayList<>();
 
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "mentoring_follower",
+      joinColumns = @JoinColumn(name = "mentoring_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id")
+  )
+  private List<User> followerList = new ArrayList<>();
+
   @CreatedDate
   private LocalDateTime registerDate;
   @LastModifiedDate

@@ -1,7 +1,7 @@
 package com.example.mentoringproject.notification.redis;
 
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.notification.notification.entity.NotificationDto;
+import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.service.NotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -24,8 +24,8 @@ public class RedisSubscriber implements MessageListener {
   public void onMessage(Message message, byte[] pattern) {
 
     try {
-      NotificationDto notificationDto = objectMapper.readValue(message.getBody(),
-          NotificationDto.class);
+      NotificationResponseDto notificationDto = objectMapper.readValue(message.getBody(),
+          NotificationResponseDto.class);
       log.debug("send message to sseUser, message= {}", notificationDto);
       notificationService.send(notificationDto);
     } catch (IOException e) {

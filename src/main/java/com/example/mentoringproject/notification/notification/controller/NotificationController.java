@@ -2,7 +2,8 @@ package com.example.mentoringproject.notification.notification.controller;
 
 import static com.example.mentoringproject.common.util.SpringSecurityUtil.getLoginEmail;
 
-import com.example.mentoringproject.notification.notification.entity.NotificationDto;
+import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
+import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.service.NotificationService;
 import com.example.mentoringproject.notification.redis.RedisPublisher;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -42,7 +46,7 @@ public class NotificationController {
       @ApiResponse(responseCode = "200", description = "알림이 연결되면 EventStream Created. [userId=\" + userEmail + \"]")
   })
   @GetMapping(value = "/subscribe", produces = "text/event-stream")
-  public ResponseEntity<SseEmitter> subscribe(@RequestParam String email) {
+  public ResponseEntity<SseEmitter> subscribe(@RequestParam @Email String email) {
     log.debug("call subscribe, user={}", email);
     return ResponseEntity.ok(notificationService.subscribe(email));
   }
@@ -51,17 +55,17 @@ public class NotificationController {
       @ApiResponse(responseCode = "200", description = "대상자에게 알림 푸쉬")
   })
   @PostMapping("/publish/notification")
-  public void pushMessage(@RequestBody NotificationDto notificationDto) {
-    log.debug("call publish, notification={}", notificationDto);
-    redisPublisher.publishNotification(myTopic, notificationDto);
+  public void pushMessage(@Valid @RequestBody NotificationRequestDto parameter) {
+    log.debug("call publish, notification={}", parameter);
+    redisPublisher.publishNotification(myTopic, parameter);
   }
 
   @Operation(summary = "알림 목록 조회 api", description = "나에게온 알림 최신순으로 10개씩 목록 조회", responses = {
       @ApiResponse(responseCode = "200", description = "대상자에게 알림 푸쉬", content =
-      @Content(schema = @Schema(implementation = NotificationDto.class)))
+      @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
   })
   @GetMapping("/notification")
-  public ResponseEntity<Page<NotificationDto>> getNotification(
+  public ResponseEntity<Page<NotificationResponseDto>> getNotification(
       @PageableDefault(size = 10, sort = "registerDate", direction = Sort.Direction.DESC) Pageable pageable
   ) {
     String email = getLoginEmail();
@@ -70,10 +74,11 @@ public class NotificationController {
 
   @Operation(summary = "알림 읽기 api", description = "알림 읽기", responses = {
       @ApiResponse(responseCode = "200", description = "알림 읽음", content =
-      @Content(schema = @Schema(implementation = NotificationDto.class)))
+      @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
   })
+
   @PutMapping("/read/notification")
-  public ResponseEntity<NotificationDto> readNotification(@RequestParam("notificationId") Long notificationId) {
+  public ResponseEntity<NotificationResponseDto> readNotification(@RequestParam("notificationId") @Min(1) Long notificationId) {
     return ResponseEntity.ok(notificationService.readNotification(notificationId));
   }
 
