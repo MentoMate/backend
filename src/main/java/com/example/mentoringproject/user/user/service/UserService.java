@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -201,6 +200,26 @@ public class UserService {
     imgList.add(s3Service.extractFileName(user.getUploadUrl()));
 
     s3Service.fileClear(uploadPath, imgList);
+  }
+
+  @Transactional
+  public void userFollow(String email, Long userId){
+
+    User followUser = getUser(email);
+    User mentor = profileInfo(userId);
+    List<User> followerList = mentor.getFollowerList();
+    if (followerList.stream().anyMatch(user -> user.getId().equals(followUser.getId()))) {
+      followerList.removeIf(user -> user.equals(followUser));
+    }
+    else{
+      followerList.add(followUser);
+    }
+  }
+
+  @Transactional(readOnly = true)
+  public Page<User> getFollowProfileList(String email, Pageable pageable) {
+    User user = getUser(email);
+    return userRepository.findByNameIsNotNull(pageable);
   }
 
 }

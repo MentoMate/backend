@@ -23,8 +23,8 @@ public class MentoringList {
     private String category;
     private Long userId;
     private String name;
-    private String thumbNailImg;
-    private int grade;
+    private String uploadUrl;
+    private Double grade;
     public static Page<MentoringList> from(Page<Mentoring> page) {
         List<MentoringList> mentoringLists = page.getContent().stream()
                 .map(mentoring -> MentoringList.builder()
@@ -36,9 +36,9 @@ public class MentoringList {
                         .category(mentoring.getCategory())
                         .userId(mentoring.getUser().getId())
                         .name(mentoring.getUser().getName())
-                        .thumbNailImg(mentoring.getUploadUrl())
+                        .uploadUrl(mentoring.getUploadUrl())
                         .numberOfPeople(mentoring.getNumberOfPeople())
-                        .grade(5)
+                        .grade(mentoring.getUser().getRating())
                         .build()
 
                 ).collect(Collectors.toList());

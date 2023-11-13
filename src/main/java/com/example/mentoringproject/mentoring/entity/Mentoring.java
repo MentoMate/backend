@@ -4,6 +4,8 @@ import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -48,6 +50,14 @@ public class Mentoring {
   private User user;
 
   private int countWatch;
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "mentoring_follower",
+      joinColumns = @JoinColumn(name = "mentoring_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id")
+  )
+  private List<User> followerList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;

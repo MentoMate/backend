@@ -39,6 +39,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +63,7 @@ public class MentoringService {
   private static final String FILE_TYPE = "img";
 
   @Transactional
-  public Mentoring createMentoring(String email, MentoringSave mentoringSave,
-      List<MultipartFile> thumbNailImg) {
+  public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
     User user = userService.profileInfo(userService.getUser(email).getId());
 
@@ -79,8 +80,7 @@ public class MentoringService {
   }
 
   @Transactional
-  public Mentoring updateMentoring(String email, MentoringSave mentoringSave,
-      List<MultipartFile> thumbNailImg) {
+  public Mentoring updateMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
     Mentoring mentoring = getMentoring(mentoringSave.getMentoringId());
     User user = userService.profileInfo(userService.getUser(email).getId());
@@ -93,6 +93,8 @@ public class MentoringService {
     mentoring.setAmount(mentoringSave.getAmount());
     mentoring.setCategory(mentoringSave.getCategory());
 
+
+
     imgUpload(mentoringSave, mentoring, thumbNailImg);
 
     mentoringRepository.save(mentoring);
@@ -104,7 +106,7 @@ public class MentoringService {
   }
 
 
-  public void deleteMentoring(Long mentoringId) {
+  public void deleteMentoring(Long mentoringId){
 
     Mentoring mentoring = getMentoring(mentoringId);
 
@@ -118,7 +120,7 @@ public class MentoringService {
   }
 
   @Transactional
-  public MentoringInfo mentoringInfo(String email, Long mentoringId) {
+  public MentoringInfo mentoringInfo(String email, Long mentoringId){
 
     Mentoring mentoring = getMentoring(mentoringId);
     boolean isOwner = false;
@@ -130,13 +132,10 @@ public class MentoringService {
     return MentoringInfo.from(mentoring, isOwner);
   }
 
-  public Mentoring getMentoring(Long mentoringId) {
-    Mentoring mentoring = mentoringRepository.findById(mentoringId)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
-    if (mentoring.getStatus() == MentoringStatus.DELETE) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "삭제된 멘토링 입니다.");
-    }
-    return mentoring;
+  public Mentoring getMentoring(Long mentoringId){
+    Mentoring mentoring = mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
+    if(mentoring.getStatus() == MentoringStatus.DELETE) throw  new AppException(HttpStatus.BAD_REQUEST, "삭제된 멘토링 입니다.");
+    return  mentoring;
   }
 
 
@@ -190,8 +189,7 @@ public class MentoringService {
   }
 
   public List<PostByRegisterDateDto> getPostByRegisterDateTime() {
-    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(
-        Category.review);
+    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(Category.review);
     int totalSize = top50PostList.size();
 
     if (totalSize < 4) {
@@ -247,10 +245,9 @@ public class MentoringService {
     userList.removeIf(user -> user.equals(pay.getUser()));
   }
 
-  private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring,
-      List<MultipartFile> thumbNailImg) {
+  private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
     String uploadPath = FOLDER + mentoringSave.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg, uploadPath, FILE_TYPE);
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
     mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     List<String> imgList = Optional.ofNullable(mentoringSave.getUploadImg())
@@ -292,5 +289,36 @@ public class MentoringService {
     return new PageImpl<>(mentoringDtoList.subList(start, end),
         pageRequest, mentoringDtoList.size());
   }
+  @Transactional
+  public void mentoringFollow(String email, Long mentoringId){
 
+    User likeUser = userService.getUser(email);
+
+    Mentoring mentoring = getMentoring(mentoringId);
+    List<User> followerList = mentoring.getFollowerList();
+    if (followerList.stream().anyMatch(user -> user.getId().equals(likeUser.getId()))) {
+      followerList.removeIf(user -> user.equals(likeUser));
+    }
+    else{
+      followerList.add(likeUser);
+    }
+  }
+
+  @Transactional
+  public Page<Mentoring> getFollowMentoring(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    return mentoringRepository.findByStatusNotAndFollowerList_Id(MentoringStatus.DELETE, user.getId(), pageable);
+  }
+
+  @Transactional
+  public Page<Mentoring> getMentoringHistory(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    return mentoringRepository.findByStatusNotAndUserId(MentoringStatus.DELETE, user.getId(), pageable);
+  }
+
+//  @Transactional
+//  public Page<Mentoring> getParticipatedMentoringHistory(String email, Pageable pageable){
+//    User user = userService.getUser(email);
+//    return mentoringRepository.findByStatusNotAndMenteeList_Id(MentoringStatus.DELETE, user.getId(), pageable);
+//  }
 }
