@@ -1,12 +1,16 @@
 package com.example.mentoringproject.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.mentoring.model.GradeRequestDto;
+import com.example.mentoringproject.mentoring.model.GradeResponseDto;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
+import com.example.mentoringproject.mentoring.model.MentoringList;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
 import com.example.mentoringproject.mentoring.service.MentoringService;
+import com.example.mentoringproject.user.grade.service.GradeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -38,6 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MentoringController {
   private final MentoringService mentoringService;
   private final ScheduleService scheduleService;
+  private final GradeService gradeService;
 
   @Operation(summary = "멘토링 등록 api", description = "멘토링 등록 api", responses = {
       @ApiResponse(responseCode = "200", description = "멘토링 등록 성공", content =
@@ -151,17 +162,17 @@ public class MentoringController {
     return ResponseEntity.ok(MentoringList.from(mentoringService.getMentoringHistory(email,pageable)));
   }
 
-  @GetMapping("/history/participated")
-  public ResponseEntity<Page<MentoringList>> getParticipatedMentoringHistory(
-      @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "5") int pageSize,
-      @RequestParam(defaultValue = "id") String sortId,
-      @RequestParam(defaultValue = "DESC") String sortDirection) {
-    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
-    String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringList.from(mentoringService.getParticipatedMentoringHistory(email,pageable)));
-  }
+//  @GetMapping("/history/participated")
+//  public ResponseEntity<Page<MentoringList>> getParticipatedMentoringHistory(
+//      @RequestParam(defaultValue = "1") int page,
+//      @RequestParam(defaultValue = "5") int pageSize,
+//      @RequestParam(defaultValue = "id") String sortId,
+//      @RequestParam(defaultValue = "DESC") String sortDirection) {
+//    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+//    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
+//    String email = SpringSecurityUtil.getLoginEmail();
+//    return ResponseEntity.ok(MentoringList.from(mentoringService.getParticipatedMentoringHistory(email,pageable)));
+//  }
 
   @GetMapping("/end")
   public ResponseEntity<Page<MentoringDto>> getListOfExpiredMentoring(

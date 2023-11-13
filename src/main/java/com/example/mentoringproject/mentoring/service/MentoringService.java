@@ -128,8 +128,8 @@ public class MentoringService {
       isOwner = true;
     }
     mentoringRepository.updateCount(mentoringId);
-
-    return MentoringInfo.from(mentoring, isOwner);
+    List<User> userList = menteeService.getUserListFormMentoring(mentoring);
+    return MentoringInfo.from(mentoring, isOwner, userList);
   }
 
   public Mentoring getMentoring(Long mentoringId){
@@ -289,6 +289,7 @@ public class MentoringService {
     return new PageImpl<>(mentoringDtoList.subList(start, end),
         pageRequest, mentoringDtoList.size());
   }
+
   @Transactional
   public void mentoringFollow(String email, Long mentoringId){
 
