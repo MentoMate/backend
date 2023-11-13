@@ -69,20 +69,15 @@ public class PayService {
   public Pay payCancel(String email, Long payId, String restApiKey, String restApiSecret) {
     Pay pay = getPay(payId);
 
-    //결제한 사용자와 결제취소를 요청한 사용자의 정보가 일치하는지 확인
-    checkPayUser(email, pay);
+    checkPayUserEmailAndCancelUserEmail(email, pay);
 
-    //이미 취소한 결제인지 확인
-    checkPayStatus(pay);
+    checkPaymentAlreadyCanceled(pay);
 
-    //accessToken 가져오기 api
     String accessToken = getAccessToken(restApiKey, restApiSecret);
     log.debug(accessToken);
 
-    //취소 api
     cancelPayment(accessToken, pay);
 
-    //db에 저장
     pay.setPayStatus(PayStatus.CANCEL);
     mentoringService.deleteMentoringUserByCancelPayment(pay);
 
@@ -94,12 +89,12 @@ public class PayService {
         new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 결제 정보입니다."));
   }
 
-  private static void checkPayUser(String email, Pay pay) {
+  private static void checkPayUserEmailAndCancelUserEmail(String email, Pay pay) {
     if (!pay.getUser().getEmail().equals(email)) {
       throw new AppException(HttpStatus.BAD_REQUEST, "결제한 사용자와 요청한 사용자의 정보가 다릅니다.");
     }
   }
-  private static void checkPayStatus(Pay pay) {
+  private static void checkPaymentAlreadyCanceled(Pay pay) {
     if (pay.getPayStatus().equals(PayStatus.CANCEL)) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이미 취소된 결제입니다.");
     }
