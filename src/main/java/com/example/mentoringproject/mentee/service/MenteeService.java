@@ -15,11 +15,15 @@ public class MenteeService {
 
   private final MenteeRepository menteeRepository;
 
-  public List<User> getMenteeListFormMentoring(Mentoring mentoring) {
+  public List<User> getUserListFormMentoring(Mentoring mentoring) {
     return menteeRepository.findAllByMentoring(mentoring)
         .stream()
         .map(Mentee::getUser)
         .collect(Collectors.toList());
+  }
+
+  public List<Mentee> getMenteeListFromMentoring(Mentoring mentoring) {
+    return menteeRepository.findAllByMentoring(mentoring);
   }
 
   public List<Mentoring> getMentoringListFormMenteeUser(User user) {
@@ -28,5 +32,4 @@ public class MenteeService {
         .map(Mentee::getMentoring)
         .collect(Collectors.toList());
   }
-
 }

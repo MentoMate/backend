@@ -47,7 +47,7 @@ public class PayService {
     User buyer = userService.getUser(email);
 
     //이미 결제가 완료된 사람인지 확인
-    List<User> menteeList = menteeService.getMenteeListFormMentoring(mentoring);
+    List<User> menteeList = menteeService.getUserListFormMentoring(mentoring);
 
     if (menteeList.stream().anyMatch(user -> user.getId().equals(buyer.getId()))) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이미 결제가 완료되었습니다.");

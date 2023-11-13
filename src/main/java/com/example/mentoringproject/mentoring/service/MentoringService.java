@@ -35,6 +35,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -239,7 +243,7 @@ public class MentoringService {
   @Transactional
   public void deleteMentoringUserByCancelPayment(Pay pay) {
     Mentoring mentoring = pay.getMentoring();
-    List<User> userList = menteeService.getMenteeListFormMentoring(mentoring);
+    List<User> userList = menteeService.getUserListFormMentoring(mentoring);
     userList.removeIf(user -> user.equals(pay.getUser()));
   }
 
@@ -270,12 +274,23 @@ public class MentoringService {
     return countDtoList;
   }
 
-  public List<MentoringDto> getEndedMentoringList(String email) {
+  public Page<MentoringDto> getEndedMentoringList(String email, Pageable pageable) {
     User user = userService.getUser(email);
-    return menteeService.getMentoringListFormMenteeUser(user)
+    List<MentoringDto> mentoringDtoList = menteeService.getMentoringListFormMenteeUser(user)
         .stream()
         .filter(mentoring -> mentoring.getStatus().equals(MentoringStatus.FINISH))
         .map(MentoringDto::from)
         .collect(Collectors.toList());
+
+    return pagingMentoringDto(pageable, mentoringDtoList);
   }
+
+  private static Page<MentoringDto> pagingMentoringDto(Pageable pageable, List<MentoringDto> mentoringDtoList) {
+    PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    int start = (int) pageRequest.getOffset();
+    int end = Math.min((start + pageable.getPageSize()), mentoringDtoList.size());
+    return new PageImpl<>(mentoringDtoList.subList(start, end),
+        pageRequest, mentoringDtoList.size());
+  }
+
 }

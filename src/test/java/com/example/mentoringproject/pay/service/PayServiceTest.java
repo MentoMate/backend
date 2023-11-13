@@ -83,7 +83,7 @@ class PayServiceTest {
 
     given(mentoringService.getMentoring(anyLong())).willReturn(mentoring);
     given(userService.getUser(anyString())).willReturn(buyer);
-    given(menteeService.getMenteeListFormMentoring(any())).willReturn(menteeList);
+    given(menteeService.getUserListFormMentoring(any())).willReturn(menteeList);
 
     //when
     AppException appException = assertThrows(AppException.class, () ->
@@ -113,7 +113,7 @@ class PayServiceTest {
 
     given(mentoringService.getMentoring(anyLong())).willReturn(mentoring);
     given(userService.getUser(anyString())).willReturn(buyer);
-    given(menteeService.getMenteeListFormMentoring(any())).willReturn(menteeList);
+    given(menteeService.getUserListFormMentoring(any())).willReturn(menteeList);
 
     //when
     payService.payCompleteRegister(email, impUid, mentoringId);

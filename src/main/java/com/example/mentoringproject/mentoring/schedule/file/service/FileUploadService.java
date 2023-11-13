@@ -38,7 +38,7 @@ public class FileUploadService {
     Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
             ()-> new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 일정입니다."));
 
-    List<User> menteeList = menteeService.getMenteeListFormMentoring(schedule.getMentoring());
+    List<User> menteeList = menteeService.getUserListFormMentoring(schedule.getMentoring());
     if (menteeList.stream().noneMatch(mentee -> mentee.getId().equals(user.getId())) && !(user.getId().equals(schedule.getMentoring().getUser().getId())) ) {
       throw new AppException(HttpStatus.BAD_REQUEST, "멘토링 참가자가 아닙니다.");
     }

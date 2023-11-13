@@ -66,7 +66,7 @@ public class NotificationController {
   })
   @GetMapping("/notification")
   public ResponseEntity<Page<NotificationResponseDto>> getNotification(
-      @PageableDefault(size = 10, sort = "registerDate", direction = Sort.Direction.DESC) Pageable pageable
+      @PageableDefault(sort = "registerDate", direction = Sort.Direction.DESC) Pageable pageable
   ) {
     String email = getLoginEmail();
     return ResponseEntity.ok(notificationService.getNotification(email, pageable));
