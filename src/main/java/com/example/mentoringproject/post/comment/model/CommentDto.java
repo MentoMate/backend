@@ -22,39 +22,40 @@ public class CommentDto {
   private String comment;
 
   private String nickName;
-  private String uploadUrl;
-  private String uploadFolder;
+  private String userUploadUrl;
+  private String userUploadFolder;
   private Post post;
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
-  public static List<CommentDto> fromEntity(Page<Comment> page) {
-    return page.getContent().stream()
-        .map(comment -> CommentDto.builder()
-            .id(comment.getId())
-            .comment(comment.getComment())
-            .nickName(comment.getNickName())
-            .uploadUrl(comment.getUploadUrl())
-            .uploadFolder(comment.getUploadFolder())
-            .post(comment.getPost())
-            .registerDatetime(comment.getRegisterDatetime())
-            .updateDatetime(comment.getUpdateDatetime())
-            .build()
-        )
-        .collect(Collectors.toList());
-  }
+  private boolean isOwner;
 
   public static CommentDto fromEntity(Comment comment) {
     return CommentDto.builder()
+        .id(comment.getId())
+        .comment(comment.getComment())
+        .nickName(comment.getUser().getNickName())
+        .userUploadUrl(comment.getUser().getUploadUrl())
+        .userUploadFolder(comment.getUser().getUploadFolder())
+        .post(comment.getPost())
+        .registerDatetime(comment.getRegisterDatetime())
+        .updateDatetime(comment.getUpdateDatetime())
+        .isOwner(true)
+        .build();
+  }
+
+  public static CommentDto fromEntity(Comment comment, boolean isOwner) {
+    return CommentDto.builder()
             .id(comment.getId())
             .comment(comment.getComment())
-            .nickName(comment.getNickName())
-            .uploadUrl(comment.getUploadUrl())
-            .uploadFolder(comment.getUploadFolder())
+            .nickName(comment.getUser().getNickName())
+            .userUploadUrl(comment.getUser().getUploadUrl())
+            .userUploadFolder(comment.getUser().getUploadFolder())
             .post(comment.getPost())
             .registerDatetime(comment.getRegisterDatetime())
             .updateDatetime(comment.getUpdateDatetime())
+            .isOwner(isOwner)
             .build();
   }
 

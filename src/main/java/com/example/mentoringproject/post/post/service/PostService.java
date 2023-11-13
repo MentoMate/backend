@@ -130,9 +130,13 @@ public class PostService {
     if (post.getUser().getEmail().equals(email)) {
       isOwner = true;
     }
-    postRepository.updateCount(postId);
-    return PostInfoResponseDto.fromEntity(post, isOwner);
-  }
 
+    boolean isLike = post.getPostLikes().stream()
+        .anyMatch(postLikes -> postLikes.getUser().getEmail().equals(email));
+
+
+    postRepository.updateCount(postId);
+    return PostInfoResponseDto.fromEntity(post, isOwner, isLike);
+  }
 
 }

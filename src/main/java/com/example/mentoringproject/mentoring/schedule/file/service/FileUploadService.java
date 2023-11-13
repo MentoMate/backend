@@ -3,11 +3,11 @@ package com.example.mentoringproject.mentoring.schedule.file.service;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
 import com.example.mentoringproject.mentoring.schedule.file.repository.FileUploadRepository;
 import com.example.mentoringproject.mentoring.schedule.repository.ScheduleRepository;
-import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
 import com.example.mentoringproject.user.entity.User;
 import com.example.mentoringproject.user.service.UserService;
 import java.util.List;
@@ -25,9 +25,11 @@ public class FileUploadService {
   private final ScheduleRepository scheduleRepository;
   private final UserService userService;
   private final S3Service s3Service;
+  private final MenteeService menteeService;
 
   public static final String FOLDER = "schedule/file";
   private static final String UPLOAD_FILETYPE = "file";
+
   public List<FileUpload> fileUpload(String email, Long scheduleId, List<MultipartFile> multipartFileList){
 
     if(multipartFileList == null) throw new AppException(HttpStatus.BAD_REQUEST, "파일이 없습니다.");
@@ -36,7 +38,7 @@ public class FileUploadService {
     Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
             ()-> new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 일정입니다."));
 
-    List<User> menteeList = schedule.getMentoring().getMenteeList();
+    List<User> menteeList = menteeService.getMenteeListFormMentoring(schedule.getMentoring());
     if (menteeList.stream().noneMatch(mentee -> mentee.getId().equals(user.getId())) && !(user.getId().equals(schedule.getMentoring().getUser().getId())) ) {
       throw new AppException(HttpStatus.BAD_REQUEST, "멘토링 참가자가 아닙니다.");
     }
