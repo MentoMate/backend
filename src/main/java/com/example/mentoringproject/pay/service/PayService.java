@@ -1,6 +1,7 @@
 package com.example.mentoringproject.pay.service;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.service.MentoringService;
 import com.example.mentoringproject.pay.entity.Pay;
@@ -31,6 +32,7 @@ public class PayService {
 
   private final PayRepository payRepository;
   private final MentoringService mentoringService;
+  private final MenteeService menteeService;
   private final UserService userService;
   private final RestTemplate restTemplate;
   private final ObjectMapper objectMapper;
@@ -45,7 +47,7 @@ public class PayService {
     User buyer = userService.getUser(email);
 
     //이미 결제가 완료된 사람인지 확인
-    List<User> menteeList = mentoring.getMenteeList();
+    List<User> menteeList = menteeService.getMenteeListFormMentoring(mentoring);
 
     if (menteeList.stream().anyMatch(user -> user.getId().equals(buyer.getId()))) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이미 결제가 완료되었습니다.");

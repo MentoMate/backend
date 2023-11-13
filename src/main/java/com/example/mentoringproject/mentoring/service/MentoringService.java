@@ -5,12 +5,14 @@ import com.example.mentoringproject.ElasticSearch.mentoring.repository.Mentoring
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.model.CountDto;
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
+import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
@@ -42,17 +44,21 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 @RequiredArgsConstructor
 public class MentoringService {
+
   private final MentoringRepository mentoringRepository;
   private final MentoringSearchRepository mentoringSearchRepository;
+  private final MenteeService menteeService;
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final UserService userService;
   private final S3Service s3Service;
 
-  private static final String  FOLDER = "mentoring/";
+  private static final String FOLDER = "mentoring/";
   private static final String FILE_TYPE = "img";
+
   @Transactional
-  public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
+  public Mentoring createMentoring(String email, MentoringSave mentoringSave,
+      List<MultipartFile> thumbNailImg) {
 
     User user = userService.profileInfo(userService.getUser(email).getId());
 
@@ -69,7 +75,8 @@ public class MentoringService {
   }
 
   @Transactional
-  public Mentoring updateMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
+  public Mentoring updateMentoring(String email, MentoringSave mentoringSave,
+      List<MultipartFile> thumbNailImg) {
 
     Mentoring mentoring = getMentoring(mentoringSave.getMentoringId());
     User user = userService.profileInfo(userService.getUser(email).getId());
@@ -82,8 +89,6 @@ public class MentoringService {
     mentoring.setAmount(mentoringSave.getAmount());
     mentoring.setCategory(mentoringSave.getCategory());
 
-
-
     imgUpload(mentoringSave, mentoring, thumbNailImg);
 
     mentoringRepository.save(mentoring);
@@ -95,7 +100,7 @@ public class MentoringService {
   }
 
 
-  public void deleteMentoring(Long mentoringId){
+  public void deleteMentoring(Long mentoringId) {
 
     Mentoring mentoring = getMentoring(mentoringId);
 
@@ -109,7 +114,7 @@ public class MentoringService {
   }
 
   @Transactional
-  public MentoringInfo mentoringInfo(String email, Long mentoringId){
+  public MentoringInfo mentoringInfo(String email, Long mentoringId) {
 
     Mentoring mentoring = getMentoring(mentoringId);
     boolean isOwner = false;
@@ -121,10 +126,13 @@ public class MentoringService {
     return MentoringInfo.from(mentoring, isOwner);
   }
 
-  public Mentoring getMentoring(Long mentoringId){
-    Mentoring mentoring = mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
-    if(mentoring.getStatus() == MentoringStatus.DELETE) throw  new AppException(HttpStatus.BAD_REQUEST, "삭제된 멘토링 입니다.");
-    return  mentoring;
+  public Mentoring getMentoring(Long mentoringId) {
+    Mentoring mentoring = mentoringRepository.findById(mentoringId)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
+    if (mentoring.getStatus() == MentoringStatus.DELETE) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "삭제된 멘토링 입니다.");
+    }
+    return mentoring;
   }
 
 
@@ -178,7 +186,8 @@ public class MentoringService {
   }
 
   public List<PostByRegisterDateDto> getPostByRegisterDateTime() {
-    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(Category.review);
+    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(
+        Category.review);
     int totalSize = top50PostList.size();
 
     if (totalSize < 4) {
@@ -204,7 +213,8 @@ public class MentoringService {
     LocalDate today = LocalDate.now();
     LocalDate maxEndDate = today.plusDays(3);
 
-    List<Mentoring> top50MentoringList = mentoringRepository.findByEndDateBetween(today, maxEndDate);
+    List<Mentoring> top50MentoringList = mentoringRepository.findByEndDateBetween(today,
+        maxEndDate);
     int totalSize = top50MentoringList.size();
 
     if (totalSize < 4) {
@@ -229,12 +239,14 @@ public class MentoringService {
   @Transactional
   public void deleteMentoringUserByCancelPayment(Pay pay) {
     Mentoring mentoring = pay.getMentoring();
-    mentoring.getMenteeList().removeIf(user -> user.equals(pay.getUser()));
+    List<User> userList = menteeService.getMenteeListFormMentoring(mentoring);
+    userList.removeIf(user -> user.equals(pay.getUser()));
   }
 
-  private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
+  private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring,
+      List<MultipartFile> thumbNailImg) {
     String uploadPath = FOLDER + mentoringSave.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg, uploadPath, FILE_TYPE);
     mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     List<String> imgList = Optional.ofNullable(mentoringSave.getUploadImg())
@@ -258,6 +270,12 @@ public class MentoringService {
     return countDtoList;
   }
 
-
+  public List<MentoringDto> getEndedMentoringList(String email) {
+    User user = userService.getUser(email);
+    return menteeService.getMentoringListFormMenteeUser(user)
+        .stream()
+        .filter(mentoring -> mentoring.getStatus().equals(MentoringStatus.FINISH))
+        .map(MentoringDto::from)
+        .collect(Collectors.toList());
+  }
 }
-
