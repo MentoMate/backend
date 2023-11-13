@@ -1,4 +1,4 @@
-package com.example.mentoringproject.user.service;
+package com.example.mentoringproject.user.user.service;
 
 import com.example.mentoringproject.ElasticSearch.mentor.entity.MentorSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
@@ -6,15 +6,16 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.model.UserJoinDto;
-import com.example.mentoringproject.user.model.UserProfileSave;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.model.UserJoinDto;
+import com.example.mentoringproject.user.user.model.UserProfileSave;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

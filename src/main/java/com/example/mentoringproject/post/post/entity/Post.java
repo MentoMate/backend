@@ -3,7 +3,7 @@ package com.example.mentoringproject.post.post.entity;
 import com.example.mentoringproject.post.comment.entity.Comment;
 import com.example.mentoringproject.post.post.model.PostRegisterRequest;
 import com.example.mentoringproject.post.postLikes.entity.PostLikes;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

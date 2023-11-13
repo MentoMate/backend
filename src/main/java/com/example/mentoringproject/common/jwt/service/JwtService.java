@@ -2,7 +2,7 @@ package com.example.mentoringproject.common.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.util.Date;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
-package com.example.mentoringproject.user.model;
+package com.example.mentoringproject.user.user.model;
 
 
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;

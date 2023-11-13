@@ -1,7 +1,7 @@
 package com.example.mentoringproject.mentee.entity;
 
 import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

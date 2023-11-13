@@ -2,7 +2,7 @@ package com.example.mentoringproject.post.postLikes.model;
 
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.postLikes.entity.PostLikes;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

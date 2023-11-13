@@ -3,7 +3,7 @@ package com.example.mentoringproject.mentee.service;
 import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.repository.MenteeRepository;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

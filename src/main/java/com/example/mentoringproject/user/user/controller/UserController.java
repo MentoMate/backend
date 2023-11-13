@@ -1,11 +1,11 @@
-package com.example.mentoringproject.user.controller;
+package com.example.mentoringproject.user.user.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.user.model.UserJoinDto;
-import com.example.mentoringproject.user.model.UserProfile;
-import com.example.mentoringproject.user.model.UserProfileList;
-import com.example.mentoringproject.user.model.UserProfileSave;
-import com.example.mentoringproject.user.service.UserService;
+import com.example.mentoringproject.user.user.model.UserJoinDto;
+import com.example.mentoringproject.user.user.model.UserProfile;
+import com.example.mentoringproject.user.user.model.UserProfileList;
+import com.example.mentoringproject.user.user.model.UserProfileSave;
+import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +15,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;

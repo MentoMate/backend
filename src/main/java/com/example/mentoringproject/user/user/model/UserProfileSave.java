@@ -1,4 +1,4 @@
-package com.example.mentoringproject.user.model;
+package com.example.mentoringproject.user.user.model;
 
 
 import java.util.List;

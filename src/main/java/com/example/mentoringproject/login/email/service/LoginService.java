@@ -1,8 +1,8 @@
 package com.example.mentoringproject.login.email.service;
 
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

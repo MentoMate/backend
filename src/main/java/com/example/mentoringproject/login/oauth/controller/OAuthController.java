@@ -1,7 +1,7 @@
 package com.example.mentoringproject.login.oauth.controller;
 
 import com.example.mentoringproject.login.oauth.service.OAuth2Service;
-import com.example.mentoringproject.user.entity.SocialType;
+import com.example.mentoringproject.user.user.entity.SocialType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

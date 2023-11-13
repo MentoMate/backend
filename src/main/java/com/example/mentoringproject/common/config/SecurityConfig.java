@@ -6,7 +6,7 @@ import com.example.mentoringproject.login.email.filter.CustomJsonUsernamePasswor
 import com.example.mentoringproject.login.email.handler.LoginFailureHandler;
 import com.example.mentoringproject.login.email.handler.LoginSuccessHandler;
 import com.example.mentoringproject.login.email.service.LoginService;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,11 +1,9 @@
 package com.example.mentoringproject.mentoring.entity;
 
 import com.example.mentoringproject.mentoring.model.MentoringSave;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;

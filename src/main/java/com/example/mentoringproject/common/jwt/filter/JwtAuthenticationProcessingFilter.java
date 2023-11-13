@@ -1,8 +1,8 @@
 package com.example.mentoringproject.common.jwt.filter;
 
 import com.example.mentoringproject.common.jwt.service.JwtService;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;

@@ -2,7 +2,7 @@ package com.example.mentoringproject.mentoring.schedule.file.entity;
 
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
