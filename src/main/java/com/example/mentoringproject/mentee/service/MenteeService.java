@@ -27,6 +27,7 @@ public class MenteeService {
   }
 
   public List<Mentoring> getMentoringListFormMenteeUser(User user) {
+
     return menteeRepository.findAllByUser(user)
         .stream()
         .map(Mentee::getMentoring)
