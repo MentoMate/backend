@@ -56,9 +56,6 @@ public class Mentoring {
   @OneToMany(fetch = FetchType.LAZY)
   private List<User> menteeList = new ArrayList<>();
 
-  @OneToOne(mappedBy = "mentoring", cascade = CascadeType.ALL)
-  private ChatRoom chatRoom;
-
   @CreatedDate
   private LocalDateTime registerDate;
   @LastModifiedDate
