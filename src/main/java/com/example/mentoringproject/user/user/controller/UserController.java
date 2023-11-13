@@ -146,7 +146,7 @@ public class UserController {
   }
 
   @PostMapping("/{userId}")
-  public ResponseEntity<Void> mentoringLike(
+  public ResponseEntity<Void> userFollow(
       @PathVariable Long userId
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
