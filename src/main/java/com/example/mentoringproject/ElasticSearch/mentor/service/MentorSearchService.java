@@ -3,6 +3,8 @@ package com.example.mentoringproject.ElasticSearch.mentor.service;
 import com.example.mentoringproject.ElasticSearch.mentor.entity.MentorSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentor.model.MentorSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
+import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -13,22 +15,36 @@ import org.springframework.stereotype.Service;
 public class MentorSearchService {
 
   private final MentorSearchRepository mentorSearchRepository;
+  private final UserRepository userRepository;
 
-  public List<MentorSearchDto> searchCategory(String name, String middleCategory) {
-    List<MentorSearchDocumment> MentorSearchDocumments = mentorSearchRepository.findAllByNameContainingAndMiddleCategory(
+  public List<MentorSearchDto> searchCategory(String name, String middleCategory, String email) {
+    List<MentorSearchDocumment> mentorSearchDocuments = mentorSearchRepository.findAllByNameContainingAndMiddleCategory(
         name, middleCategory);
+    Boolean isMentorRegister = isMentorRegister(email);
 
-    return MentorSearchDocumments.stream()
-        .map(MentorSearchDto::fromDocument)
+    return mentorSearchDocuments.stream()
+        .map(doc -> MentorSearchDto.fromDocument(doc, isMentorRegister))
         .collect(Collectors.toList());
   }
 
-  public List<MentorSearchDto> searchAll() {
-    List<MentorSearchDocumment> MentorSearchDocumments = mentorSearchRepository.findAll();
+  public List<MentorSearchDto> searchAll(String email) {
+    List<MentorSearchDocumment> mentorSearchDocuments = mentorSearchRepository.findAll();
 
-    return MentorSearchDocumments.stream()
-        .map(MentorSearchDto::fromDocument)
+    Boolean isMentorRegister = isMentorRegister(email);
+
+    return mentorSearchDocuments.stream()
+        .map(doc -> MentorSearchDto.fromDocument(doc, isMentorRegister))
         .collect(Collectors.toList());
   }
 
+  private boolean isMentorRegister(String email) {
+    if (email != null) {
+      User user = userRepository.findByEmail(email).orElse(null);
+
+      if (user != null && user.getNickName() != null) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

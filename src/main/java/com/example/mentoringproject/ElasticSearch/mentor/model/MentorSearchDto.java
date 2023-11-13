@@ -24,7 +24,9 @@ public class MentorSearchDto {
 
   private Double rating;
 
-  public static MentorSearchDto fromDocument(MentorSearchDocumment mentorSearchDocumment) {
+  private boolean isMentorRegister;
+
+  public static MentorSearchDto fromDocument(MentorSearchDocumment mentorSearchDocumment, boolean isMentorRegister) {
     return MentorSearchDto.builder()
         .id(mentorSearchDocumment.getId())
         .name(mentorSearchDocumment.getName())
@@ -35,6 +37,7 @@ public class MentorSearchDto {
         .uploadUrl(mentorSearchDocumment.getUploadUrl())
         .uploadFolder(mentorSearchDocumment.getUploadFolder())
         .rating(mentorSearchDocumment.getRating())
+        .isMentorRegister(isMentorRegister)
         .build();
   }
 

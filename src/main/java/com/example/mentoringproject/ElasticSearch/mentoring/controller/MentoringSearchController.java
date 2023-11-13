@@ -3,6 +3,7 @@ package com.example.mentoringproject.ElasticSearch.mentoring.controller;
 import com.example.mentoringproject.ElasticSearch.mentoring.model.MentoringSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentoring.service.MentoringSearchService;
 import com.example.mentoringproject.ElasticSearch.util.SearchResult;
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,18 +42,20 @@ public class MentoringSearchController {
 
     List<MentoringSearchDto> mentoringSearchDtoList = new ArrayList<>();
 
+    String email = SpringSecurityUtil.getLoginEmail();
+
     if (searchType != null) {
       if ("title".equals(searchType)) {
         mentoringSearchDtoList = mentoringSearchService.searchTitleAndCategory(searchText,
-            searchCategory);
+            searchCategory, email);
       } else if ("writer".equals(searchType)) {
         mentoringSearchDtoList = mentoringSearchService.searchWriterAndCategory(searchText,
-            searchCategory);
+            searchCategory,email);
       } else {
         return ResponseEntity.badRequest().build();
       }
     } else {
-      mentoringSearchDtoList = mentoringSearchService.searchAll();
+      mentoringSearchDtoList = mentoringSearchService.searchAll(email);
     }
 
     // 평점순, 최신순, 금액순 정렬

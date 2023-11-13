@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 public class MentoringSearchDto {
 
   private Long id;
@@ -32,8 +34,10 @@ public class MentoringSearchDto {
 
   private int countWatch;
 
+  private boolean isMentorRegister;
+
   public static MentoringSearchDto fromDocument(
-      MentoringSearchDocumment mentoringSearchDocumment) {
+      MentoringSearchDocumment mentoringSearchDocumment, boolean isMentorRegister) {
     return MentoringSearchDto.builder()
         .id(mentoringSearchDocumment.getId())
         .writer(mentoringSearchDocumment.getWriter())
@@ -48,6 +52,7 @@ public class MentoringSearchDto {
         .rating(mentoringSearchDocumment.getRating())
         .uploadUrl(mentoringSearchDocumment.getUploadUrl())
         .uploadFolder(mentoringSearchDocumment.getUploadFolder())
+        .isMentorRegister(isMentorRegister)
         .build();
   }
 }

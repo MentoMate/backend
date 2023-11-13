@@ -4,6 +4,7 @@ package com.example.mentoringproject.ElasticSearch.mentor.controller;
 import com.example.mentoringproject.ElasticSearch.mentor.model.MentorSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentor.service.MentorSearchService;
 import com.example.mentoringproject.ElasticSearch.util.SearchResult;
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,12 +41,13 @@ public class MentorSearchController {
       @RequestParam(defaultValue = "8") int pageSize) {
 
     List<MentorSearchDto> mentorSearchDtoList = new ArrayList<>();
+    String email = SpringSecurityUtil.getLoginEmail();
 
     if (searchCategory != null) {
       mentorSearchDtoList = mentorSearchService.searchCategory(searchText,
-          searchCategory);
+          searchCategory, email);
     } else {
-      mentorSearchDtoList = mentorSearchService.searchAll();
+      mentorSearchDtoList = mentorSearchService.searchAll(email);
     }
 
     // 평점순, 최신순 정렬
