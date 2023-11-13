@@ -64,7 +64,7 @@ public class MentoringSearchDocumment {
         .category(mentoring.getCategory())
         .rating(user.getRating())
         .uploadUrl(mentoring.getUploadUrl())
-        .uploadFolder(mentoring.getUploadUrl())
+        .uploadFolder(mentoring.getUploadFolder())
         .countWatch(mentoring.getCountWatch())
         .build();
   }

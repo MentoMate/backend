@@ -1,7 +1,9 @@
 package com.example.mentoringproject.ElasticSearch.post.controller;
 
+import com.example.mentoringproject.ElasticSearch.mentoring.model.MentoringSearchDto;
 import com.example.mentoringproject.ElasticSearch.post.model.PostSearchDto;
 import com.example.mentoringproject.ElasticSearch.post.service.PostSearchService;
+import com.example.mentoringproject.ElasticSearch.util.SearchResult;
 import com.example.mentoringproject.post.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +35,7 @@ public class PostSearchController {
       @Content(schema = @Schema(implementation = PostSearchDto.class)))
   })
   @GetMapping("/search")
-  public ResponseEntity<List<PostSearchDto>> searchPost(
+  public ResponseEntity<SearchResult<PostSearchDto>> searchPost(
       @RequestParam(required = false) String searchType,
       @RequestParam(required = false) String searchText,
       @RequestParam(required = true) String searchCategory,
@@ -65,14 +67,19 @@ public class PostSearchController {
       postSearchDtoList.sort(Comparator.comparing(PostSearchDto::getId).reversed());
     }
 
+    // 전체 페이지 수 계산
+    int totalItems = postSearchDtoList.size();
+    int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
     // 페이징 처리
     int start = (page - 1) * pageSize;
     int end = Math.min(start + pageSize, postSearchDtoList.size());
 
     List<PostSearchDto> pagedResult = postSearchDtoList.subList(start, end);
 
-    return ResponseEntity.ok(pagedResult);
+    SearchResult<PostSearchDto> searchResult = new SearchResult<>(totalPages, pagedResult);
+
+    return ResponseEntity.ok(searchResult);
 
   }
-
 }

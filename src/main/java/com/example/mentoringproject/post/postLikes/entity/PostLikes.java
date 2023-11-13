@@ -47,11 +47,14 @@ public class PostLikes {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Post post;
 
+  private boolean isLikes;
+
 
   public static PostLikes from(User user, Post post) {
     return PostLikes.builder()
         .user(user)
         .post(post)
+        .isLikes(true)
         .build();
   }
 }

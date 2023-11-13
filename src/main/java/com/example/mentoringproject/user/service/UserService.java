@@ -35,7 +35,7 @@ public class UserService {
   private final MentorSearchRepository mentorSearchRepository;
   private final S3Service s3Service;
 
-  private static final String FOLDER = "profile";
+  private static final String FOLDER = "profile/";
   private static final String FILE_TYPE = "img";
   //인증 확인 이메일을 보내고 DB에 저장
 
@@ -187,10 +187,9 @@ public class UserService {
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 
-  private void ImgUpload(List<MultipartFile> multipartFile, User user,
-      UserProfileSave userProfile) {
-    String uploadPath = FOLDER + "/" + user.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile, uploadPath, FILE_TYPE);
+  private void ImgUpload(List<MultipartFile> multipartFile, User user, UserProfileSave userProfile) {
+    String uploadPath = FOLDER + user.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);
     user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     List<String> imgList = Optional.ofNullable(userProfile.getUploadImg())

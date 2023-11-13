@@ -6,6 +6,7 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.post.post.entity.Post;
+import com.example.mentoringproject.post.post.model.PostInfoResponseDto;
 import com.example.mentoringproject.post.post.model.PostRegisterRequest;
 import com.example.mentoringproject.post.post.model.PostUpdateRequest;
 import com.example.mentoringproject.post.post.repository.PostRepository;
@@ -33,17 +34,18 @@ public class PostService {
   private final PostSearchRepository postSearchRepository;
   private final S3Service s3Service;
 
-  private static final String FOLDER = "post";
+  private static final String FOLDER = "post/";
   private static final String FILE_TYPE = "img";
 
   // 포스팅 등록
-  public Post createPost(String email, PostRegisterRequest postRegisterRequest, List<MultipartFile> thumbNailImg) {
+  public Post createPost(String email, PostRegisterRequest postRegisterRequest,
+      List<MultipartFile> thumbNailImg) {
     User user = getUser(email);
 
     Post post = Post.from(user, postRegisterRequest);
 
-    String uploadPath = FOLDER + "/" + postRegisterRequest.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    String uploadPath = FOLDER + postRegisterRequest.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg, uploadPath, FILE_TYPE);
     post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     postRepository.save(post);
@@ -56,7 +58,7 @@ public class PostService {
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
     imgList.add(s3Service.extractFileName(post.getUploadUrl()));
-    s3Service.fileClear(FOLDER + "/" + postRegisterRequest.getUploadFolder(), imgList);
+    s3Service.fileClear(FOLDER + postRegisterRequest.getUploadFolder(), imgList);
 
     return post;
   }
@@ -69,7 +71,8 @@ public class PostService {
 
   // 포스팅 수정
   @Transactional
-  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest, List<MultipartFile> thumbNailImg) {
+  public Post updatePost(String email, Long postId, PostUpdateRequest postUpdateRequest,
+      List<MultipartFile> thumbNailImg) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Post"));
 
@@ -82,8 +85,8 @@ public class PostService {
     post.setContent(postUpdateRequest.getContent());
     post.setUpdateDatetime(LocalDateTime.now());
 
-    String uploadPath = FOLDER + "/" + postUpdateRequest.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
+    String uploadPath = FOLDER + postUpdateRequest.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg, uploadPath, FILE_TYPE);
     post.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     postRepository.save(post);
@@ -96,7 +99,7 @@ public class PostService {
         .map(s3Service::extractFileName)
         .collect(Collectors.toList());
     imgList.add(s3Service.extractFileName(post.getUploadUrl()));
-    s3Service.fileClear(FOLDER + "/" + postUpdateRequest.getUploadFolder(), imgList);
+    s3Service.fileClear(FOLDER + postUpdateRequest.getUploadFolder(), imgList);
 
     return post;
 
@@ -112,20 +115,28 @@ public class PostService {
       throw new AppException(HttpStatus.BAD_REQUEST, "Not Writer of Post");
     }
 
-    s3Service.fileClear(FOLDER + "/" + post.getUploadFolder(), Collections.emptyList());
+    s3Service.fileClear(FOLDER + post.getUploadFolder(), Collections.emptyList());
     postRepository.deleteById(postId);
     postSearchRepository.deleteById(postId);
   }
 
   @Transactional
-  public Post postInfo(Long postId) {
+  public PostInfoResponseDto postInfo(String email, Long postId) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 글 입니다."));
+
+    boolean isOwner = false;
+
+    if (post.getUser().getEmail().equals(email)) {
+      isOwner = true;
+    }
+
+    boolean isLike = post.getPostLikes().stream()
+        .anyMatch(postLikes -> postLikes.getUser().getEmail().equals(email));
+
+
     postRepository.updateCount(postId);
-
-    return getPost(postId);
-  }
-
-  public Post getPost(Long postId){
-    return postRepository.findById(postId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 글 입니다."));
+    return PostInfoResponseDto.fromEntity(post, isOwner, isLike);
   }
 
 }

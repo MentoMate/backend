@@ -1,5 +1,6 @@
 package com.example.mentoringproject.post.comment.controller;
 
+import com.example.mentoringproject.ElasticSearch.util.SearchResult;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.comment.model.CommentDto;
 import com.example.mentoringproject.post.comment.model.CommentRegisterRequest;
@@ -80,15 +81,25 @@ public class CommentController {
       @ApiResponse(responseCode = "200", description = "댓글 조회 성공", content =
       @Content(schema = @Schema(implementation = CommentDto.class)))
   })
+
   @GetMapping
-  public ResponseEntity<Page<CommentDto>> getAllComments(
+  public ResponseEntity<SearchResult<CommentDto>> getAllComments(
+      @PathVariable Long postId,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "8") int pageSize,
       @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "DESC") String sortDirection) {
-    Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.fromString(sortDirection),
-        sortBy);
+    String email = SpringSecurityUtil.getLoginEmail();
+    Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.Direction.fromString(sortDirection), sortBy);
 
-    return ResponseEntity.ok(commentService.findAllComments(pageable).map(CommentDto::fromEntity));
+    Page<CommentDto> commentsPage = commentService.findAllCommentsByPostId(postId, pageable, email);
+
+    SearchResult<CommentDto> searchResult = new SearchResult<>(
+        commentsPage.getTotalPages(),
+        commentsPage.getContent()
+    );
+
+    return ResponseEntity.ok(searchResult);
   }
+
 }

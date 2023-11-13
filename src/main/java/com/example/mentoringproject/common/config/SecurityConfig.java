@@ -55,9 +55,8 @@ public class SecurityConfig {
         .authorizeRequests()
         .antMatchers("/", "/user/login/**", "/user/join/**").permitAll()
         .antMatchers(PERMIT_URL_ARRAY).permitAll()
-        .antMatchers(HttpMethod.POST, "/mentor/search","/mentoring/search").permitAll()
         .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
-            "/posts/{postId}/comments", "/posts/{postId}/info","/post/search").permitAll()
+            "/posts/{postId}/comments", "/posts/{postId}/info", "/post/search","/{postId}/comments","/mentor/search","/mentoring/search").permitAll()
         .anyRequest().authenticated();
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.addFilterBefore(jwtAuthenticationProcessingFilter(),

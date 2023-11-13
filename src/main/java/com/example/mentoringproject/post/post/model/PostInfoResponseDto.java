@@ -25,11 +25,15 @@ public class PostInfoResponseDto {
   private int commentCount;
   private int countWatch;
   private String nickName;
+  private boolean isOwner;
+  private boolean isLike;
+  private String UserUploadUrl;
+  private String UserUploadFolder;
 
   private LocalDateTime registerDatetime;
   private LocalDateTime updateDatetime;
 
-  public static PostInfoResponseDto fromEntity(Post post) {
+  public static PostInfoResponseDto fromEntity(Post post, boolean isOwner, boolean isLike) {
     return PostInfoResponseDto.builder()
         .id(post.getId())
         .category(post.getCategory())
@@ -41,8 +45,12 @@ public class PostInfoResponseDto {
         .commentCount(post.getCommentCount())
         .countWatch(post.getCountWatch())
         .nickName(post.getUser().getNickName())
+        .isOwner(isOwner)
+        .isLike(isLike)
         .registerDatetime(post.getRegisterDatetime())
         .updateDatetime(post.getUpdateDatetime())
+        .UserUploadUrl(post.getUser().getUploadUrl())
+        .UserUploadFolder(post.getUser().getUploadFolder())
         .build();
   }
 

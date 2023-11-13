@@ -40,8 +40,8 @@ public class Comment {
   private String comment;
 
   private String nickName;
-  private String uploadUrl;
-  private String uploadFolder;
+
+  private boolean isOwner;
 
 
   @CreatedDate
@@ -65,6 +65,7 @@ public class Comment {
         .post(post)
         .comment(commentRegisterRequest.getComment())
         .nickName(user.getNickName())
+        .isOwner(true)
         .build();
   }
 

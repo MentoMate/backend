@@ -26,9 +26,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,7 +49,7 @@ public class MentoringService {
   private final UserService userService;
   private final S3Service s3Service;
 
-  private static final String  FOLDER = "mentoring";
+  private static final String  FOLDER = "mentoring/";
   private static final String FILE_TYPE = "img";
   @Transactional
   public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
@@ -120,11 +122,13 @@ public class MentoringService {
   }
 
   public Mentoring getMentoring(Long mentoringId){
-    return mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
+    Mentoring mentoring = mentoringRepository.findById(mentoringId).orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "존재 하지 않는 멘토링 입니다."));
+    if(mentoring.getStatus() == MentoringStatus.DELETE) throw  new AppException(HttpStatus.BAD_REQUEST, "삭제된 멘토링 입니다.");
+    return  mentoring;
   }
 
 
-  public List<MentoringByCountWatchDto> getMentoringByCountWatch(){
+  public List<MentoringByCountWatchDto> getMentoringByCountWatch() {
     List<Mentoring> top50MentoringList = mentoringRepository.findTop50ByOrderByCountWatchDesc();
     int totalSize = top50MentoringList.size();
 
@@ -133,16 +137,26 @@ public class MentoringService {
     }
 
     Random random = new Random();
-    List<Mentoring> randomMentoringList = random.ints(4, 0, totalSize)
-        .mapToObj(top50MentoringList::get)
+    Set<Integer> randomIndices = new HashSet<>();
+
+    while (randomIndices.size() < 4) {
+      randomIndices.add(random.nextInt(totalSize));
+    }
+
+    List<Mentoring> randomMentoringList = randomIndices.stream()
+        .map(top50MentoringList::get)
         .collect(Collectors.toList());
 
     return MentoringByCountWatchDto.fromEntity(randomMentoringList);
-
   }
 
+
   public List<MentorByRatingDto> getMentorByRating() {
-    List<User> top50MentorList = userRepository.findTop50ByOrderByRatingDesc();
+    List<User> top50MentorList = userRepository.findTop50ByOrderByRatingDesc()
+        .stream()
+        .filter(user -> user.getName() != null)
+        .collect(Collectors.toList());
+
     int totalSize = top50MentorList.size();
 
     if (totalSize < 4) {
@@ -150,16 +164,21 @@ public class MentoringService {
     }
 
     Random random = new Random();
-    List<User> randomMentorList = random.ints(4, 0, totalSize)
-        .mapToObj(top50MentorList::get)
+    Set<Integer> randomIndices = new HashSet<>();
+
+    while (randomIndices.size() < 4) {
+      randomIndices.add(random.nextInt(totalSize));
+    }
+
+    List<User> randomMentorList = randomIndices.stream()
+        .map(top50MentorList::get)
         .collect(Collectors.toList());
 
     return MentorByRatingDto.fromEntity(randomMentorList);
   }
 
   public List<PostByRegisterDateDto> getPostByRegisterDateTime() {
-    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(
-        Category.review);
+    List<Post> top50PostList = postRepository.findTop50ByCategoryOrderByRegisterDatetimeDesc(Category.review);
     int totalSize = top50PostList.size();
 
     if (totalSize < 4) {
@@ -167,16 +186,23 @@ public class MentoringService {
     }
 
     Random random = new Random();
-    List<Post> randomPostList = random.ints(4, 0, totalSize)
-        .mapToObj(top50PostList::get)
+    Set<Integer> randomIndices = new HashSet<>();
+
+    while (randomIndices.size() < 4) {
+      randomIndices.add(random.nextInt(totalSize));
+    }
+
+    List<Post> randomPostList = randomIndices.stream()
+        .map(top50PostList::get)
         .collect(Collectors.toList());
 
     return PostByRegisterDateDto.fromEntity(randomPostList);
   }
 
+
   public List<MentoringByEndDateDto> getMentoringByEndDate() {
     LocalDate today = LocalDate.now();
-    LocalDate maxEndDate = today.plusDays(5); //
+    LocalDate maxEndDate = today.plusDays(3);
 
     List<Mentoring> top50MentoringList = mentoringRepository.findByEndDateBetween(today, maxEndDate);
     int totalSize = top50MentoringList.size();
@@ -185,23 +211,19 @@ public class MentoringService {
       return MentoringByEndDateDto.fromEntity(top50MentoringList);
     }
 
-    List<Mentoring> randomMentoringList = getRandomMentorings(top50MentoringList, 4);
+    Random random = new Random();
+    Set<Integer> randomIndices = new HashSet<>();
+
+    while (randomIndices.size() < 4) {
+      randomIndices.add(random.nextInt(totalSize));
+    }
+
+    List<Mentoring> randomMentoringList = randomIndices.stream()
+        .map(top50MentoringList::get)
+        .collect(Collectors.toList());
 
     return MentoringByEndDateDto.fromEntity(randomMentoringList);
   }
-
-  private List<Mentoring> getRandomMentorings(List<Mentoring> mentorings, int count) {
-    List<Mentoring> randomMentorings = new ArrayList<>();
-    Random random = new Random();
-
-    while (randomMentorings.size() < count && !mentorings.isEmpty()) {
-      int randomIndex = random.nextInt(mentorings.size());
-      randomMentorings.add(mentorings.remove(randomIndex));
-    }
-
-    return randomMentorings;
-  }
-
 
 
   @Transactional
@@ -211,7 +233,7 @@ public class MentoringService {
   }
 
   private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
-    String uploadPath = FOLDER + "/" + mentoringSave.getUploadFolder();
+    String uploadPath = FOLDER + mentoringSave.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(thumbNailImg,uploadPath,FILE_TYPE);
     mentoring.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
