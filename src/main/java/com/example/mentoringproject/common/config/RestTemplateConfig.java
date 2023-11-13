@@ -1,4 +1,4 @@
-package com.example.mentoringproject.login.oauth.config;
+package com.example.mentoringproject.common.config;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.service.MentoringService;
 import com.example.mentoringproject.pay.entity.Pay;
@@ -43,6 +44,9 @@ class PayServiceTest {
   private UserService userService;
 
   @Mock
+  private MenteeService menteeService;
+
+  @Mock
   private RestTemplate restTemplate;
 
   @Mock
@@ -74,10 +78,12 @@ class PayServiceTest {
     mentee2.setId(2L);
     menteeList.add(mentee1);
     menteeList.add(mentee2);
-    mentoring.setMenteeList(menteeList);
+
+
 
     given(mentoringService.getMentoring(anyLong())).willReturn(mentoring);
     given(userService.getUser(anyString())).willReturn(buyer);
+    given(menteeService.getMenteeListFormMentoring(any())).willReturn(menteeList);
 
     //when
     AppException appException = assertThrows(AppException.class, () ->
@@ -98,7 +104,6 @@ class PayServiceTest {
     List<User> menteeList = new ArrayList<>();
 
     mentoring.setId(mentoringId);
-    mentoring.setMenteeList(menteeList);
 
     String email = "buyer@example.com";
     User buyer = new User();
@@ -108,6 +113,7 @@ class PayServiceTest {
 
     given(mentoringService.getMentoring(anyLong())).willReturn(mentoring);
     given(userService.getUser(anyString())).willReturn(buyer);
+    given(menteeService.getMenteeListFormMentoring(any())).willReturn(menteeList);
 
     //when
     payService.payCompleteRegister(email, impUid, mentoringId);

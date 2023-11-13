@@ -49,11 +49,7 @@ public class Mentoring {
   @JoinColumn(name = "user_id")
   private User user;
 
-
   private int countWatch;
-
-  @OneToMany(fetch = FetchType.LAZY)
-  private List<User> menteeList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;
