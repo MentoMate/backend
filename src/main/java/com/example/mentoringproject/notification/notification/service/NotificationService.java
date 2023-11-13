@@ -6,6 +6,8 @@ import com.example.mentoringproject.notification.notification.entity.Notificatio
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
 import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.repository.NotificationRepository;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.service.UserService;
 import java.io.IOException;
 import java.util.Map;
 import javax.transaction.Transactional;
@@ -26,6 +28,7 @@ public class NotificationService {
 
   private final EmitterRepository emitterRepository;
   private final NotificationRepository notificationRepository;
+  private final UserService userService;
 
   public SseEmitter subscribe(String userEmail) {
     String emitterId = makeTimeIncludeId(userEmail);
@@ -70,8 +73,11 @@ public class NotificationService {
   }
 
   public NotificationResponseDto saveNotification(NotificationRequestDto parameter) {
+    User user = userService.getUser(parameter.getReceiverEmail());
+
     return NotificationResponseDto.from(notificationRepository.save(Notification.builder()
         .receiverEmail(parameter.getReceiverEmail())
+        .receiver(user)
         .content(parameter.getContent())
         .notificationType(parameter.getNotificationType())
         .isRead(false)
@@ -79,7 +85,8 @@ public class NotificationService {
   }
 
   public Page<NotificationResponseDto> getNotification(String email, Pageable pageable) {
-    Page<Notification> notificationPage = notificationRepository.findAllByReceiverEmail(email, pageable);
+    Page<Notification> notificationPage = notificationRepository.findAllByReceiverEmail(email,
+        pageable);
     return NotificationResponseDto.from(notificationPage);
   }
 

@@ -1,7 +1,7 @@
 package com.example.mentoringproject.pay.entity;
 
 import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;

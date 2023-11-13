@@ -16,8 +16,8 @@ import com.example.mentoringproject.mentoring.service.MentoringService;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.entity.PayStatus;
 import com.example.mentoringproject.pay.repository.PayRepository;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.service.UserService;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +83,7 @@ class PayServiceTest {
 
     given(mentoringService.getMentoring(anyLong())).willReturn(mentoring);
     given(userService.getUser(anyString())).willReturn(buyer);
-    given(menteeService.getMenteeListFormMentoring(any())).willReturn(menteeList);
+    given(menteeService.getUserListFormMentoring(any())).willReturn(menteeList);
 
     //when
     AppException appException = assertThrows(AppException.class, () ->
@@ -113,7 +113,7 @@ class PayServiceTest {
 
     given(mentoringService.getMentoring(anyLong())).willReturn(mentoring);
     given(userService.getUser(anyString())).willReturn(buyer);
-    given(menteeService.getMenteeListFormMentoring(any())).willReturn(menteeList);
+    given(menteeService.getUserListFormMentoring(any())).willReturn(menteeList);
 
     //when
     payService.payCompleteRegister(email, impUid, mentoringId);

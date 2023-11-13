@@ -1,7 +1,7 @@
-package com.example.mentoringproject.user.repository;
+package com.example.mentoringproject.user.user.repository;
 
-import com.example.mentoringproject.user.entity.SocialType;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.SocialType;
+import com.example.mentoringproject.user.user.entity.User;
 import java.util.List;
 import java.util.Optional;
 

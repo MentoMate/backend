@@ -1,6 +1,6 @@
 package com.example.mentoringproject.ElasticSearch.mentor.entity;
 
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

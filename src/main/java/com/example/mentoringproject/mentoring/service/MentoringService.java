@@ -5,12 +5,14 @@ import com.example.mentoringproject.ElasticSearch.mentoring.repository.Mentoring
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.model.CountDto;
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
+import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
@@ -19,9 +21,9 @@ import com.example.mentoringproject.post.post.entity.Category;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.model.PostByRegisterDateDto;
 import com.example.mentoringproject.post.post.repository.PostRepository;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.repository.UserRepository;
-import com.example.mentoringproject.user.service.UserService;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.service.UserService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +36,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,15 +50,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 @RequiredArgsConstructor
 public class MentoringService {
+
   private final MentoringRepository mentoringRepository;
   private final MentoringSearchRepository mentoringSearchRepository;
+  private final MenteeService menteeService;
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final UserService userService;
   private final S3Service s3Service;
 
-  private static final String  FOLDER = "mentoring/";
+  private static final String FOLDER = "mentoring/";
   private static final String FILE_TYPE = "img";
+
   @Transactional
   public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
@@ -206,7 +215,8 @@ public class MentoringService {
     LocalDate today = LocalDate.now();
     LocalDate maxEndDate = today.plusDays(3);
 
-    List<Mentoring> top50MentoringList = mentoringRepository.findByEndDateBetween(today, maxEndDate);
+    List<Mentoring> top50MentoringList = mentoringRepository.findByEndDateBetween(today,
+        maxEndDate);
     int totalSize = top50MentoringList.size();
 
     if (totalSize < 4) {
@@ -231,7 +241,8 @@ public class MentoringService {
   @Transactional
   public void deleteMentoringUserByCancelPayment(Pay pay) {
     Mentoring mentoring = pay.getMentoring();
-    mentoring.getMenteeList().removeIf(user -> user.equals(pay.getUser()));
+    List<User> userList = menteeService.getUserListFormMentoring(mentoring);
+    userList.removeIf(user -> user.equals(pay.getUser()));
   }
 
   private void imgUpload(MentoringSave mentoringSave, Mentoring mentoring, List<MultipartFile> thumbNailImg){
@@ -260,6 +271,24 @@ public class MentoringService {
     return countDtoList;
   }
 
+  public Page<MentoringDto> getEndedMentoringList(String email, Pageable pageable) {
+    User user = userService.getUser(email);
+    List<MentoringDto> mentoringDtoList = menteeService.getMentoringListFormMenteeUser(user)
+        .stream()
+        .filter(mentoring -> mentoring.getStatus().equals(MentoringStatus.FINISH))
+        .map(MentoringDto::from)
+        .collect(Collectors.toList());
+
+    return pagingMentoringDto(pageable, mentoringDtoList);
+  }
+
+  private static Page<MentoringDto> pagingMentoringDto(Pageable pageable, List<MentoringDto> mentoringDtoList) {
+    PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    int start = (int) pageRequest.getOffset();
+    int end = Math.min((start + pageable.getPageSize()), mentoringDtoList.size());
+    return new PageImpl<>(mentoringDtoList.subList(start, end),
+        pageRequest, mentoringDtoList.size());
+  }
   @Transactional
   public void mentoringFollow(String email, Long mentoringId){
 
@@ -287,11 +316,9 @@ public class MentoringService {
     return mentoringRepository.findByStatusNotAndUserId(MentoringStatus.DELETE, user.getId(), pageable);
   }
 
-  @Transactional
-  public Page<Mentoring> getParticipatedMentoringHistory(String email, Pageable pageable){
-    User user = userService.getUser(email);
-    return mentoringRepository.findByStatusNotAndMenteeList_Id(MentoringStatus.DELETE, user.getId(), pageable);
-  }
-
+//  @Transactional
+//  public Page<Mentoring> getParticipatedMentoringHistory(String email, Pageable pageable){
+//    User user = userService.getUser(email);
+//    return mentoringRepository.findByStatusNotAndMenteeList_Id(MentoringStatus.DELETE, user.getId(), pageable);
+//  }
 }
-

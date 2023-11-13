@@ -8,8 +8,8 @@ import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.entity.PayStatus;
 import com.example.mentoringproject.pay.model.IamportResponseDto;
 import com.example.mentoringproject.pay.repository.PayRepository;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.service.UserService;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -47,7 +47,7 @@ public class PayService {
     User buyer = userService.getUser(email);
 
     //이미 결제가 완료된 사람인지 확인
-    List<User> menteeList = menteeService.getMenteeListFormMentoring(mentoring);
+    List<User> menteeList = menteeService.getUserListFormMentoring(mentoring);
 
     if (menteeList.stream().anyMatch(user -> user.getId().equals(buyer.getId()))) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이미 결제가 완료되었습니다.");

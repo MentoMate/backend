@@ -1,7 +1,7 @@
 package com.example.mentoringproject.post.postLikes.entity;
 
 import com.example.mentoringproject.post.post.entity.Post;
-import com.example.mentoringproject.user.entity.User;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;

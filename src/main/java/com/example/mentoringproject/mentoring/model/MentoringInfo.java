@@ -2,8 +2,10 @@ package com.example.mentoringproject.mentoring.model;
 
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import lombok.Builder;
@@ -32,7 +34,7 @@ public class MentoringInfo {
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
-  public static MentoringInfo from(Mentoring mentoring, boolean isOwner) {
+  public static MentoringInfo from(Mentoring mentoring, boolean isOwner, List<User> userList) {
 
     return MentoringInfo.builder()
         .mentoringId(mentoring.getId())
@@ -49,7 +51,7 @@ public class MentoringInfo {
         .name(mentoring.getUser().getName())
         .countWatch(mentoring.getCountWatch())
         .useProfileImg(mentoring.getUser().getUploadUrl())
-        .leftPeople(mentoring.getNumberOfPeople() - mentoring.getMenteeList().size())
+        .leftPeople(mentoring.getNumberOfPeople() - userList.size())
         .followers(mentoring.getFollowerList().size())
         .isOwner(isOwner)
         .registerDate(mentoring.getRegisterDate())

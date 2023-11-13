@@ -1,7 +1,7 @@
 package com.example.mentoringproject.login.email.handler;
 
 import com.example.mentoringproject.common.jwt.service.JwtService;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

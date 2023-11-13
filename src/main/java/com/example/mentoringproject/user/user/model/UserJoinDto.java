@@ -1,4 +1,4 @@
-package com.example.mentoringproject.user.model;
+package com.example.mentoringproject.user.user.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;

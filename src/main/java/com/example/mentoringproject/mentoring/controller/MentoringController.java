@@ -3,12 +3,10 @@ package com.example.mentoringproject.mentoring.controller;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
-import com.example.mentoringproject.mentoring.model.MentoringList;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
 import com.example.mentoringproject.mentoring.service.MentoringService;
-import com.example.mentoringproject.user.model.UserProfileList;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,10 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -167,5 +161,20 @@ public class MentoringController {
     Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(MentoringList.from(mentoringService.getParticipatedMentoringHistory(email,pageable)));
+  }
+
+  @GetMapping("/end")
+  public ResponseEntity<Page<MentoringDto>> getListOfExpiredMentoring(
+      @PageableDefault Pageable pageable
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(mentoringService.getEndedMentoringList(email, pageable));
+  }
+
+  @PutMapping("/rating")
+  public ResponseEntity<GradeResponseDto> giveFeedbackAndRating(
+      @RequestBody GradeRequestDto gradeRequestDto) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(gradeService.giveFeedbackAndRating(email, gradeRequestDto));
   }
 }

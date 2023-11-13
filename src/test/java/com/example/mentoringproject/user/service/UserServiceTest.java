@@ -8,11 +8,13 @@ import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearch
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.model.UserJoinDto;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.model.UserJoinDto;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import com.example.mentoringproject.user.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

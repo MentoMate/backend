@@ -1,8 +1,8 @@
 package com.example.mentoringproject.login.oauth.service;
 
 
-import static com.example.mentoringproject.user.entity.SocialType.KAKAO;
-import static com.example.mentoringproject.user.entity.SocialType.NAVER;
+import static com.example.mentoringproject.user.user.entity.SocialType.KAKAO;
+import static com.example.mentoringproject.user.user.entity.SocialType.NAVER;
 
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.jwt.service.JwtService;
@@ -10,9 +10,9 @@ import com.example.mentoringproject.login.email.service.LoginService;
 import com.example.mentoringproject.login.oauth.model.OAuthToken;
 import com.example.mentoringproject.login.oauth.oauth.KakaoOauth;
 import com.example.mentoringproject.login.oauth.oauth.NaverOauth;
-import com.example.mentoringproject.user.entity.SocialType;
-import com.example.mentoringproject.user.entity.User;
-import com.example.mentoringproject.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.entity.SocialType;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;

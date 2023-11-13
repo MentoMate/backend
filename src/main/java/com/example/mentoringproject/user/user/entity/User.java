@@ -1,4 +1,4 @@
-package com.example.mentoringproject.user.entity;
+package com.example.mentoringproject.user.user.entity;
 
 import com.example.mentoringproject.post.comment.entity.Comment;
 import com.example.mentoringproject.post.post.entity.Post;
