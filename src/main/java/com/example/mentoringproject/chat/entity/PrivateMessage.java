@@ -53,12 +53,5 @@ public class PrivateMessage {
     this.senderNickName = senderNickName;
     this.message = message;
   }
-/*
-  public static ChatMessage toChatMessage(PrivateMessage privateMessage) {
-    return new ChatMessage(
-        privateMessage.getPrivateChatRoom().getId(),
-        privateMessage.getSenderNickName(),
-        privateMessage.getMessage());
-  }
-*/
+
 }

@@ -27,7 +27,7 @@ public class GroupChatRoom {
   private Long id;
 
   @OneToOne
-  @JoinColumn(name = "group_mentoring_id", unique = true)
+  @JoinColumn(name = "mentoring_id", unique = true)
   private Mentoring mentoring;
 
 

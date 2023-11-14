@@ -5,5 +5,5 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GroupMessageRepository extends JpaRepository<GroupMessage, Long> {
-  List<GroupMessage> findAllByMentoringId(Long groupMentoringId);
+  List<GroupMessage> findByMentoringIdOrderByRegisterDatetime(Long mentoringId);
 }

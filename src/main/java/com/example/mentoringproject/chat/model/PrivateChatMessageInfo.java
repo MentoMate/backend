@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class PrivateChatMessageInfo {
-  private Long chatRoomId;
+  private Long privateChatRoomId;
   private String senderNickName;
   private String message;
   private LocalDateTime registerDatetime;
 
   public static PrivateChatMessageInfo fromEntity(PrivateMessage privateMessage) {
     return PrivateChatMessageInfo.builder()
-        .chatRoomId(privateMessage.getPrivateChatRoom().getId())
+        .privateChatRoomId(privateMessage.getPrivateChatRoom().getId())
         .senderNickName(privateMessage.getSenderNickName())
         .message(privateMessage.getMessage())
         .registerDatetime(privateMessage.getRegisterDatetime())

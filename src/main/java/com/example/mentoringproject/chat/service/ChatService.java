@@ -95,8 +95,8 @@ public class ChatService {
 
   // 그룹 채팅방 불러오기
   @Transactional
-  public List<GroupMessage> findAllGroupMessages(Long groupMentoringId) {
-    return groupMessageRepository.findAllByMentoringId(groupMentoringId);
+  public List<GroupMessage> findAllGroupMessages(Long mentoringId) {
+    return groupMessageRepository.findByMentoringIdOrderByRegisterDatetime(mentoringId);
   }
 
   // 1:1 채팅방 불러오기

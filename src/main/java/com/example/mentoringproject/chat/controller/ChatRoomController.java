@@ -46,11 +46,11 @@ public class ChatRoomController {
       @ApiResponse(responseCode = "200", description = "그룹 채팅방 입장 후 조회 성공", content =
       @Content(schema = @Schema(implementation =GroupChatMessageInfo.class)))
   })
-  @GetMapping("/{groupMentoringId}")
+  @GetMapping("/{mentoringId}")
   public ResponseEntity<List<GroupChatMessageInfo>> GroupMessageInfo(
-      @PathVariable Long groupMentoringId) {
+      @PathVariable Long mentoringId) {
 
-    return ResponseEntity.ok(chatService.findAllGroupMessages(groupMentoringId).stream()
+    return ResponseEntity.ok(chatService.findAllGroupMessages(mentoringId).stream()
         .map(GroupChatMessageInfo::fromEntity).collect(Collectors.toList()));
   }
 
