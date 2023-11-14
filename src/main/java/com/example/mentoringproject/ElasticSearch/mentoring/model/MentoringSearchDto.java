@@ -1,13 +1,18 @@
 package com.example.mentoringproject.ElasticSearch.mentoring.model;
 
 import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
+import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.repository.MentoringRepository;
+import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,13 +36,14 @@ public class MentoringSearchDto {
 
   private String uploadUrl;
   private String uploadFolder;
-
-  private int countWatch;
-
   private boolean isMentorRegister;
 
   public static MentoringSearchDto fromDocument(
-      MentoringSearchDocumment mentoringSearchDocumment, boolean isMentorRegister) {
+      MentoringSearchDocumment mentoringSearchDocumment, boolean isMentorRegister, MentoringRepository mentoringRepository) {
+    Mentoring mentoring = mentoringRepository.findById(mentoringSearchDocumment.getId()).orElseThrow(
+        () -> new AppException(HttpStatus.BAD_REQUEST,"Not found Mentoring"));
+    User user = mentoring.getUser();
+    Double rating = user != null ? user.getRating() : 0.0;
     return MentoringSearchDto.builder()
         .id(mentoringSearchDocumment.getId())
         .writer(mentoringSearchDocumment.getWriter())
@@ -49,7 +55,7 @@ public class MentoringSearchDto {
         .amount(mentoringSearchDocumment.getAmount())
         .status(mentoringSearchDocumment.getStatus())
         .category(mentoringSearchDocumment.getCategory())
-        .rating(mentoringSearchDocumment.getRating())
+        .rating(rating)
         .uploadUrl(mentoringSearchDocumment.getUploadUrl())
         .uploadFolder(mentoringSearchDocumment.getUploadFolder())
         .isMentorRegister(isMentorRegister)

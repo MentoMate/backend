@@ -3,6 +3,7 @@ package com.example.mentoringproject.ElasticSearch.mentoring.service;
 import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentoring.model.MentoringSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
+import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class MentoringSearchService {
 
   private final MentoringSearchRepository metoringSearchRepository;
+  private final MentoringRepository mentoringRepository;
   private final UserRepository userRepository;
 
   public List<MentoringSearchDto> searchTitleAndCategory(String title, String category, String email) {
@@ -23,7 +25,7 @@ public class MentoringSearchService {
     Boolean isMentorRegister = isMentorRegister(email);
 
     return mentoringSearchDocuments.stream()
-        .map(doc -> MentoringSearchDto.fromDocument(doc, isMentorRegister))
+        .map(doc -> MentoringSearchDto.fromDocument(doc, isMentorRegister, mentoringRepository))
         .collect(Collectors.toList());
   }
 
@@ -34,7 +36,7 @@ public class MentoringSearchService {
     Boolean isMentorRegister = isMentorRegister(email);
 
     return mentoringSearchDocuments.stream()
-        .map(doc -> MentoringSearchDto.fromDocument(doc, isMentorRegister))
+        .map(doc -> MentoringSearchDto.fromDocument(doc, isMentorRegister, mentoringRepository))
         .collect(Collectors.toList());
   }
 
@@ -43,7 +45,7 @@ public class MentoringSearchService {
     Boolean isMentorRegister = isMentorRegister(email);
 
     return mentoringSearchDocuments.stream()
-        .map(doc -> MentoringSearchDto.fromDocument(doc, isMentorRegister))
+        .map(doc -> MentoringSearchDto.fromDocument(doc, isMentorRegister, mentoringRepository))
         .collect(Collectors.toList());
   }
 
