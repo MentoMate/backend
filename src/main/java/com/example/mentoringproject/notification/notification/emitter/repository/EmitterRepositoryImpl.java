@@ -27,8 +27,8 @@ public class EmitterRepositoryImpl implements EmitterRepository {
   }
 
   @Override
-  public void deleteById(String id) {
-    emitters.remove(id);
+  public void deleteById(String emitterId) {
+    emitters.remove(emitterId);
   }
 
 }

@@ -3,9 +3,10 @@ package com.example.mentoringproject.notification.notification.service;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.notification.notification.emitter.repository.EmitterRepository;
 import com.example.mentoringproject.notification.notification.entity.Notification;
+import com.example.mentoringproject.notification.notification.model.FirstConnectionDto;
 import com.example.mentoringproject.notification.notification.model.NotificationConnectionType;
 import com.example.mentoringproject.notification.notification.model.NotificationDto;
-import com.example.mentoringproject.notification.notification.model.NotificationFinalDto;
+import com.example.mentoringproject.notification.notification.model.NotificationObjectDto;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
 import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.repository.NotificationRepository;
@@ -35,24 +36,27 @@ public class NotificationService {
   private final NotificationRepository notificationRepository;
   private final UserService userService;
 
-  public SseEmitter subscribe(String userEmail) {
-    String emitterId = makeTimeIncludeId(userEmail);
+  public SseEmitter subscribe(String userEmail, String emitterId) {
     SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
     emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
     emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
 
     // 503 에러를 방지하기 위한 더미 이벤트 전송
     String eventId = makeTimeIncludeId(userEmail);
-    NotificationFinalDto connection = NotificationFinalDto.builder()
+
+    NotificationObjectDto connection = NotificationObjectDto.builder()
         .type(NotificationConnectionType.SUBSCRIBE)
-        .data("EventStream Created. [userId=" + userEmail + "]")
+        .data(FirstConnectionDto.builder()
+            .connectionId(userEmail)
+            .emitterId(emitterId)
+            .build())
         .build();
     sendNotification(emitter, eventId, emitterId, connection);
 
     return emitter;
   }
 
-  private String makeTimeIncludeId(String userEmail) {
+  public String makeTimeIncludeId(String userEmail) {
     return userEmail + "_" + System.currentTimeMillis();
   }
 
@@ -86,17 +90,22 @@ public class NotificationService {
   public NotificationResponseDto saveNotification(NotificationRequestDto parameter) {
     User user = userService.getUser(parameter.getReceiverEmail());
 
-    NotificationDto sendData = NotificationDto.from(notificationRepository.save(Notification.builder()
-        .receiverEmail(parameter.getReceiverEmail())
-        .receiver(user)
-        .content(parameter.getContent())
-        .notificationType(parameter.getNotificationType())
-        .isRead(false)
-        .build()));
+    NotificationDto sendData = NotificationDto.from(
+        notificationRepository.save(Notification.builder()
+            .receiverEmail(parameter.getReceiverEmail())
+            .receiver(user)
+            .content(parameter.getContent())
+            .notificationType(parameter.getNotificationType())
+            .isRead(false)
+            .build()));
     return NotificationResponseDto.builder()
         .type(NotificationConnectionType.RECEIVE)
         .data(sendData)
         .build();
+  }
+
+  public void deleteEmitter(String emitterId) {
+    emitterRepository.deleteById(emitterId);
   }
 
   public Page<NotificationDto> getNotification(String email, Pageable pageable) {

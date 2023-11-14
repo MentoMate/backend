@@ -3,9 +3,9 @@ package com.example.mentoringproject.notification.notification.controller;
 import static com.example.mentoringproject.common.util.SpringSecurityUtil.getLoginEmail;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.notification.notification.model.NotificationObjectDto;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
 import com.example.mentoringproject.notification.notification.model.NotificationDto;
-import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.service.NotificationService;
 import com.example.mentoringproject.notification.redis.RedisPublisher;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,15 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,13 +44,14 @@ public class NotificationController {
 
   @Operation(summary = "알림 최초 연결 api", description = "알림 최초 연결 api", responses = {
       @ApiResponse(responseCode = "200", description = "최초 연결은 data:EventStream Created. [userId=sungjinny5@naver.com] 형식"
-      , content = @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
+      , content = @Content(schema = @Schema(implementation = NotificationObjectDto.class)))
   })
   @GetMapping(value = "/subscribe", produces = "text/event-stream")
   public ResponseEntity<SseEmitter> subscribe() {
     String email = SpringSecurityUtil.getLoginEmail();
     log.debug("call subscribe, user={}", email);
-    return ResponseEntity.ok(notificationService.subscribe(email));
+    String emitterId = notificationService.makeTimeIncludeId(email);
+    return ResponseEntity.ok(notificationService.subscribe(email, emitterId));
   }
 
   @Operation(summary = "알림 푸쉬 api", description = "알림 푸쉬 api", responses = {
@@ -64,6 +62,17 @@ public class NotificationController {
     log.debug("call publish, notification={}", parameter);
     redisPublisher.publishNotification(parameter);
   }
+
+  @Operation(summary = "emitterId 삭제", description = "emitterId 삭제", responses = {
+      @ApiResponse(responseCode = "200", description = "true/false")
+  })
+  @DeleteMapping("/emitter")
+  public ResponseEntity<Boolean> deleteEmitter(@RequestParam String emitterId) {
+    log.debug("emitterId = {}", emitterId);
+    notificationService.deleteEmitter(emitterId);
+    return ResponseEntity.ok(true);
+  }
+
 
   @Operation(summary = "알림 목록 조회 api", description = "나에게온 알림 최신순으로 10개씩 목록 조회", responses = {
       @ApiResponse(responseCode = "200", description = "대상자에게 알림 푸쉬", content =

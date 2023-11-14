@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationFinalDto {
+public class NotificationObjectDto {
 
   @Schema(description = "NotificationType", example = "SUBSCRIBE/RECEIVE")
   private NotificationConnectionType type;
