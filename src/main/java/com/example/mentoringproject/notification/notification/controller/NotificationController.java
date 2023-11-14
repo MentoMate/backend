@@ -2,8 +2,10 @@ package com.example.mentoringproject.notification.notification.controller;
 
 import static com.example.mentoringproject.common.util.SpringSecurityUtil.getLoginEmail;
 
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
 import com.example.mentoringproject.notification.notification.model.NotificationDto;
+import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.service.NotificationService;
 import com.example.mentoringproject.notification.redis.RedisPublisher;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,10 +45,12 @@ public class NotificationController {
 
 
   @Operation(summary = "알림 최초 연결 api", description = "알림 최초 연결 api", responses = {
-      @ApiResponse(responseCode = "200", description = "알림이 연결되면 EventStream Created. [userId=\" + userEmail + \"]")
+      @ApiResponse(responseCode = "200", description = "최초 연결은 data:EventStream Created. [userId=sungjinny5@naver.com] 형식"
+      , content = @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
   })
   @GetMapping(value = "/subscribe", produces = "text/event-stream")
-  public ResponseEntity<SseEmitter> subscribe(@RequestParam @Email String email) {
+  public ResponseEntity<SseEmitter> subscribe() {
+    String email = SpringSecurityUtil.getLoginEmail();
     log.debug("call subscribe, user={}", email);
     return ResponseEntity.ok(notificationService.subscribe(email));
   }
