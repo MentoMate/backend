@@ -50,12 +50,14 @@ public class MentorSearchController {
       mentorSearchDtoList = mentorSearchService.searchAll(email);
     }
 
-    // 평점순, 최신순 정렬
+    // 평점순, 최신순, 팔로우순 정렬
     if ("rating".equals(sortBy)) {
       mentorSearchDtoList.sort(
           Comparator.comparing(MentorSearchDto::getRating).reversed());
     } else if ("latest".equals(sortBy)) {
       mentorSearchDtoList.sort(Comparator.comparing(MentorSearchDto::getId).reversed());
+    } else if ("follower".equals(sortBy)) {
+      mentorSearchDtoList.sort(Comparator.comparing(MentorSearchDto::getFollowers).reversed());
     }
     // 전체 페이지 수 계산
     int totalItems = mentorSearchDtoList.size();
