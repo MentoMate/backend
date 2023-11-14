@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +81,6 @@ public class NotificationController {
       @ApiResponse(responseCode = "200", description = "알림 읽음", content =
       @Content(schema = @Schema(implementation = NotificationDto.class)))
   })
-
   @PutMapping("/read/notification")
   public ResponseEntity<NotificationDto> readNotification(@RequestParam("notificationId") @Min(1) Long notificationId) {
     return ResponseEntity.ok(notificationService.readNotification(notificationId));
@@ -94,5 +94,17 @@ public class NotificationController {
       @RequestParam("notificationId") Long notificationId) {
     notificationService.deleteNotification(notificationId);
     return ResponseEntity.ok(true);
+  }
+
+  @Operation(summary = "읽지 않은 알림 목록", description = "읽지 않은 알림 목록 가져오기 api", responses = {
+      @ApiResponse(responseCode = "200", description = "알림 목록 가져오기 성공 읽음, 페이징 처리", content =
+      @Content(schema = @Schema(implementation = NotificationDto.class)))
+  })
+  @GetMapping("/notification/unread")
+  public ResponseEntity<Page<NotificationDto>> getUnreadNotification(
+      @PageableDefault(sort = "registerDate", direction = Direction.DESC) Pageable pageable
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(notificationService.getUnreadNotification(email, pageable));
   }
 }
