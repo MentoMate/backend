@@ -23,7 +23,7 @@ public class MentorSearchService {
     Boolean isMentorRegister = isMentorRegister(email);
 
     return mentorSearchDocuments.stream()
-        .map(doc -> MentorSearchDto.fromDocument(doc, isMentorRegister))
+        .map(doc -> MentorSearchDto.fromDocument(doc, isMentorRegister, userRepository))
         .collect(Collectors.toList());
   }
 
@@ -33,7 +33,7 @@ public class MentorSearchService {
     Boolean isMentorRegister = isMentorRegister(email);
 
     return mentorSearchDocuments.stream()
-        .map(doc -> MentorSearchDto.fromDocument(doc, isMentorRegister))
+        .map(doc -> MentorSearchDto.fromDocument(doc, isMentorRegister, userRepository))
         .collect(Collectors.toList());
   }
 
