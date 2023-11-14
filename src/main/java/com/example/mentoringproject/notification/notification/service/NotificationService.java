@@ -4,9 +4,9 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.notification.notification.emitter.repository.EmitterRepository;
 import com.example.mentoringproject.notification.notification.entity.Notification;
 import com.example.mentoringproject.notification.notification.model.NotificationConnectionType;
+import com.example.mentoringproject.notification.notification.model.NotificationDto;
 import com.example.mentoringproject.notification.notification.model.NotificationFinalDto;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
-import com.example.mentoringproject.notification.notification.model.NotificationDto;
 import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.repository.NotificationRepository;
 import com.example.mentoringproject.user.user.entity.User;
@@ -114,5 +114,12 @@ public class NotificationService {
       throw new AppException(HttpStatus.BAD_REQUEST, "존재하지 않는 공지 아이디입니다");
     }
     notificationRepository.deleteById(notificationId);
+  }
+
+  public Page<NotificationDto> getUnreadNotification(String email, Pageable pageable) {
+    User user = userService.getUser(email);
+    Page<Notification> notificationPage = notificationRepository.findAllByReceiverAndIsReadIsFalse(user,
+        pageable);
+    return notificationPage.map(NotificationDto::from);
   }
 }
