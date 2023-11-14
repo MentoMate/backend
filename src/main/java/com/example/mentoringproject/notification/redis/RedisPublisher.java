@@ -1,6 +1,7 @@
 package com.example.mentoringproject.notification.redis;
 
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
+import com.example.mentoringproject.notification.notification.model.NotificationDto;
 import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.service.NotificationService;
 import lombok.AllArgsConstructor;

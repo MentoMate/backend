@@ -3,7 +3,7 @@ package com.example.mentoringproject.notification.notification.controller;
 import static com.example.mentoringproject.common.util.SpringSecurityUtil.getLoginEmail;
 
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
-import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
+import com.example.mentoringproject.notification.notification.model.NotificationDto;
 import com.example.mentoringproject.notification.notification.service.NotificationService;
 import com.example.mentoringproject.notification.redis.RedisPublisher;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,10 +62,10 @@ public class NotificationController {
 
   @Operation(summary = "알림 목록 조회 api", description = "나에게온 알림 최신순으로 10개씩 목록 조회", responses = {
       @ApiResponse(responseCode = "200", description = "대상자에게 알림 푸쉬", content =
-      @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
+      @Content(schema = @Schema(implementation = NotificationDto.class)))
   })
   @GetMapping("/notification")
-  public ResponseEntity<Page<NotificationResponseDto>> getNotification(
+  public ResponseEntity<Page<NotificationDto>> getNotification(
       @PageableDefault(sort = "registerDate", direction = Sort.Direction.DESC) Pageable pageable
   ) {
     String email = getLoginEmail();
@@ -74,11 +74,11 @@ public class NotificationController {
 
   @Operation(summary = "알림 읽기 api", description = "알림 읽기", responses = {
       @ApiResponse(responseCode = "200", description = "알림 읽음", content =
-      @Content(schema = @Schema(implementation = NotificationResponseDto.class)))
+      @Content(schema = @Schema(implementation = NotificationDto.class)))
   })
 
   @PutMapping("/read/notification")
-  public ResponseEntity<NotificationResponseDto> readNotification(@RequestParam("notificationId") @Min(1) Long notificationId) {
+  public ResponseEntity<NotificationDto> readNotification(@RequestParam("notificationId") @Min(1) Long notificationId) {
     return ResponseEntity.ok(notificationService.readNotification(notificationId));
   }
 
