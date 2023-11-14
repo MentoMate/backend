@@ -1,9 +1,11 @@
 package com.example.mentoringproject.post.post.controller;
 
+import com.example.mentoringproject.ElasticSearch.util.SearchResult;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.post.model.PostDto;
 import com.example.mentoringproject.post.post.model.PostInfoResponseDto;
+import com.example.mentoringproject.post.post.model.PostMyPageResponse;
 import com.example.mentoringproject.post.post.model.PostRegisterRequest;
 import com.example.mentoringproject.post.post.model.PostUpdateRequest;
 import com.example.mentoringproject.post.post.service.PostService;
@@ -15,14 +17,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,4 +94,28 @@ public class PostController {
     return ResponseEntity.ok(postService.postInfo(email, postId));
   }
 
+  // 마이페이지 내가 쓴 글 조회
+  @Operation(summary = " 마이페이지 내가 쓴 글 조회 api", description = " 마이페이지 내가 쓴 글 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = " 마이페이지 내가 쓴 글 조회 성공", content =
+      @Content(schema = @Schema(implementation = PostMyPageResponse.class)))
+  })
+  @GetMapping("/myPage")
+  public ResponseEntity<SearchResult<PostMyPageResponse>> getPostMyPage(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "8") int pageSize,
+      @RequestParam(defaultValue = "id") String sortId,
+      @RequestParam(defaultValue = "DESC") String sortDirection) {
+
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
+    String email = SpringSecurityUtil.getLoginEmail();
+    Page<PostMyPageResponse> postMyPageResponses = postService.getPostMyPage(email, pageable);
+
+    SearchResult<PostMyPageResponse> searchResult = new SearchResult<>(
+        postMyPageResponses.getTotalPages(),
+        postMyPageResponses.getContent()
+    );
+
+    return ResponseEntity.ok(searchResult);
+  }
 }

@@ -7,11 +7,13 @@ import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.model.PostInfoResponseDto;
+import com.example.mentoringproject.post.post.model.PostMyPageResponse;
 import com.example.mentoringproject.post.post.model.PostRegisterRequest;
 import com.example.mentoringproject.post.post.model.PostUpdateRequest;
 import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final UserRepository userRepository;
+  private final UserService userService;
   private final PostSearchRepository postSearchRepository;
   private final S3Service s3Service;
 
@@ -137,6 +142,13 @@ public class PostService {
 
     postRepository.updateCount(postId);
     return PostInfoResponseDto.fromEntity(post, isOwner, isLike);
+  }
+
+  @Transactional
+  public Page<PostMyPageResponse> getPostMyPage(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    return postRepository.findByUserId(user.getId(), pageable)
+        .map(PostMyPageResponse::fromEntity);
   }
 
 }
