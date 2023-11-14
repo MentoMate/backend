@@ -1,5 +1,8 @@
 package com.example.mentoringproject.mentoring.entity;
 
+import com.example.mentoringproject.chat.entity.GroupChatRoom;
+import com.example.mentoringproject.chat.entity.GroupMessage;
+import com.example.mentoringproject.chat.entity.PrivateMessage;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
@@ -58,6 +61,12 @@ public class Mentoring {
       inverseJoinColumns = @JoinColumn(name = "user_id")
   )
   private List<User> followerList = new ArrayList<>();
+
+  @OneToOne(mappedBy = "mentoring")
+  private GroupChatRoom groupChatRoom;
+
+  @OneToMany(mappedBy = "mentoring", cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+  List<GroupMessage> groupMessageList = new ArrayList<>();
 
   @CreatedDate
   private LocalDateTime registerDate;
