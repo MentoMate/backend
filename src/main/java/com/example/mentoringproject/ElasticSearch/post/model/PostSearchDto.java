@@ -1,11 +1,15 @@
 package com.example.mentoringproject.ElasticSearch.post.model;
 
 import com.example.mentoringproject.ElasticSearch.post.entity.PostSearchDocumment;
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.post.post.entity.Category;
+import com.example.mentoringproject.post.post.entity.Post;
+import com.example.mentoringproject.post.post.repository.PostRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,21 +26,23 @@ public class PostSearchDto {
   private String uploadFolder;
   private int postLikesCount;
   private int commentCount;
-  private int countWatch;
 
 
-  public static PostSearchDto fromDocument(PostSearchDocumment post) {
+  public static PostSearchDto fromDocument(PostSearchDocumment postSearchDocumment, PostRepository postRepository) {
+    Post post = postRepository.findById(postSearchDocumment.getId()).orElseThrow(
+        () -> new AppException(HttpStatus.BAD_REQUEST,"Not found Post"));
+    int postLikesCount = post != null ? post.getPostLikesCount() : 0;
+    int commentCount = post != null ? post.getCommentCount() : 0;
     return PostSearchDto.builder()
-        .id(post.getId())
-        .category(post.getCategory())
-        .title(post.getTitle())
-        .content(post.getContent())
-        .writer(post.getWriter())
-        .uploadUrl(post.getUploadUrl())
-        .uploadFolder(post.getUploadFolder())
-        .postLikesCount(post.getPostLikesCount())
-        .commentCount(post.getCommentCount())
-        .countWatch(post.getCountWatch())
+        .id(postSearchDocumment.getId())
+        .category(postSearchDocumment.getCategory())
+        .title(postSearchDocumment.getTitle())
+        .content(postSearchDocumment.getContent())
+        .writer(postSearchDocumment.getWriter())
+        .uploadUrl(postSearchDocumment.getUploadUrl())
+        .uploadFolder(postSearchDocumment.getUploadFolder())
+        .postLikesCount(postLikesCount)
+        .commentCount(commentCount)
         .build();
   }
 }
