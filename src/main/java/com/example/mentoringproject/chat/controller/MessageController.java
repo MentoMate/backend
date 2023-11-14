@@ -1,14 +1,12 @@
 package com.example.mentoringproject.chat.controller;
 
-import com.example.mentoringproject.chat.entity.GroupMessage;
 import com.example.mentoringproject.chat.model.GroupChatMessage;
 import com.example.mentoringproject.chat.model.PrivateChatMessage;
-import com.example.mentoringproject.chat.model.PrivateChatMessageInfo;
-import com.example.mentoringproject.chat.repository.GroupMessageRepository;
 import com.example.mentoringproject.chat.service.ChatService;
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,6 +19,7 @@ public class MessageController {
 
   private final SimpMessageSendingOperations sendingOperations;
   private final ChatService chatService;
+  private final UserService userService;
 
   // 그룹 메세지 저장
   @Operation(summary = "그룹 메세지 저장 api", description = "그룹 메세지 저장 api", responses = {
@@ -28,6 +27,9 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/group")
   public void enter(GroupChatMessage groupChatMessage) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    User user = userService.getUser(email);
+    groupChatMessage.setSenderNickName(user.getNickName());
     chatService.saveGroupChatMessage(groupChatMessage);
     sendingOperations.convertAndSend("/topic/chat/room/" + groupChatMessage.getGroupMentoringId(), groupChatMessage);
 
@@ -39,6 +41,9 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/private")
   public void enter(PrivateChatMessage privateChatMessage) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    User user = userService.getUser(email);
+    privateChatMessage.setSenderNickName(user.getNickName());
     chatService.savePrivateChatMessage(privateChatMessage);
     sendingOperations.convertAndSend("/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(), privateChatMessage);
   }
