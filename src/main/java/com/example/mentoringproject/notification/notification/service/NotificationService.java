@@ -29,7 +29,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationService {
 
-  private static final Long DEFAULT_TIMEOUT = 1000 * 15L;
+  private static final Long DEFAULT_TIMEOUT = 1000 * 60 * 60L;
 
   private final EmitterRepository emitterRepository;
   private final NotificationRepository notificationRepository;
