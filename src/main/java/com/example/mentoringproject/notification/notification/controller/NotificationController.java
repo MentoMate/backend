@@ -42,7 +42,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationController {
 
   private final NotificationService notificationService;
-  private final ChannelTopic myTopic;
   private final RedisPublisher redisPublisher;
 
 
@@ -63,7 +62,7 @@ public class NotificationController {
   @PostMapping("/publish/notification")
   public void pushMessage(@Valid @RequestBody NotificationRequestDto parameter) {
     log.debug("call publish, notification={}", parameter);
-    redisPublisher.publishNotification(myTopic, parameter);
+    redisPublisher.publishNotification(parameter);
   }
 
   @Operation(summary = "알림 목록 조회 api", description = "나에게온 알림 최신순으로 10개씩 목록 조회", responses = {
@@ -98,7 +97,7 @@ public class NotificationController {
   }
 
   @Operation(summary = "읽지 않은 알림 목록", description = "읽지 않은 알림 목록 가져오기 api", responses = {
-      @ApiResponse(responseCode = "200", description = "알림 목록 가져오기 성공 읽음, 페이징 처리", content =
+      @ApiResponse(responseCode = "200", description = "알림 목록 가져오기 성공 읽음, 리스트로 가져옴", content =
       @Content(schema = @Schema(implementation = NotificationDto.class)))
   })
   @GetMapping("/notification/unread")

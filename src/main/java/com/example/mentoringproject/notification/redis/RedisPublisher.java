@@ -15,13 +15,16 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class RedisPublisher {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final NotificationService notificationService;
+  private final RedisTemplate<String, Object> redisTemplate;
+  private final NotificationService notificationService;
+  private final ChannelTopic myTopic;
 
-    public void publishNotification(ChannelTopic topic, NotificationRequestDto parameter) {
-        log.debug("notification save");
-        NotificationResponseDto notificationResponseDto = notificationService.saveNotification(parameter);
-        log.debug("notification convertAndSend to redis");
-        redisTemplate.convertAndSend(topic.getTopic(), notificationResponseDto);
-    }
+  public void publishNotification(NotificationRequestDto parameter) {
+    log.debug("redis Publish Start");
+    log.debug("notification save");
+    NotificationResponseDto notificationResponseDto = notificationService.saveNotification(
+        parameter);
+    log.debug("notificationResponseDto = {}", notificationResponseDto.toString());
+    redisTemplate.convertAndSend(myTopic.getTopic(), notificationResponseDto);
+  }
 }

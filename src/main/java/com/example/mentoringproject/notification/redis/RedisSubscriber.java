@@ -25,9 +25,10 @@ public class RedisSubscriber implements MessageListener {
   public void onMessage(Message message, byte[] pattern) {
 
     try {
+      log.debug("redis Listener ok");
       NotificationResponseDto notificationResponseDto = objectMapper.readValue(message.getBody(),
           NotificationResponseDto.class);
-      log.debug("send message to sseUser, message= {}", notificationResponseDto);
+      log.debug("send message to sseUser, message= {}", notificationResponseDto.toString());
       notificationService.send(notificationResponseDto);
     } catch (IOException e) {
       throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
