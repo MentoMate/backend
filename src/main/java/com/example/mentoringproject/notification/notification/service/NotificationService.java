@@ -12,7 +12,9 @@ import com.example.mentoringproject.notification.notification.repository.Notific
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.service.UserService;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,10 +118,10 @@ public class NotificationService {
     notificationRepository.deleteById(notificationId);
   }
 
-  public Page<NotificationDto> getUnreadNotification(String email, Pageable pageable) {
+  public List<NotificationDto> getUnreadNotification(String email) {
     User user = userService.getUser(email);
-    Page<Notification> notificationPage = notificationRepository.findAllByReceiverAndIsReadIsFalse(user,
-        pageable);
-    return notificationPage.map(NotificationDto::from);
+    return notificationRepository.findAllByReceiverAndIsReadIsFalse(user)
+        .stream().map(NotificationDto::from)
+        .collect(Collectors.toList());
   }
 }

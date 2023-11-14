@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
@@ -101,10 +102,8 @@ public class NotificationController {
       @Content(schema = @Schema(implementation = NotificationDto.class)))
   })
   @GetMapping("/notification/unread")
-  public ResponseEntity<Page<NotificationDto>> getUnreadNotification(
-      @PageableDefault(sort = "registerDate", direction = Direction.DESC) Pageable pageable
-  ) {
+  public ResponseEntity<List<NotificationDto>> getUnreadNotification() {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(notificationService.getUnreadNotification(email, pageable));
+    return ResponseEntity.ok(notificationService.getUnreadNotification(email));
   }
 }
