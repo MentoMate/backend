@@ -3,7 +3,10 @@ package com.example.mentoringproject.notification.notification.service;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.notification.notification.emitter.repository.EmitterRepository;
 import com.example.mentoringproject.notification.notification.entity.Notification;
+import com.example.mentoringproject.notification.notification.model.NotificationConnectionType;
+import com.example.mentoringproject.notification.notification.model.NotificationFinalDto;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
+import com.example.mentoringproject.notification.notification.model.NotificationDto;
 import com.example.mentoringproject.notification.notification.model.NotificationResponseDto;
 import com.example.mentoringproject.notification.notification.repository.NotificationRepository;
 import com.example.mentoringproject.user.user.entity.User;
@@ -38,8 +41,11 @@ public class NotificationService {
 
     // 503 에러를 방지하기 위한 더미 이벤트 전송
     String eventId = makeTimeIncludeId(userEmail);
-    sendNotification(emitter, eventId, emitterId,
-        "EventStream Created. [userId=" + userEmail + "]");
+    NotificationFinalDto connection = NotificationFinalDto.builder()
+        .type(NotificationConnectionType.SUBSCRIBE)
+        .data("EventStream Created. [userId=" + userEmail + "]")
+        .build();
+    sendNotification(emitter, eventId, emitterId, connection);
 
     return emitter;
   }
@@ -48,14 +54,14 @@ public class NotificationService {
     return userEmail + "_" + System.currentTimeMillis();
   }
 
-  public void send(NotificationResponseDto notificationDto) {
-    String receiverEmail = notificationDto.getReceiverEmail();
+  public void send(NotificationResponseDto notificationResponseDto) {
+    String receiverEmail = notificationResponseDto.getData().getReceiverEmail();
     String eventId = receiverEmail + "_" + System.currentTimeMillis();
     Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserEmail(
         receiverEmail);
     emitters.forEach(
         (key, emitter) -> {
-          sendNotification(emitter, eventId, key, notificationDto);
+          sendNotification(emitter, eventId, key, notificationResponseDto);
         }
     );
   }
@@ -75,27 +81,31 @@ public class NotificationService {
   public NotificationResponseDto saveNotification(NotificationRequestDto parameter) {
     User user = userService.getUser(parameter.getReceiverEmail());
 
-    return NotificationResponseDto.from(notificationRepository.save(Notification.builder()
+    NotificationDto sendData = NotificationDto.from(notificationRepository.save(Notification.builder()
         .receiverEmail(parameter.getReceiverEmail())
         .receiver(user)
         .content(parameter.getContent())
         .notificationType(parameter.getNotificationType())
         .isRead(false)
         .build()));
+    return NotificationResponseDto.builder()
+        .type(NotificationConnectionType.RECEIVE)
+        .data(sendData)
+        .build();
   }
 
-  public Page<NotificationResponseDto> getNotification(String email, Pageable pageable) {
+  public Page<NotificationDto> getNotification(String email, Pageable pageable) {
     Page<Notification> notificationPage = notificationRepository.findAllByReceiverEmail(email,
         pageable);
-    return NotificationResponseDto.from(notificationPage);
+    return NotificationDto.from(notificationPage);
   }
 
   @Transactional
-  public NotificationResponseDto readNotification(Long notificationId) {
+  public NotificationDto readNotification(Long notificationId) {
     Notification notification = notificationRepository.findById(notificationId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Notification Not found"));
     notification.setIsRead(true);
-    return NotificationResponseDto.from(notification);
+    return NotificationDto.from(notification);
   }
 
   @Transactional
