@@ -1,6 +1,9 @@
 package com.example.mentoringproject.pay.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
+import com.example.mentoringproject.notification.notification.service.NotificationService;
+import com.example.mentoringproject.notification.redis.RedisPublisher;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.model.PayDto;
 import com.example.mentoringproject.pay.service.PayService;
@@ -29,10 +32,14 @@ public class PayController {
 
   private final IamportClient iamportClient;
   private final PayService payService;
+  private final NotificationService notificationService;
+  private final RedisPublisher redisPublisher;
 
-  public PayController(PayService payService) {
+  public PayController(PayService payService, NotificationService notificationService, RedisPublisher redisPublisher) {
     this.iamportClient = new IamportClient(restApiKey, restApiSecret);
     this.payService = payService;
+    this.notificationService = notificationService;
+    this.redisPublisher = redisPublisher;
   }
 
   @Operation(summary = "결제 성공시 db저장 api", description = "결제 성공시 db저장 api", responses = {
@@ -47,7 +54,9 @@ public class PayController {
     if (response.getCode() != 0) {
       return ResponseEntity.badRequest().body(false);
     }
-    payService.payCompleteRegister(email, impUid, mentoringId);
+    NotificationRequestDto notificationRequestDto = payService.payCompleteRegister(email, impUid,
+        mentoringId);
+    redisPublisher.publishNotification(notificationRequestDto);
     return ResponseEntity.ok(true);
   }
 

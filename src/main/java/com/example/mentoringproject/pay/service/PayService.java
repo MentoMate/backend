@@ -4,6 +4,8 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.service.MentoringService;
+import com.example.mentoringproject.notification.notification.entity.NotificationType;
+import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.entity.PayStatus;
 import com.example.mentoringproject.pay.model.IamportResponseDto;
@@ -41,7 +43,7 @@ public class PayService {
   public static final String IAMPORT_CANCEL_URL = "https://api.iamport.kr/payments/cancel";
 
   @Transactional
-  public void payCompleteRegister(String email, String impUid, Long mentoringId) {
+  public NotificationRequestDto payCompleteRegister(String email, String impUid, Long mentoringId) {
 
     Mentoring mentoring = mentoringService.getMentoring(mentoringId);
     User buyer = userService.getUser(email);
@@ -65,6 +67,24 @@ public class PayService {
     log.debug("Pay Info = {}", pay);
     //mentoring userList에 user추가
     menteeList.add(buyer);
+
+    return createPaymentNotificationResponseDto(mentoring, buyer);
+  }
+
+  private NotificationRequestDto createPaymentNotificationResponseDto(
+      Mentoring mentoring, User buyer) {
+
+    return NotificationRequestDto.builder()
+        .receiverEmail(mentoring.getUser().getEmail())
+        .notificationType(NotificationType.PAY)
+        .content(createPayCompleteMessage(mentoring, buyer))
+        .build();
+
+  }
+
+  private String createPayCompleteMessage(Mentoring mentoring, User buyer) {
+    return "멘토링 제목 : " + mentoring.getTitle() + "\n" +
+        "신청자 닉네임 : " + buyer.getNickName();
   }
 
   @Transactional
