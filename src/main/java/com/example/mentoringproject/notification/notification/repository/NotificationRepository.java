@@ -13,5 +13,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
   Page<Notification> findAllByReceiverEmail(String email, Pageable pageable);
 
-  List<Notification> findAllByReceiverAndIsReadIsFalse(User user);
+  List<Notification> findAllByReceiverAndIsReadIsFalseOrderByRegisterDateDesc(User user);
 }

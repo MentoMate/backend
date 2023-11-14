@@ -29,7 +29,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationService {
 
-  private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+  private static final Long DEFAULT_TIMEOUT = 1000 * 15L;
 
   private final EmitterRepository emitterRepository;
   private final NotificationRepository notificationRepository;
@@ -58,9 +58,11 @@ public class NotificationService {
 
   public void send(NotificationResponseDto notificationResponseDto) {
     String receiverEmail = notificationResponseDto.getData().getReceiverEmail();
+    log.debug("receiverEmail = {}", receiverEmail);
     String eventId = receiverEmail + "_" + System.currentTimeMillis();
     Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserEmail(
         receiverEmail);
+    log.debug("emitter = {}", emitters);
     emitters.forEach(
         (key, emitter) -> {
           sendNotification(emitter, eventId, key, notificationResponseDto);
@@ -70,6 +72,7 @@ public class NotificationService {
 
   private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) {
     try {
+      log.debug("sendNotification emitterId = {}", emitterId);
       emitter.send(SseEmitter.event()
           .id(eventId)
           .data(data));
@@ -120,7 +123,7 @@ public class NotificationService {
 
   public List<NotificationDto> getUnreadNotification(String email) {
     User user = userService.getUser(email);
-    return notificationRepository.findAllByReceiverAndIsReadIsFalse(user)
+    return notificationRepository.findAllByReceiverAndIsReadIsFalseOrderByRegisterDateDesc(user)
         .stream().map(NotificationDto::from)
         .collect(Collectors.toList());
   }
