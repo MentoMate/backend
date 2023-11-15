@@ -4,6 +4,7 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
 import com.example.mentoringproject.notification.redis.RedisPublisher;
 import com.example.mentoringproject.pay.entity.Pay;
+import com.example.mentoringproject.pay.model.PayDetailDto;
 import com.example.mentoringproject.pay.model.PayDto;
 import com.example.mentoringproject.pay.service.PayService;
 import com.siot.IamportRestClient.IamportClient;
@@ -17,7 +18,11 @@ import java.io.IOException;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,5 +71,13 @@ public class PayController {
     Pay pay = payService.payCancel(email, payId, restApiKey,
         restApiSecret);
     return ResponseEntity.ok(PayDto.from(pay));
+  }
+
+  @GetMapping("/pay/list")
+  public ResponseEntity<Page<PayDetailDto>> getPaymentDetails(
+      @PageableDefault Pageable pageable
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(payService.getPaymentDetails(email, pageable));
   }
 }

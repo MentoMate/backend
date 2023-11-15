@@ -3,9 +3,19 @@ spring:
     include:
       - jwt
       - mail
-      - oauth-dev
+      - oauth
       - s3
       - db-dev
       - redis
       - log
       - iamport
+  config:
+      import:
+        - application-jwt.yml
+        - application-mail.yml
+        - application-oauth-local.yml
+        - application-s3.yml
+        - application-db-local.yml
+        - application-redis-local.yml
+        - application-log.yml
+        - application-iamport.yml
