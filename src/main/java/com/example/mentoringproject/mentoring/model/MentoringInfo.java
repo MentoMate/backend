@@ -14,6 +14,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MentoringInfo {
+
   private long mentoringId;
   private String title;
   private String content;
@@ -31,10 +32,12 @@ public class MentoringInfo {
   private int leftPeople;
   private int followers;
   private boolean isOwner;
+  private boolean isPrivateChatRoomCreate;
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
-  public static MentoringInfo from(Mentoring mentoring, boolean isOwner, List<User> userList) {
+  public static MentoringInfo from(Mentoring mentoring, boolean isOwner,
+      boolean isPrivateChatRoomCreate, List<User> userList) {
 
     return MentoringInfo.builder()
         .mentoringId(mentoring.getId())
@@ -54,6 +57,7 @@ public class MentoringInfo {
         .leftPeople(mentoring.getNumberOfPeople() - userList.size())
         .followers(mentoring.getFollowerList().size())
         .isOwner(isOwner)
+        .isPrivateChatRoomCreate(isPrivateChatRoomCreate)
         .registerDate(mentoring.getRegisterDate())
         .updateDate(mentoring.getUpdateDate())
         .build();
