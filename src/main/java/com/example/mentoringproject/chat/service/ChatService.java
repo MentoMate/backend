@@ -17,7 +17,11 @@ import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
+import com.example.mentoringproject.user.user.service.UserService;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +45,7 @@ public class ChatService {
   private final UserRepository userRepository;
   private final PrivateChatRoomRepository privateChatRoomRepository;
   private final PrivateMessageRepository privateMessageRepository;
+  private final UserService userService;
 
   @PostConstruct
   //의존관게 주입완료되면 실행되는 코드
@@ -137,6 +142,28 @@ public class ChatService {
         nickName, privateChatMessage.getMessage());
     privateMessageRepository.save(privateMessage);
     return privateMessage;
+
+  }
+  // 사용자의 1:1 채팅방 리스트 가져오기
+  @Transactional
+  public List<PrivateMessage> getPrivateMyChatListInfo(String email) {
+    User user = userService.getUser(email);
+    List<PrivateMessage> privateMessageList = privateMessageRepository.findBySenderNickName(user.getNickName());
+    Map<Long, PrivateMessage> latestMessagesByMentoringId = new HashMap<>();
+
+    for (PrivateMessage privateMessage : privateMessageList) {
+      Long mentoringId = privateMessage.getPrivateChatRoom().getMentoring().getId();
+      if (!latestMessagesByMentoringId.containsKey(mentoringId) ||
+          privateMessage.getRegisterDatetime().isAfter(latestMessagesByMentoringId.get(mentoringId).getRegisterDatetime())) {
+        latestMessagesByMentoringId.put(mentoringId, privateMessage);
+      }
+    }
+
+    List<PrivateMessage> latestMessages = new ArrayList<>(latestMessagesByMentoringId.values());
+
+    latestMessages.sort(Comparator.comparing(PrivateMessage::getRegisterDatetime).reversed());;
+
+    return latestMessages;
 
   }
 }
