@@ -2,6 +2,7 @@ package com.example.mentoringproject.mentoring.service;
 
 import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
+import com.example.mentoringproject.chat.repository.PrivateChatRoomRepository;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
@@ -56,6 +57,7 @@ public class MentoringService {
   private final MenteeService menteeService;
   private final PostRepository postRepository;
   private final UserRepository userRepository;
+  private final PrivateChatRoomRepository privateChatRoomRepository;
   private final UserService userService;
   private final S3Service s3Service;
 
@@ -127,9 +129,17 @@ public class MentoringService {
     if (mentoring.getUser().getEmail().equals(email)) {
       isOwner = true;
     }
+
+    User user = userService.getUser(email);
+
+    boolean isPrivateChatRoomCreate = false;
+    if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(), mentoringId)) {
+      isPrivateChatRoomCreate = true;
+    }
+
     mentoringRepository.updateCount(mentoringId);
     List<User> userList = menteeService.getUserListFormMentoring(mentoring);
-    return MentoringInfo.from(mentoring, isOwner, userList);
+    return MentoringInfo.from(mentoring, isOwner, isPrivateChatRoomCreate, userList);
   }
 
   public Mentoring getMentoring(Long mentoringId){
