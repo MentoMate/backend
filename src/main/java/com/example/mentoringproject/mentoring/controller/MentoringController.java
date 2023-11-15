@@ -116,6 +116,10 @@ public class MentoringController {
     return ResponseEntity.ok(mentoringMainPageDtoMap);
   }
 
+  @Operation(summary = "멘토링 일정 조회 api", description = "멘토링 일정 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토링 일정 조회 성공", content =
+      @Content(schema = @Schema(implementation = MentoringInfo.class)))
+  })
   @GetMapping("/{mentoringId}/schedule")
   public ResponseEntity<List<ScheduleInfo>> scheduleInfoByPeriod(
       @PathVariable Long mentoringId,
@@ -138,6 +142,10 @@ public class MentoringController {
     return ResponseEntity.ok().build();
   }
 
+  @Operation(summary = "멘토 팔로우 api", description = "멘토링 팔로우 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토링 팔로우 성공", content =
+      @Content(schema = @Schema(implementation = MentoringDto.class)))
+  })
   @GetMapping("/follow")
   public ResponseEntity<Page<MentoringList>> getFollowMentoring(
       @RequestParam(defaultValue = "1") int page,
@@ -150,29 +158,34 @@ public class MentoringController {
     return ResponseEntity.ok(MentoringList.from(mentoringService.getFollowMentoring(email,pageable)));
   }
 
-  @GetMapping("/history")
+  @Operation(summary = "사용자가 진행한 멘토링 조회 api", description = "사용자가 진행한 멘토링 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = "사용자가 진행한 멘토링 조회 성공", content =
+      @Content(schema = @Schema(implementation = MentoringDto.class)))
+  })
+  @GetMapping("/{userId}/history")
   public ResponseEntity<Page<MentoringList>> getMentoringHistory(
+      @PathVariable Long userId,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int pageSize,
       @RequestParam(defaultValue = "id") String sortId,
       @RequestParam(defaultValue = "DESC") String sortDirection) {
     Sort.Direction direction = Sort.Direction.fromString(sortDirection);
     Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
-    String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringList.from(mentoringService.getMentoringHistory(email,pageable)));
+    return ResponseEntity.ok(MentoringList.from(mentoringService.getMentoringHistory(userId,pageable)));
   }
 
-//  @GetMapping("/history/participated")
-//  public ResponseEntity<Page<MentoringList>> getParticipatedMentoringHistory(
-//      @RequestParam(defaultValue = "1") int page,
-//      @RequestParam(defaultValue = "5") int pageSize,
-//      @RequestParam(defaultValue = "id") String sortId,
-//      @RequestParam(defaultValue = "DESC") String sortDirection) {
-//    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-//    Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
-//    String email = SpringSecurityUtil.getLoginEmail();
-//    return ResponseEntity.ok(MentoringList.from(mentoringService.getParticipatedMentoringHistory(email,pageable)));
-//  }
+  @Operation(summary = "사용자가 참가중인 멘토링 조회 api", description = "사용자가 참가중인 멘토링 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = "사용자가 참가중인 멘토링 조회 성공", content =
+      @Content(schema = @Schema(implementation = MentoringDto.class)))
+  })
+  @GetMapping("/history")
+  public ResponseEntity<Page<MentoringList>> getParticipatedMentoringHistory(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int pageSize) {
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(MentoringList.from(mentoringService.getParticipatedMentoring(email,pageable)));
+  }
 
   @GetMapping("/end")
   public ResponseEntity<Page<MentoringDto>> getListOfExpiredMentoring(

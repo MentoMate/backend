@@ -155,8 +155,7 @@ public class UserService {
 
   public User profileInfo(Long userId) {
 
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+    User user = getUser(userId);
 
     if (!userRepository.existsByIdAndNameIsNotNull(user.getId())) {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
@@ -222,4 +221,8 @@ public class UserService {
     return userRepository.findByNameIsNotNull(pageable);
   }
 
+  public User getUser(Long userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+  }
 }

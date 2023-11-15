@@ -312,14 +312,27 @@ public class MentoringService {
   }
 
   @Transactional
-  public Page<Mentoring> getMentoringHistory(String email, Pageable pageable){
-    User user = userService.getUser(email);
+  public Page<Mentoring> getMentoringHistory(Long userId, Pageable pageable){
+    User user = userService.getUser(userId);
     return mentoringRepository.findByStatusNotAndUserId(MentoringStatus.DELETE, user.getId(), pageable);
   }
 
-//  @Transactional
-//  public Page<Mentoring> getParticipatedMentoringHistory(String email, Pageable pageable){
-//    User user = userService.getUser(email);
-//    return mentoringRepository.findByStatusNotAndMenteeList_Id(MentoringStatus.DELETE, user.getId(), pageable);
-//  }
+  @Transactional
+  public Page<Mentoring> getParticipatedMentoring(String email, Pageable pageable){
+    User user = userService.getUser(email);
+    List<Mentoring> mentoringList = menteeService.getMentoringListFormMenteeUser(user)
+        .stream()
+        .filter(mentoring -> mentoring.getStatus().equals(MentoringStatus.PROGRESS))
+        .collect(Collectors.toList());
+
+    int start = (int) pageable.getOffset();
+    int end = Math.min((start + pageable.getPageSize()), mentoringList.size());
+
+    List<Mentoring> sublist = new ArrayList<>();
+    if (start <= end) {
+      sublist = mentoringList.subList(start, end);
+    }
+
+    return new PageImpl<>(sublist, pageable, mentoringList.size());
+  }
 }
