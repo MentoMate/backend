@@ -1,6 +1,7 @@
 package com.example.mentoringproject.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.model.RatingRequestDto;
 import com.example.mentoringproject.mentoring.model.RatingResponseDto;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
@@ -12,6 +13,9 @@ import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
 import com.example.mentoringproject.mentoring.service.MentoringService;
 import com.example.mentoringproject.user.rating.service.RatingService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -117,8 +122,8 @@ public class MentoringController {
   }
 
   @Operation(summary = "멘토링 일정 조회 api", description = "멘토링 일정 조회 api", responses = {
-      @ApiResponse(responseCode = "200", description = "멘토링 일정 조회 성공", content =
-      @Content(schema = @Schema(implementation = MentoringInfo.class)))
+      @ApiResponse(responseCode = "200", description = "멘토링 일정 조회 성공",  content =
+      @Content(array = @ArraySchema(schema = @Schema(implementation = ScheduleInfo.class))))
   })
   @GetMapping("/{mentoringId}/schedule")
   public ResponseEntity<List<ScheduleInfo>> scheduleInfoByPeriod(
@@ -129,9 +134,20 @@ public class MentoringController {
     return ResponseEntity.ok(ScheduleInfo.from(scheduleService.scheduleInfoByPeriod(mentoringId, startDate, endDate)));
   }
 
+  @Operation(summary = "멘토링 종료 api", description = "멘토링 종료 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토링 종료 성공")
+  })
+  @PutMapping("/{mentoringId}")
+  public ResponseEntity<Void> mentoringFinish(
+      @PathVariable Long mentoringId
+  ) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    mentoringService.mentoringFinish(email, mentoringId);
+    return ResponseEntity.ok().build();
+  }
+
   @Operation(summary = "멘토링 찜 api", description = "멘토링 찜 api", responses = {
-      @ApiResponse(responseCode = "200", description = "멘토링 찜 성공", content =
-      @Content(schema = @Schema(implementation = MentoringDto.class)))
+      @ApiResponse(responseCode = "200", description = "멘토링 찜 성공")
   })
   @PostMapping("/{mentoringId}")
   public ResponseEntity<Void> mentoringLike(
@@ -144,7 +160,7 @@ public class MentoringController {
 
   @Operation(summary = "멘토 팔로우 api", description = "멘토링 팔로우 api", responses = {
       @ApiResponse(responseCode = "200", description = "멘토링 팔로우 성공", content =
-      @Content(schema = @Schema(implementation = MentoringDto.class)))
+      @Content(schema = @Schema(implementation = Page.class)))
   })
   @GetMapping("/follow")
   public ResponseEntity<Page<MentoringList>> getFollowMentoring(
@@ -158,9 +174,9 @@ public class MentoringController {
     return ResponseEntity.ok(MentoringList.from(mentoringService.getFollowMentoring(email,pageable)));
   }
 
-  @Operation(summary = "사용자가 진행한 멘토링 조회 api", description = "사용자가 진행한 멘토링 조회 api", responses = {
-      @ApiResponse(responseCode = "200", description = "사용자가 진행한 멘토링 조회 성공", content =
-      @Content(schema = @Schema(implementation = MentoringDto.class)))
+  @Operation(summary = "멘토가 진행한 멘토링 조회 api", description = "멘토가 진행한 멘토링 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토가 진행한 멘토링 조회 성공", content =
+      @Content(schema = @Schema(implementation = Page.class)))
   })
   @GetMapping("/{userId}/history")
   public ResponseEntity<Page<MentoringList>> getMentoringHistory(
@@ -176,7 +192,7 @@ public class MentoringController {
 
   @Operation(summary = "사용자가 참가중인 멘토링 조회 api", description = "사용자가 참가중인 멘토링 조회 api", responses = {
       @ApiResponse(responseCode = "200", description = "사용자가 참가중인 멘토링 조회 성공", content =
-      @Content(schema = @Schema(implementation = MentoringDto.class)))
+      @Content(schema = @Schema(implementation = Page.class)))
   })
   @GetMapping("/history")
   public ResponseEntity<Page<MentoringList>> getParticipatedMentoringHistory(
