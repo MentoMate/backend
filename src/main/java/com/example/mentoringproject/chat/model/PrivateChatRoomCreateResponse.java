@@ -17,7 +17,7 @@ public class PrivateChatRoomCreateResponse {
   private Long mentorId;
   private Long mentoringId;
   private LocalDateTime registerDatetime;
-  private boolean isCreate;
+  private boolean isPrivateChatRoomCreate;
   private Long privateChatRoomId;
 
 
