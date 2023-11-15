@@ -13,14 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GradeResponseDto {
+public class RatingResponseDto {
   private Long mentoringId;
   private Long userId;
   private String comment;
   private Integer rating;
 
-  public static GradeResponseDto from(Mentee mentee, User user) {
-    return GradeResponseDto.builder()
+  public static RatingResponseDto from(Mentee mentee, User user) {
+    return RatingResponseDto.builder()
         .mentoringId(mentee.getMentoring().getId())
         .userId(user.getId())
         .comment(mentee.getComment())

@@ -4,8 +4,8 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.model.GradeRequestDto;
-import com.example.mentoringproject.mentoring.model.GradeResponseDto;
+import com.example.mentoringproject.mentoring.model.RatingRequestDto;
+import com.example.mentoringproject.mentoring.model.RatingResponseDto;
 import com.example.mentoringproject.mentoring.service.MentoringService;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.service.UserService;
@@ -24,7 +24,7 @@ public class RatingService {
   private final MenteeService menteeService;
 
   @Transactional
-  public GradeResponseDto giveFeedbackAndRating(String email, GradeRequestDto parameter) {
+  public RatingResponseDto giveFeedbackAndRating(String email, RatingRequestDto parameter) {
     User user = userService.getUser(email);
     Mentoring mentoring = mentoringService.getMentoring(parameter.getMentoringId());
     List<Mentee> menteeList = menteeService.getMenteeListFromMentoring(mentoring);
@@ -32,7 +32,7 @@ public class RatingService {
     checkAlreadySubmitFeedbackAndRating(mentee);
     mentee.setRating(parameter.getRating());
     mentee.setComment(parameter.getComment());
-    return GradeResponseDto.from(mentee, user);
+    return RatingResponseDto.from(mentee, user);
   }
 
   private void checkAlreadySubmitFeedbackAndRating(Mentee mentee) {
