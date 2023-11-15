@@ -2,7 +2,6 @@ package com.example.mentoringproject.pay.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.notification.notification.model.NotificationRequestDto;
-import com.example.mentoringproject.notification.notification.service.NotificationService;
 import com.example.mentoringproject.notification.redis.RedisPublisher;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.model.PayDto;
@@ -15,6 +14,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import javax.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "결제", description = "결제 API")
 @RestController
+@RequiredArgsConstructor
 public class PayController {
 
   @Value("${iamport.key}")
@@ -30,16 +32,13 @@ public class PayController {
   @Value("${iamport.secret}")
   private String restApiSecret;
 
-  private final IamportClient iamportClient;
+  private IamportClient iamportClient;
   private final PayService payService;
-  private final NotificationService notificationService;
   private final RedisPublisher redisPublisher;
 
-  public PayController(PayService payService, NotificationService notificationService, RedisPublisher redisPublisher) {
+  @PostConstruct
+  public void init() {
     this.iamportClient = new IamportClient(restApiKey, restApiSecret);
-    this.payService = payService;
-    this.notificationService = notificationService;
-    this.redisPublisher = redisPublisher;
   }
 
   @Operation(summary = "결제 성공시 db저장 api", description = "결제 성공시 db저장 api", responses = {
