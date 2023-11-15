@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GradeRequestDto {
+public class RatingRequestDto {
 
   private Long mentoringId;
   private String comment;

@@ -1,12 +1,19 @@
 package com.example.mentoringproject.chat.controller;
 
+import com.example.mentoringproject.chat.entity.GroupMessage;
+import com.example.mentoringproject.chat.entity.PrivateMessage;
 import com.example.mentoringproject.chat.model.GroupChatMessage;
+import com.example.mentoringproject.chat.model.GroupChatMessageResponse;
 import com.example.mentoringproject.chat.model.PrivateChatMessage;
+import com.example.mentoringproject.chat.model.PrivateChatMessageResponse;
+import com.example.mentoringproject.chat.model.PrivateChatRoomCreateResponse;
 import com.example.mentoringproject.chat.service.ChatService;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -29,9 +36,10 @@ public class MessageController {
   public void enter(GroupChatMessage groupChatMessage) {
     String email = SpringSecurityUtil.getLoginEmail();
     User user = userService.getUser(email);
-    groupChatMessage.setSenderNickName(user.getNickName());
-    chatService.saveGroupChatMessage(groupChatMessage);
-    sendingOperations.convertAndSend("/topic/chat/room/" + groupChatMessage.getGroupMentoringId(), groupChatMessage);
+    GroupMessage groupMessage = chatService.saveGroupChatMessage(groupChatMessage, user.getNickName());
+    GroupChatMessageResponse groupChatMessageResponse = GroupChatMessageResponse.fromEntity(groupMessage);
+    sendingOperations.convertAndSend("/topic/chat/room/" + groupChatMessage.getGroupMentoringId(),
+        groupChatMessageResponse);
 
   }
 
@@ -43,8 +51,10 @@ public class MessageController {
   public void enter(PrivateChatMessage privateChatMessage) {
     String email = SpringSecurityUtil.getLoginEmail();
     User user = userService.getUser(email);
-    privateChatMessage.setSenderNickName(user.getNickName());
-    chatService.savePrivateChatMessage(privateChatMessage);
-    sendingOperations.convertAndSend("/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(), privateChatMessage);
+    PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage,
+        user.getNickName());
+    PrivateChatMessageResponse privateChatMessageResponse = PrivateChatMessageResponse.fromEntity(privateMessage);
+    sendingOperations.convertAndSend(
+        "/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(), privateChatMessageResponse);
   }
 }

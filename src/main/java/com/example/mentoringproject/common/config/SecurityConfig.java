@@ -58,6 +58,10 @@ public class SecurityConfig {
         .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
             "/posts/{postId}/comments", "/posts/{postId}/info", "/post/search","/{postId}/comments","/mentor/search","/mentoring/search"
             , "/user/profile", "/user/profile/{userId}").permitAll()
+        .antMatchers("/ws/**").permitAll()
+        .antMatchers("/ws/*").permitAll()
+        .antMatchers("/ws/chat/*").permitAll()
+        .antMatchers("/ws/chat/**").permitAll()
         .anyRequest().authenticated();
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.addFilterBefore(jwtAuthenticationProcessingFilter(),

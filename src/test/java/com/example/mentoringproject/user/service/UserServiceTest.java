@@ -218,6 +218,4 @@ class UserServiceTest {
     assertEquals(exception.getErrorCode(), BAD_REQUEST);
     assertEquals(exception.getMessage(), "이메일 인증이 필요합니다.");
   }
-
-
 }

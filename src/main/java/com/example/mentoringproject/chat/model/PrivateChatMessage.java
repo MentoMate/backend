@@ -15,8 +15,6 @@ import lombok.Setter;
 @Setter
 public class PrivateChatMessage {
   private Long privateChatRoomId;
-  private String senderNickName;
   private String message;
-  private LocalDateTime registerDatetime;
 
 }

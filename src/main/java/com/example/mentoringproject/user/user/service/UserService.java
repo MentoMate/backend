@@ -7,6 +7,7 @@ import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.model.UserInfoDto;
 import com.example.mentoringproject.user.user.model.UserJoinDto;
 import com.example.mentoringproject.user.user.model.UserProfileSave;
 import com.example.mentoringproject.user.user.repository.UserRepository;
@@ -155,7 +156,8 @@ public class UserService {
 
   public User profileInfo(Long userId) {
 
-    User user = getUser(userId);
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
 
     if (!userRepository.existsByIdAndNameIsNotNull(user.getId())) {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
@@ -224,5 +226,17 @@ public class UserService {
   public User getUser(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+  }
+  public UserInfoDto getUserInfo(String email) {
+    User user = getUser(email);
+    return UserInfoDto.from(user);
+  }
+
+  @Transactional
+  public UserInfoDto changeNickname(String email, String nickname) {
+    User user = getUser(email);
+    checkDuplicateNickName(nickname);
+    user.setNickName(nickname);
+    return UserInfoDto.from(user);
   }
 }

@@ -1,8 +1,8 @@
 package com.example.mentoringproject.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.mentoring.model.GradeRequestDto;
-import com.example.mentoringproject.mentoring.model.GradeResponseDto;
+import com.example.mentoringproject.mentoring.model.RatingRequestDto;
+import com.example.mentoringproject.mentoring.model.RatingResponseDto;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringList;
@@ -10,7 +10,7 @@ import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
 import com.example.mentoringproject.mentoring.service.MentoringService;
-import com.example.mentoringproject.user.grade.service.GradeService;
+import com.example.mentoringproject.user.rating.service.RatingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MentoringController {
   private final MentoringService mentoringService;
   private final ScheduleService scheduleService;
-  private final GradeService gradeService;
+  private final RatingService ratingService;
 
   @Operation(summary = "멘토링 등록 api", description = "멘토링 등록 api", responses = {
       @ApiResponse(responseCode = "200", description = "멘토링 등록 성공", content =
@@ -196,9 +196,9 @@ public class MentoringController {
   }
 
   @PutMapping("/rating")
-  public ResponseEntity<GradeResponseDto> giveFeedbackAndRating(
-      @RequestBody GradeRequestDto gradeRequestDto) {
+  public ResponseEntity<RatingResponseDto> giveFeedbackAndRating(
+      @RequestBody RatingRequestDto gradeRequestDto) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(gradeService.giveFeedbackAndRating(email, gradeRequestDto));
+    return ResponseEntity.ok(ratingService.giveFeedbackAndRating(email, gradeRequestDto));
   }
 }
