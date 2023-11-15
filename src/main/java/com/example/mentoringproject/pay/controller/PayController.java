@@ -45,18 +45,15 @@ public class PayController {
       @ApiResponse(responseCode = "200", description = "iamportClient.paymentByImpUid(ImpUid)로 반환")
   })
   @PostMapping("/pay/complete")
-  public ResponseEntity<Boolean> paymentComplete(@RequestParam("imp_uid") String impUid,
+  public IamportResponse<Payment> paymentComplete(@RequestParam("imp_uid") String impUid,
       @RequestParam("mentoring_id") Long mentoringId)
       throws IamportResponseException, IOException {
     String email = SpringSecurityUtil.getLoginEmail();
     IamportResponse<Payment> response = iamportClient.paymentByImpUid(impUid);
-    if (response.getCode() != 0) {
-      return ResponseEntity.badRequest().body(false);
-    }
     NotificationRequestDto notificationRequestDto = payService.payCompleteRegister(email, impUid,
         mentoringId);
     redisPublisher.publishNotification(notificationRequestDto);
-    return ResponseEntity.ok(true);
+    return response;
   }
 
   @Operation(summary = "결제 취소", description = "payId로 결제 취소 api", responses = {
