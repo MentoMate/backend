@@ -6,6 +6,9 @@ import com.example.mentoringproject.chat.model.PrivateChatMessageInfo;
 import com.example.mentoringproject.chat.model.PrivateChatRoomCreateRequest;
 import com.example.mentoringproject.chat.model.PrivateChatRoomCreateResponse;
 import com.example.mentoringproject.chat.service.ChatService;
+import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ChatRoomController {
 
   private final ChatService chatService;
+  private final UserService userService;
 
   /*
   // 그룹 채팅방 생성 (사용 안함)
@@ -63,12 +67,17 @@ public class ChatRoomController {
   @PostMapping("/private")
   public ResponseEntity<PrivateChatRoomCreateResponse> privateCreateChatRoom(@RequestBody
   PrivateChatRoomCreateRequest privateChatRoomCreateRequest) {
-    PrivateChatRoom privateChatRoom = chatService.createPrivateRoom(privateChatRoomCreateRequest);
+    String email = SpringSecurityUtil.getLoginEmail();
+    User user = userService.getUser(email);
+
+    PrivateChatRoom privateChatRoom = chatService.createPrivateRoom(privateChatRoomCreateRequest, user.getId());
     PrivateChatRoomCreateResponse privateRoomCreateResponse = new PrivateChatRoomCreateResponse(
         privateChatRoom.getUser().getId(),
         privateChatRoom.getMentor().getId(),
         privateChatRoom.getMentoring().getId(),
-        privateChatRoom.getRegisterDatetime()
+        privateChatRoom.getRegisterDatetime(),
+        true,
+        privateChatRoom.getId()
     );
     return ResponseEntity.ok(privateRoomCreateResponse);
   }

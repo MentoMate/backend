@@ -77,16 +77,24 @@ public class ChatService {
   //  1:1 채팅방 생성
   @Transactional
   public PrivateChatRoom createPrivateRoom(
-      PrivateChatRoomCreateRequest privateChatRoomCreateRequest) {
-    User user = userRepository.findById(privateChatRoomCreateRequest.getUserId())
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "MEMBER_NOT_FOUND"));
+      PrivateChatRoomCreateRequest privateChatRoomCreateRequest, Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "USER_NOT_FOUND"));
 
     User mentor = userRepository.findById(privateChatRoomCreateRequest.getMentorId())
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "MEMBER_NOT_FOUND"));
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "MENTOR_NOT_FOUND"));
 
     Mentoring mentoring = mentoringRepository.findById(
             privateChatRoomCreateRequest.getMentoringId())
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "MENTORING_NOT_FOUND"));
+
+    if (!mentoring.getUser().getId().equals(mentor.getId())) {
+      throw new AppException(HttpStatus.BAD_REQUEST,"Invalid mentor for the given mentoring");
+    }
+
+    if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(), privateChatRoomCreateRequest.getMentoringId())) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "1:1 채팅방이 이미 생성 되었습니다");
+    }
 
     PrivateChatRoom privateChatRoom = new PrivateChatRoom(user, mentor, mentoring);
     PrivateChatRoom savePrivateChatRoom = privateChatRoomRepository.save(privateChatRoom);
