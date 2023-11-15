@@ -1,6 +1,7 @@
 package com.example.mentoringproject.user.user.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.user.user.model.UserInfoDto;
 import com.example.mentoringproject.user.user.model.UserJoinDto;
 import com.example.mentoringproject.user.user.model.UserProfile;
 import com.example.mentoringproject.user.user.model.UserProfileList;
@@ -86,6 +87,25 @@ public class UserController {
   public ResponseEntity<String> joinEmailUser(@RequestBody @Valid UserJoinDto parameter) {
     userService.joinEmailUser(parameter);
     return ResponseEntity.ok("email join success");
+  }
+  @Operation(summary = "유저 정보 가져오기 api", description = "이름 이메일, 닉네임 가져오기", responses = {
+      @ApiResponse(responseCode = "200", description = "유저 정보 가져오기 완료", content = @Content(schema =
+      @Schema(implementation = UserInfoDto.class)))
+  })
+  @GetMapping("/info")
+  public ResponseEntity<UserInfoDto> getUserInfo() {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(userService.getUserInfo(email));
+  }
+
+  @Operation(summary = "닉네임 변경 api", description = "닉네임 변경 api", responses = {
+      @ApiResponse(responseCode = "200", description = "닉네임 변경 완료", content = @Content(schema =
+      @Schema(implementation = UserInfoDto.class)))
+  })
+  @PutMapping("/nickname/change")
+  public ResponseEntity<UserInfoDto> changeNickname(@RequestParam String nickname) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(userService.changeNickname(email, nickname));
   }
 
   @Operation(summary = "프로필 등록 api", description = "프로필 등록 api", responses = {

@@ -7,6 +7,7 @@ import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.model.UserInfoDto;
 import com.example.mentoringproject.user.user.model.UserJoinDto;
 import com.example.mentoringproject.user.user.model.UserProfileSave;
 import com.example.mentoringproject.user.user.repository.UserRepository;
@@ -222,4 +223,16 @@ public class UserService {
     return userRepository.findByNameIsNotNull(pageable);
   }
 
+  public UserInfoDto getUserInfo(String email) {
+    User user = getUser(email);
+    return UserInfoDto.from(user);
+  }
+
+  @Transactional
+  public UserInfoDto changeNickname(String email, String nickname) {
+    User user = getUser(email);
+    checkDuplicateNickName(nickname);
+    user.setNickName(nickname);
+    return UserInfoDto.from(user);
+  }
 }
