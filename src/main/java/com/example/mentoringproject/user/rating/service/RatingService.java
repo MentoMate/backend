@@ -1,4 +1,4 @@
-package com.example.mentoringproject.user.grade.service;
+package com.example.mentoringproject.user.rating.service;
 
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.mentee.entity.Mentee;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class GradeService {
+public class RatingService {
 
   private final UserService userService;
   private final MentoringService mentoringService;
