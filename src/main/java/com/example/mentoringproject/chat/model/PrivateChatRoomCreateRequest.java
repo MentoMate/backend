@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class PrivateChatRoomCreateRequest {
-  private Long userId;
   private Long mentorId;
   private Long mentoringId;
 

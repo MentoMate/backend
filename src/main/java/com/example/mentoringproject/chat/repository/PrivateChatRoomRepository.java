@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PrivateChatRoomRepository extends JpaRepository<PrivateChatRoom, String> {
   Optional<PrivateChatRoom> findById(Long chatRoomId);
-
+  boolean existsByUserIdAndMentoringId(Long userId, Long mentoringId);
 }
 
