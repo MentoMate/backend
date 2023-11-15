@@ -14,8 +14,6 @@ import lombok.Setter;
 @Setter
 public class GroupChatMessage {
   private Long groupMentoringId;
-  private String senderNickName;
   private String message;
-  private LocalDateTime registerDatetime;
 
 }
