@@ -57,7 +57,7 @@ public class SecurityConfig {
         .antMatchers(PERMIT_URL_ARRAY).permitAll()
         .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
             "/posts/{postId}/comments", "/posts/{postId}/info", "/post/search","/{postId}/comments","/mentor/search","/mentoring/search"
-            , "/user/profile", "/user/profile/{userId}").permitAll()
+            , "/user/profile", "/user/profile/{userId}", "/mentoring/{userId}/history").permitAll()
         .antMatchers("/ws/**").permitAll()
         .antMatchers("/ws/*").permitAll()
         .antMatchers("/ws/chat/*").permitAll()

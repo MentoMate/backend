@@ -335,4 +335,22 @@ public class MentoringService {
 
     return new PageImpl<>(sublist, pageable, mentoringList.size());
   }
+
+  @Transactional
+  public void mentoringFinish(String email, Long mentoringId){
+    User user = userService.getUser(email);
+    Mentoring mentoring = getMentoring(mentoringId);
+
+    if(!user.getId().equals(mentoring.getUser().getId())){
+      throw new AppException(HttpStatus.BAD_REQUEST, "멘토링 등록자가 아닙니다.");
+    }
+
+    if(LocalDate.now().isBefore(mentoring.getEndDate())){
+      throw new AppException(HttpStatus.BAD_REQUEST, "종료 신청은 멘토링 종료일에만 할 수 있습니다.");
+    }
+
+    mentoring.setStatus(MentoringStatus.FINISH);
+    mentoringRepository.save(mentoring);
+  }
+
 }
