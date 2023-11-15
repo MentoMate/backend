@@ -9,6 +9,7 @@ import com.example.mentoringproject.notification.notification.model.Notification
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.entity.PayStatus;
 import com.example.mentoringproject.pay.model.IamportResponseDto;
+import com.example.mentoringproject.pay.model.PayDetailDto;
 import com.example.mentoringproject.pay.repository.PayRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.service.UserService;
@@ -19,6 +20,8 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -177,5 +180,12 @@ public class PayService {
 
     IamportResponseDto dto = objectMapper.readValue(response.getBody(), IamportResponseDto.class);
     return dto.getCode();
+  }
+
+  public Page<PayDetailDto> getPaymentDetails(String email, Pageable pageable) {
+    User user = userService.getUser(email);
+    Page<Pay> payPage = payRepository.findAllByUserOrderByUpdateDate(user,
+        pageable);
+    return payPage.map(PayDetailDto::from);
   }
 }
