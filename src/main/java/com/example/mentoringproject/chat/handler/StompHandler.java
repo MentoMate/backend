@@ -9,7 +9,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class StompHandler implements ChannelInterceptor {
   public Message<?> preSend(Message<?> message, MessageChannel channel) {
     StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(message);
     if (stompHeaderAccessor.getCommand() == StompCommand.CONNECT) {
-      String accessToken = stompHeaderAccessor.getFirstNativeHeader("AccessToken");
+      String accessToken = stompHeaderAccessor.getFirstNativeHeader("Authorization");
       if (!jwtService.isTokenValid(accessToken)) {
         throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
       }
