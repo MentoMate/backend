@@ -22,16 +22,22 @@ public class StompHandler implements ChannelInterceptor {
   @Override
   public Message<?> preSend(Message<?> message, MessageChannel channel) {
     StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(message);
-    log.debug("stompHeaderAccessor");
+    log.debug("Start stompHeaderAccessor");
     if (stompHeaderAccessor.getCommand() == StompCommand.CONNECT) {
       String authorizationHeader = stompHeaderAccessor.getFirstNativeHeader("Authorization");
       log.debug("Get AuthorizationHeader: {}", authorizationHeader);
-      String token = authorizationHeader.substring(7);
-      log.debug("Get ACCESSESTOKEN Get: {}", token);
-      if (!jwtService.isTokenValid(token)) {
-        throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
+      if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        String token = authorizationHeader.substring(7);
+        log.debug("Get ACCESSESTOKEN Get: {}", token);
+        if (!jwtService.isTokenValid(token)) {
+          throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
+        }
+      } else {
+        throw new AppException(HttpStatus.UNAUTHORIZED, "MISSING OR MALFORMED TOKEN");
       }
+      log.debug("SUCCESS TO VALID TOKEN");
     }
+    log.debug("PreSend message");
     return message;
   }
 }
