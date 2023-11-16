@@ -64,7 +64,13 @@ public class SecurityConfig {
         .antMatchers("/ws/*").permitAll()
         .antMatchers("/ws/chat/*").permitAll()
         .antMatchers("/ws/chat/**").permitAll()
+        .antMatchers("/subscribe/**").permitAll()
+        .antMatchers("/topic/**").permitAll()
+        .antMatchers("/chat/*").permitAll()
+        .antMatchers("/chat/**").permitAll()
+
         .anyRequest().authenticated();
+
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
     http.addFilterBefore(jwtAuthenticationProcessingFilter(),
         CustomJsonUsernamePasswordAuthenticationFilter.class);
