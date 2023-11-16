@@ -16,10 +16,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
@@ -34,12 +36,22 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/group")
   public void enter(GroupChatMessage groupChatMessage) {
+    log.debug("Enter Group Message method start...");
+
     String email = SpringSecurityUtil.getLoginEmail();
+    log.debug("Logged in email: {}", email);
+
     User user = userService.getUser(email);
+    log.debug("User retrieved from userService: {}", user);
+
     GroupMessage groupMessage = chatService.saveGroupChatMessage(groupChatMessage, user.getNickName());
+    log.debug("Group message saved: {}", groupMessage);
+
     GroupChatMessageResponse groupChatMessageResponse = GroupChatMessageResponse.fromEntity(groupMessage);
     sendingOperations.convertAndSend("/topic/chat/room/" + groupChatMessage.getGroupMentoringId(),
         groupChatMessageResponse);
+    log.debug("Message sent successfully!");
+    log.debug("Exit Group Message method...");
 
   }
 
@@ -49,12 +61,24 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/private")
   public void enter(PrivateChatMessage privateChatMessage) {
+    log.debug("Enter Private Message method start...");
+
     String email = SpringSecurityUtil.getLoginEmail();
+    log.debug("Logged in email: {}", email);
+
     User user = userService.getUser(email);
+    log.debug("User retrieved from userService: {}", user);
+
     PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage,
         user.getNickName());
+    log.debug("Private message saved: {}", privateMessage);
+
     PrivateChatMessageResponse privateChatMessageResponse = PrivateChatMessageResponse.fromEntity(privateMessage);
     sendingOperations.convertAndSend(
         "/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(), privateChatMessageResponse);
+    log.debug("Message sent successfully!");
+
+    log.debug("Exit Private Message method...");
+
   }
 }
