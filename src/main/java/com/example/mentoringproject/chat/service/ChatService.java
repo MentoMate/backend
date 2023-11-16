@@ -119,24 +119,6 @@ public class ChatService {
         privateChatRoomId);
   }
 
-  // 그룹 메세지 저장
-  @Transactional
-  public GroupMessage saveGroupChatMessage(GroupChatMessage groupChatMessage, String nickName) {
-    log.debug("Enter saveGroupChatMessage method...");
-    Mentoring mentoring = mentoringRepository.findById(
-            groupChatMessage.getGroupMentoringId())
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Mentoring_NOT_FOUND"));
-    log.debug("Mentoring retrieved: {}", mentoring);
-
-    GroupMessage groupMessage = new GroupMessage(mentoring,
-        nickName, groupChatMessage.getMessage());
-    groupMessageRepository.save(groupMessage);
-    log.debug("Group message saved: {}", groupMessage);
-
-    log.debug("Exit saveGroupChatMessage method...");
-    return groupMessage;
-  }
-
   // 1:1 메세지 저장
   @Transactional
   public PrivateMessage savePrivateChatMessage(PrivateChatMessage privateChatMessage) {
@@ -156,6 +138,26 @@ public class ChatService {
     return privateMessage;
 
   }
+
+  // 그룹 메세지 저장
+  @Transactional
+  public GroupMessage saveGroupChatMessage(GroupChatMessage groupChatMessage, String nickName) {
+    log.debug("Enter saveGroupChatMessage method...");
+    Mentoring mentoring = mentoringRepository.findById(
+            groupChatMessage.getGroupMentoringId())
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Mentoring_NOT_FOUND"));
+    log.debug("Mentoring retrieved: {}", mentoring);
+
+    GroupMessage groupMessage = new GroupMessage(mentoring,
+        nickName, groupChatMessage.getMessage());
+    groupMessageRepository.save(groupMessage);
+    log.debug("Group message saved: {}", groupMessage);
+
+    log.debug("Exit saveGroupChatMessage method...");
+    return groupMessage;
+  }
+
+
   // 사용자의 1:1 채팅방 리스트 가져오기
   @Transactional
   public List<PrivateMessage> getPrivateMyChatListInfo(String email) {

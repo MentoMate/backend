@@ -61,20 +61,9 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/private")
   public void enter(PrivateChatMessage privateChatMessage) {
-    /*
-    log.debug("Enter Private Message method start...");
+    PrivateMessage privateMessages = chatService.savePrivateChatMessage(privateChatMessage);
+    log.debug("Private message saved: {}", privateMessages);
 
-    String email = SpringSecurityUtil.getLoginEmail();
-    log.debug("Logged in email: {}", email);
-
-    User user = userService.getUser(email);
-    log.debug("User retrieved from userService: {}", user);
-    */
-    PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage);
-    log.debug("Private message saved: {}", privateMessage);
-    /*
-    PrivateChatMessageResponse privateChatMessageResponse = PrivateChatMessageResponse.fromEntity(privateMessage);
-    */
     sendingOperations.convertAndSend(
         "/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(), privateChatMessage);
     log.debug("Message sent successfully!");
