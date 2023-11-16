@@ -9,8 +9,10 @@ import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.model.UserInfoDto;
 import com.example.mentoringproject.user.user.model.UserJoinDto;
 import com.example.mentoringproject.user.user.repository.UserRepository;
+import com.siot.IamportRestClient.App;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
@@ -217,5 +220,71 @@ class UserServiceTest {
     //then
     assertEquals(exception.getErrorCode(), BAD_REQUEST);
     assertEquals(exception.getMessage(), "이메일 인증이 필요합니다.");
+  }
+
+  @Test
+  @DisplayName("회원정보 조회 성공")
+  void getUserInfoSuccess() {
+    //given
+    String nickname = "nickname";
+    String name = "name";
+    String email = "email.example.com";
+    User user = User.builder()
+        .id(1L)
+        .name(name)
+        .email(email)
+        .nickName(nickname)
+        .build();
+
+    given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
+    //when
+    UserInfoDto userInfo = userService.getUserInfo(email);
+    //then
+    assertEquals(userInfo.getName(), name);
+    assertEquals(userInfo.getNickname(), nickname);
+    assertEquals(userInfo.getEmail(), email);
+  }
+
+  @Test
+  @DisplayName("닉네임 변경 실패 - 이미 존재하는 닉네임")
+  void changeNicknameFail_alreadyExistNickname() {
+    //given
+    String nickname = "nickname";
+    User checkingUser = User.builder()
+        .id(1L)
+        .nickName("testNickname")
+        .build();
+
+    User alreadyExistNicknameUser = User.builder()
+        .id(1L)
+        .nickName(nickname)
+        .build();
+    given(userRepository.findByEmail(anyString())).willReturn(Optional.of(checkingUser));
+    given(userRepository.findByNickNameAndRegisterDateIsNotNull(anyString())).willReturn(
+        Optional.of(alreadyExistNicknameUser));
+    //when
+    AppException exception = assertThrows(AppException.class, () ->
+        userService.changeNickname(anyString(), nickname));
+    //then
+    assertEquals(exception.getErrorCode(), BAD_REQUEST);
+    assertEquals(exception.getMessage(), "이미 존재하는 닉네임입니다.");
+  }
+
+  @Test
+  @DisplayName("닉네임 변경 성공_닉네임이 변경되었는지 확인")
+  void changeNicknameSuccess_nicknameChange() {
+    //given
+    String ChangeNickname = "ChangeNickname";
+    User checkingUser = User.builder()
+        .id(1L)
+        .nickName("BeforeNickname")
+        .build();
+    given(userRepository.findByEmail(anyString())).willReturn(Optional.of(checkingUser));
+    given(userRepository.findByNickNameAndRegisterDateIsNotNull(anyString())).willReturn(
+        Optional.empty());
+    //when
+    UserInfoDto changeUser = userService.changeNickname("email", ChangeNickname);
+    //then
+    assertEquals(changeUser.getNickname(), ChangeNickname);
   }
 }
