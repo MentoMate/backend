@@ -43,4 +43,8 @@ out/
 /src/main/resources/application-db-local.yml
 /src/main/resources/application-oauth.yml
 /src/main/resources/application-redis.yml
+/src/main/resources/application-iamport.yml
+/src/main/resources/application-log.yml
+/src/main/resources/application-oauth-local.yml
+/src/main/resources/application-redis-local.yml
 
