@@ -323,7 +323,7 @@ public class MentoringService {
 
   @Transactional
   public Page<Mentoring> getMentoringHistory(Long userId, Pageable pageable){
-    User user = userService.getUser(userId);
+    User user = userService.getUserById(userId);
     return mentoringRepository.findByStatusNotAndUserId(MentoringStatus.DELETE, user.getId(), pageable);
   }
 

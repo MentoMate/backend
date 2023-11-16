@@ -223,10 +223,11 @@ public class UserService {
     return userRepository.findByNameIsNotNull(pageable);
   }
 
-  public User getUser(Long userId) {
+  public User getUserById(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
+
   public UserInfoDto getUserInfo(String email) {
     User user = getUser(email);
     return UserInfoDto.from(user);
@@ -239,4 +240,5 @@ public class UserService {
     user.setNickName(nickname);
     return UserInfoDto.from(user);
   }
+
 }
