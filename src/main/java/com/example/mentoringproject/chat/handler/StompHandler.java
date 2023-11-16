@@ -3,6 +3,7 @@ package com.example.mentoringproject.chat.handler;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class StompHandler implements ChannelInterceptor {
 
   private final JwtService jwtService;
@@ -20,9 +22,13 @@ public class StompHandler implements ChannelInterceptor {
   @Override
   public Message<?> preSend(Message<?> message, MessageChannel channel) {
     StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(message);
+    log.debug("stompHeaderAccessor");
     if (stompHeaderAccessor.getCommand() == StompCommand.CONNECT) {
-      String accessToken = stompHeaderAccessor.getFirstNativeHeader("Authorization");
-      if (!jwtService.isTokenValid(accessToken)) {
+      String authorizationHeader = stompHeaderAccessor.getFirstNativeHeader("Authorization");
+      log.debug("Get AuthorizationHeader: {}", authorizationHeader);
+      String token = authorizationHeader.substring(7);
+      log.debug("Get ACCESSESTOKEN Get: {}", token);
+      if (!jwtService.isTokenValid(token)) {
         throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
       }
     }
