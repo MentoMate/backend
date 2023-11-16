@@ -6,17 +6,16 @@ import com.example.mentoringproject.chat.model.GroupChatMessage;
 import com.example.mentoringproject.chat.model.GroupChatMessageResponse;
 import com.example.mentoringproject.chat.model.PrivateChatMessage;
 import com.example.mentoringproject.chat.model.PrivateChatMessageResponse;
-import com.example.mentoringproject.chat.model.PrivateChatRoomCreateResponse;
 import com.example.mentoringproject.chat.service.ChatService;
-import com.example.mentoringproject.common.util.SpringSecurityUtil;
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +28,7 @@ public class MessageController {
   private final SimpMessageSendingOperations sendingOperations;
   private final ChatService chatService;
   private final UserService userService;
+  private final UserRepository userRepository;
 
   // 그룹 메세지 저장
   @Operation(summary = "그룹 메세지 저장 api", description = "그룹 메세지 저장 api", responses = {
@@ -36,18 +36,21 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/group")
   public void enter(GroupChatMessage groupChatMessage) {
-    log.debug("Enter Group Message method start...");
 
-    String email = SpringSecurityUtil.getLoginEmail();
-    log.debug("Logged in email: {}", email);
+    User user = userRepository.findById(
+            groupChatMessage.getUserId())
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User_NOT_FOUND"));
 
-    User user = userService.getUser(email);
-    log.debug("User retrieved from userService: {}", user);
+    String senderNickName = user.getNickName();
 
-    GroupMessage groupMessage = chatService.saveGroupChatMessage(groupChatMessage, user.getNickName());
+    log.debug("senderNickName retrieved from user: {}", senderNickName);
+
+    GroupMessage groupMessage = chatService.saveGroupChatMessage(groupChatMessage,
+        senderNickName);
     log.debug("Group message saved: {}", groupMessage);
 
-    GroupChatMessageResponse groupChatMessageResponse = GroupChatMessageResponse.fromEntity(groupMessage);
+    GroupChatMessageResponse groupChatMessageResponse = GroupChatMessageResponse.fromEntity(
+        groupMessage);
     sendingOperations.convertAndSend("/topic/chat/room/" + groupChatMessage.getGroupMentoringId(),
         groupChatMessageResponse);
     log.debug("Message sent successfully!");
@@ -61,11 +64,25 @@ public class MessageController {
   })
   @MessageMapping("/chat/message/private")
   public void enter(PrivateChatMessage privateChatMessage) {
-    PrivateMessage privateMessages = chatService.savePrivateChatMessage(privateChatMessage);
-    log.debug("Private message saved: {}", privateMessages);
+    log.debug("Enter Private Message method start...");
+
+    User user = userRepository.findById(
+            privateChatMessage.getUserId())
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User_NOT_FOUND"));
+
+    String senderNickName = user.getNickName();
+    log.debug("senderNickName retrieved from user: {}", senderNickName);
+
+    PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage,
+        senderNickName);
+    log.debug("Private message saved: {}", privateMessage);
+
+    PrivateChatMessageResponse privateChatMessageResponse = PrivateChatMessageResponse.fromEntity(
+        privateMessage);
 
     sendingOperations.convertAndSend(
-        "/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(), privateChatMessage);
+        "/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(),
+        privateChatMessageResponse);
     log.debug("Message sent successfully!");
 
     log.debug("Exit Private Message method...");
