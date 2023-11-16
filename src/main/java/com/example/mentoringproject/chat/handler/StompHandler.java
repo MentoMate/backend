@@ -38,8 +38,6 @@ public class StompHandler implements ChannelInterceptor {
         if (!jwtService.isTokenValid(token)) {
           throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
         }
-        // HttpSession에 토큰 저장
-        httpSession.setAttribute("token", token);
       } else {
         throw new AppException(HttpStatus.UNAUTHORIZED, "MISSING OR MALFORMED TOKEN");
       }
