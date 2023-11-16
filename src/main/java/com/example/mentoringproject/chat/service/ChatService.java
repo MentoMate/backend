@@ -139,7 +139,7 @@ public class ChatService {
 
   // 1:1 메세지 저장
   @Transactional
-  public PrivateMessage savePrivateChatMessage(PrivateChatMessage privateChatMessage, String nickName) {
+  public PrivateMessage savePrivateChatMessage(PrivateChatMessage privateChatMessage) {
     log.debug("Enter savePrivateChatMessage method...");
 
     PrivateChatRoom privateChatRoom = privateChatRoomRepository.findById(
@@ -148,7 +148,7 @@ public class ChatService {
     log.debug("PrivateChatRoom retrieved: {}", privateChatRoom);
 
     PrivateMessage privateMessage = new PrivateMessage(privateChatRoom,
-        nickName, privateChatMessage.getMessage());
+        "nickname", privateChatMessage.getMessage());
     privateMessageRepository.save(privateMessage);
     log.debug("Private message saved: {}", privateMessage);
 

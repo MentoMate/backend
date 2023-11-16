@@ -69,11 +69,10 @@ public class MessageController {
 
     User user = userService.getUser(email);
     log.debug("User retrieved from userService: {}", user);
-
-    PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage,
-        user.getNickName());
+    */
+    PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage);
     log.debug("Private message saved: {}", privateMessage);
-
+    /*
     PrivateChatMessageResponse privateChatMessageResponse = PrivateChatMessageResponse.fromEntity(privateMessage);
     */
     sendingOperations.convertAndSend(
