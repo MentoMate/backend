@@ -20,9 +20,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
@@ -36,10 +36,11 @@ public class SecurityConfig {
   private final UserRepository userRepository;
   private final ObjectMapper objectMapper;
 
-  private static final String[] PERMIT_URL_ARRAY = {
-          "/v3/api-docs/**",
-          "/swagger-ui/**"
-  };
+  private static final String[] PERMIT_SWAGGER_URL_ARRAY = PermitUrl.PERMIT_SWAGGER_URL_ARRAY;
+  private static final String[] PERMIT_GET_MENTORING_URL_ARRAY = PermitUrl.PERMIT_GET_MENTORING_URL_ARRAY;
+  private static final String[] PERMIT_GET_POST_URL_ARRAY = PermitUrl.PERMIT_GET_POST_URL_ARRAY;
+  private static final String[] PERMIT_GET_USER_URL_ARRAY = PermitUrl.PERMIT_GET_USER_URL_ARRAY;
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
@@ -54,10 +55,11 @@ public class SecurityConfig {
         .and()
         .authorizeRequests()
         .antMatchers("/", "/user/login/**", "/user/join/**").permitAll()
-        .antMatchers(PERMIT_URL_ARRAY).permitAll()
-        .antMatchers(HttpMethod.GET, "/mentoring/{mentoringId}", "/mentoring", "/mentoring/main", "/posts",
-            "/posts/{postId}/comments", "/posts/{postId}/info", "/post/search","/{postId}/comments","/mentor/search","/mentoring/search"
-            , "/user/profile", "/user/profile/{userId}", "/mentoring/{userId}/history").permitAll()
+        .antMatchers(PERMIT_SWAGGER_URL_ARRAY).permitAll()
+        .antMatchers().permitAll()
+        .antMatchers(HttpMethod.GET, PERMIT_GET_MENTORING_URL_ARRAY).permitAll()
+        .antMatchers(HttpMethod.GET, PERMIT_GET_POST_URL_ARRAY).permitAll()
+        .antMatchers(HttpMethod.GET, PERMIT_GET_USER_URL_ARRAY).permitAll()
         .antMatchers("/ws/**").permitAll()
         .antMatchers("/ws/*").permitAll()
         .antMatchers("/ws/chat/*").permitAll()
