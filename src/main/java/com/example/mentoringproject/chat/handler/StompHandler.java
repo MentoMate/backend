@@ -2,6 +2,7 @@ package com.example.mentoringproject.chat.handler;
 
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.jwt.service.JwtService;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,16 +23,23 @@ public class StompHandler implements ChannelInterceptor {
   @Override
   public Message<?> preSend(Message<?> message, MessageChannel channel) {
     StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(message);
-    log.debug("Start stompHeaderAccessor");
+    log.debug("Start stompHeaderAccessor:{}",stompHeaderAccessor );
+
+    HttpSession httpSession = (HttpSession) stompHeaderAccessor.getSessionAttributes().get(
+        HttpSession.class.getName());
+    log.debug("Start httpSession :{}", httpSession);
+
     if (stompHeaderAccessor.getCommand() == StompCommand.CONNECT) {
       String authorizationHeader = stompHeaderAccessor.getFirstNativeHeader("Authorization");
       log.debug("Get AuthorizationHeader: {}", authorizationHeader);
       if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
         String token = authorizationHeader.substring(7);
-        log.debug("Get ACCESSESTOKEN Get: {}", token);
+        log.debug("Get ACCESSESTOKEN : {}", token);
         if (!jwtService.isTokenValid(token)) {
           throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
         }
+        // HttpSession에 토큰 저장
+        httpSession.setAttribute("token", token);
       } else {
         throw new AppException(HttpStatus.UNAUTHORIZED, "MISSING OR MALFORMED TOKEN");
       }
