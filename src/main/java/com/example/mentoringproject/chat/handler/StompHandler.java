@@ -22,7 +22,7 @@ public class StompHandler implements ChannelInterceptor {
   public Message<?> preSend(Message<?> message, MessageChannel channel) {
     StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(message);
     if (stompHeaderAccessor.getCommand() == StompCommand.CONNECT) {
-      String accessToken = stompHeaderAccessor.getFirstNativeHeader("AccessToken");
+      String accessToken = stompHeaderAccessor.getFirstNativeHeader("Authorization");
       if (!jwtService.isTokenValid(accessToken)) {
         throw new AppException(HttpStatus.BAD_REQUEST, "INVALID TOKEN");
       }
