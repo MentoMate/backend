@@ -3,7 +3,6 @@ package com.example.mentoringproject.login.email.handler;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.user.EmailLoginUser;
 import com.example.mentoringproject.user.user.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +38,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         });
     log.debug("로그인에 성공하였습니다. 이메일 : {}", email);
     log.debug("로그인에 성공하였습니다. AccessToken : {}", accessToken);
-    log.debug("User Id : {}", userId);
+
   }
 
   private String extractUsername(Authentication authentication) {

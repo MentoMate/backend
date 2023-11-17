@@ -19,8 +19,6 @@ import com.example.mentoringproject.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.pay.entity.Pay;
-import com.example.mentoringproject.pay.entity.PayStatus;
-import com.example.mentoringproject.pay.service.PayService;
 import com.example.mentoringproject.post.post.entity.Category;
 import com.example.mentoringproject.post.post.entity.Post;
 import com.example.mentoringproject.post.post.model.PostByRegisterDateDto;
@@ -61,7 +59,7 @@ public class MentoringService {
   private final UserRepository userRepository;
   private final PrivateChatRoomRepository privateChatRoomRepository;
   private final UserService userService;
-  private final PayService payService;
+//  private final PayService payService;
   private final S3Service s3Service;
 
   private static final String FOLDER = "mentoring/";
@@ -121,7 +119,7 @@ public class MentoringService {
 
     List<Mentee> menteeList = menteeService.getMenteeListFromMentoring(mentoring);
     if(!menteeList.isEmpty()){
-      payService.payCancelByMentor(menteeList, mentoring.getId(), restApiKey,restApiSecret);
+//      payService.payCancelByMentor(menteeList, mentoring.getId(), restApiKey,restApiSecret);
     }
     menteeService.deleteMenteeList(menteeList);
     mentoring.setStatus(MentoringStatus.DELETE);
