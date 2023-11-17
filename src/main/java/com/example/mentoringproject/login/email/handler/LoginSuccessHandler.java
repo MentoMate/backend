@@ -3,6 +3,8 @@ package com.example.mentoringproject.login.email.handler;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.user.EmailLoginUser;
 import com.example.mentoringproject.user.user.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +22,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-      Authentication authentication){
+      Authentication authentication) throws IOException {
     String email = extractUsername(authentication);
     Long userId = extractUserId(authentication);
     String nickname = extractNickname(authentication);
