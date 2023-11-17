@@ -114,7 +114,7 @@ public class PayService {
   public void payCancelByMentor(List<Mentee> menteeList, Long mentoringId, String restApiKey, String restApiSecret) {
 
     for(Mentee mentee : menteeList){
-      Pay pay = payRepository.findByMentoring_IdAndUser_Id(mentee.getUser().getId(), mentoringId);
+      Pay pay = payRepository.findByMentoring_IdAndUser_Id(mentoringId, mentee.getUser().getId());
 
       if(pay.getPayStatus().equals(PayStatus.CANCEL)) continue;
 
@@ -124,6 +124,7 @@ public class PayService {
       cancelPayment(accessToken, pay);
 
       pay.setPayStatus(PayStatus.CANCEL);
+      payRepository.save(pay);
     }
   }
 
