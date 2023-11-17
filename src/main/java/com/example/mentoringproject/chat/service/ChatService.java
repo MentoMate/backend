@@ -177,9 +177,9 @@ public class ChatService {
     PrivateChatRoom privateChatRoom = null;
 
     if (isUser) {
-      privateChatRoom = privateChatRoomRepository.findByUser(user);
+      privateChatRoom = privateChatRoomRepository.findFirstByUser(user);
     } else if (isMentor) {
-      privateChatRoom = privateChatRoomRepository.findByMentor(user);
+      privateChatRoom = privateChatRoomRepository.findFirstByMentor(user);
     }
 
     log.debug("Debug: privateChatRoom - {}", privateChatRoom);
