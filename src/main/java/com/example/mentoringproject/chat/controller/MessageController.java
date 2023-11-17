@@ -43,6 +43,8 @@ public class MessageController {
 
     String senderNickName = user.getNickName();
 
+    Long usrId = user.getId();
+
     log.debug("senderNickName retrieved from user: {}", senderNickName);
 
     GroupMessage groupMessage = chatService.saveGroupChatMessage(groupChatMessage,
@@ -50,7 +52,7 @@ public class MessageController {
     log.debug("Group message saved: {}", groupMessage);
 
     GroupChatMessageResponse groupChatMessageResponse = GroupChatMessageResponse.fromEntity(
-        groupMessage);
+        groupMessage, usrId);
     sendingOperations.convertAndSend("/topic/chat/room/" + groupChatMessage.getGroupMentoringId(),
         groupChatMessageResponse);
     log.debug("Message sent successfully!");
@@ -71,6 +73,9 @@ public class MessageController {
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User_NOT_FOUND"));
 
     String senderNickName = user.getNickName();
+
+    Long usrId = user.getId();
+
     log.debug("senderNickName retrieved from user: {}", senderNickName);
 
     PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage,
@@ -78,7 +83,7 @@ public class MessageController {
     log.debug("Private message saved: {}", privateMessage);
 
     PrivateChatMessageResponse privateChatMessageResponse = PrivateChatMessageResponse.fromEntity(
-        privateMessage);
+        privateMessage, usrId);
 
     sendingOperations.convertAndSend(
         "/subscribe/chat/room/" + privateChatMessage.getPrivateChatRoomId(),
