@@ -11,7 +11,6 @@ public class SpringSecurityUtil {
 
   public static String getLoginEmail() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    log.debug("DEBUG :authentication :{}", authentication);
 
     if (authentication == null || authentication.getName() == null) {
       throw new RuntimeException("get authentication 오류");

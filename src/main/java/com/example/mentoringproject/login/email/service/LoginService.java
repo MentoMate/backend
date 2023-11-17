@@ -1,13 +1,14 @@
 package com.example.mentoringproject.login.email.service;
 
-import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.login.email.user.EmailLoginUser;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
-import java.time.LocalDateTime;
-import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,21 +20,22 @@ public class LoginService implements UserDetailsService {
   private final UserRepository userRepository;
 
   @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+  public EmailLoginUser loadUserByUsername(String email) throws UsernameNotFoundException {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 존재하지 않습니다."));
-
-    return org.springframework.security.core.userdetails.User.builder()
+    return EmailLoginUser.builder()
         .username(user.getEmail())
+        .userId(user.getId())
         .password(user.getPassword())
-        .authorities("ROLE_USER")
+        .authorities(getGrantedAuthorities())
         .build();
   }
 
-  @Transactional
-  public void setLastLogin(User oAuth2User) {
-    User user = userRepository.findByEmail(oAuth2User.getEmail())
-        .orElseThrow(() -> new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "Not Found OAuth2User"));
-    user.setLastLogin(LocalDateTime.now());
+  @NotNull
+  private static Collection<GrantedAuthority> getGrantedAuthorities() {
+    Collection<GrantedAuthority> authorities = new ArrayList<>();
+    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+    return authorities;
   }
+
 }

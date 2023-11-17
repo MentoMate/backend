@@ -80,12 +80,13 @@ public class OAuth2Service {
 
     User oauthUser = optionalOauthUser.get();
     String email = oauthUser.getEmail();
+    Long userId = oauthUser.getId();
 
     String accessToken = jwtService.createAccessToken(oauthUser.getEmail());
     String refreshToken = jwtService.createRefreshToken();
     jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+    jwtService.sendUserIdInHeader(response, userId);
     jwtService.updateRefreshToken(email, refreshToken);
-    loginService.setLastLogin(oauthUser);
     log.info("oauth login success");
   }
 }
