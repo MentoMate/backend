@@ -220,11 +220,11 @@ public class MentoringController {
       @Content(schema = @Schema(implementation = MentoringDto.class)))
   })
   @GetMapping("/end")
-  public ResponseEntity<Page<MentoringDto>> getListOfExpiredMentoring(
+  public ResponseEntity<Page<MentoringList>> getListOfExpiredMentoring(
       @PageableDefault Pageable pageable
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(mentoringService.getEndedMentoringList(email, pageable));
+    return ResponseEntity.ok(MentoringList.from(mentoringService.getEndedMentoringList(email, pageable)));
   }
 
   @Operation(summary = "평점, 후기 남기기 API", description = "평점, 후기 남기기 API", responses = {
