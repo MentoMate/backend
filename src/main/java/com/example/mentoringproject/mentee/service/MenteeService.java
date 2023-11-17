@@ -34,10 +34,16 @@ public class MenteeService {
         .collect(Collectors.toList());
   }
 
+
+  public void deleteMenteeList(List<Mentee> menteeList){
+    menteeRepository.deleteAllInBatch(menteeList);
+  }
+  
   public Mentee addMentee(User mentee, Mentoring mentoring) {
     return menteeRepository.save(Mentee.builder()
         .mentoring(mentoring)
         .user(mentee)
         .build());
+
   }
 }

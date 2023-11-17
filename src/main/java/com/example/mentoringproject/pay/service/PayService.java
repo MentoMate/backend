@@ -1,6 +1,7 @@
 package com.example.mentoringproject.pay.service;
 
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.service.MentoringService;
@@ -107,6 +108,24 @@ public class PayService {
     mentoringService.deleteMentoringUserByCancelPayment(pay);
 
     return pay;
+  }
+
+  @Transactional
+  public void payCancelByMentor(List<Mentee> menteeList, Long mentoringId, String restApiKey, String restApiSecret) {
+
+    for(Mentee mentee : menteeList){
+      Pay pay = payRepository.findByMentoring_IdAndUser_Id(mentoringId, mentee.getUser().getId());
+
+      if(pay.getPayStatus().equals(PayStatus.CANCEL)) continue;
+
+      String accessToken = getAccessToken(restApiKey, restApiSecret);
+      log.debug(accessToken);
+
+      cancelPayment(accessToken, pay);
+
+      pay.setPayStatus(PayStatus.CANCEL);
+      payRepository.save(pay);
+    }
   }
 
   private Pay getPay(Long payId) {
