@@ -2,7 +2,10 @@ package com.example.mentoringproject.common.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.mentoringproject.login.response.ResponseBody;
 import com.example.mentoringproject.user.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -37,14 +40,12 @@ public class JwtService {
 
   private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
   private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-  private static final String USER_ID = "UserId";
-  private static final String NICK_NAME = "Nickname";
   private static final String EMAIL_CLAIM = "email";
 
   private static final String BEARER = "Bearer";
 
   private final UserRepository userRepository;
-
+  private final ObjectMapper objectMapper;
   public String createAccessToken(String email) {
     Date now = new Date();
     return JWT.create()
@@ -122,8 +123,12 @@ public class JwtService {
     }
   }
 
-  public void sendUserIdAndNickname(HttpServletResponse response, Long userId, String nickname) {
-    response.setHeader(USER_ID, String.valueOf(userId));
-    response.setHeader(NICK_NAME, nickname);
+  public void sendUserIdAndNickname(HttpServletResponse response, Long userId, String nickname)
+      throws IOException {
+    ResponseBody responseBody= ResponseBody.builder()
+        .userId(userId)
+        .nickname(nickname)
+        .build();
+    response.getWriter().write(objectMapper.writeValueAsString(responseBody));
   }
 }
