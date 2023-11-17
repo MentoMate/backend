@@ -6,6 +6,7 @@ import com.example.mentoringproject.chat.repository.PrivateChatRoomRepository;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
@@ -59,6 +60,7 @@ public class MentoringService {
   private final UserRepository userRepository;
   private final PrivateChatRoomRepository privateChatRoomRepository;
   private final UserService userService;
+//  private final PayService payService;
   private final S3Service s3Service;
 
   private static final String FOLDER = "mentoring/";
@@ -108,17 +110,24 @@ public class MentoringService {
   }
 
 
-  public void deleteMentoring(Long mentoringId){
+  public void deleteMentoring(Long mentoringId, String restApiKey, String restApiSecret){
 
     Mentoring mentoring = getMentoring(mentoringId);
 
+    if(!mentoring.getStatus().equals(MentoringStatus.PROGRESS)){
+      throw new AppException(HttpStatus.BAD_REQUEST, "시작한 멘토링은 삭제할 수 없습니다.");
+    }
+
+    List<Mentee> menteeList = menteeService.getMenteeListFromMentoring(mentoring);
+    if(!menteeList.isEmpty()){
+//      payService.payCancelByMentor(menteeList, mentoring.getId(), restApiKey,restApiSecret);
+    }
+    menteeService.deleteMenteeList(menteeList);
     mentoring.setStatus(MentoringStatus.DELETE);
     mentoring.setDeleteDate(LocalDateTime.now());
 
     mentoringRepository.save(mentoring);
-
     mentoringSearchRepository.deleteById(mentoringId);
-
   }
 
   @Transactional

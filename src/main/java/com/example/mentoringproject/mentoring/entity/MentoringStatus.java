@@ -5,9 +5,7 @@ public enum MentoringStatus {
   PROGRESS,
   COMPLETE,
   START,
-  END,
   FINISH,
-  CANCEL,
   DELETE
 
 }

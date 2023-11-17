@@ -16,13 +16,15 @@ public class PrivateChatMessageInfo {
   private String senderNickName;
   private String message;
   private LocalDateTime registerDatetime;
+  private Long userId;
 
-  public static PrivateChatMessageInfo fromEntity(PrivateMessage privateMessage) {
+  public static PrivateChatMessageInfo fromEntity(PrivateMessage privateMessage, Long userId) {
     return PrivateChatMessageInfo.builder()
         .privateChatRoomId(privateMessage.getPrivateChatRoom().getId())
         .senderNickName(privateMessage.getSenderNickName())
         .message(privateMessage.getMessage())
         .registerDatetime(privateMessage.getRegisterDatetime())
+        .userId(userId)
         .build();
   }
 

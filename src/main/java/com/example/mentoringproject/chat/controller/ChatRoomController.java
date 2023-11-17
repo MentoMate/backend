@@ -93,9 +93,19 @@ public class ChatRoomController {
   @GetMapping("/private/{privateChatRoomId}")
   public ResponseEntity<List<PrivateChatMessageInfo>> privateMessageInfo(
       @PathVariable Long privateChatRoomId) {
-    return ResponseEntity.ok(chatService.findAllPrivateMessages(privateChatRoomId).stream()
-        .map(PrivateChatMessageInfo::fromEntity).collect(Collectors.toList()));
+    List<PrivateMessage> privateMessageList = chatService.findAllPrivateMessages(privateChatRoomId);
+
+    String email = SpringSecurityUtil.getLoginEmail();
+    User user = userService.getUser(email);
+    Long userId = user.getId();
+
+    List<PrivateChatMessageInfo> messageInfos = privateMessageList.stream()
+        .map(message -> PrivateChatMessageInfo.fromEntity(message, userId))
+        .collect(Collectors.toList());
+
+    return ResponseEntity.ok(messageInfos);
   }
+
 
   // 사용자의 1:1 채팅방 리스트 가져오기
   @Operation(summary = "사용자의 1:1 채팅방 리스트 가져오기 api", description = "사용자의 1:1 채팅방 리스트 가져오기 api", responses = {
@@ -106,10 +116,13 @@ public class ChatRoomController {
   public ResponseEntity<List<PrivateMyChatListInfo>> privateMyChatListInfo() {
     String email = SpringSecurityUtil.getLoginEmail();
 
+    User user = userService.getUser(email);
+    String nickName = user.getNickName();
+
     List<PrivateMessage> privateMessageList = chatService.getPrivateMyChatListInfo(email);
 
     List<PrivateMyChatListInfo> chatListInfo = privateMessageList.stream()
-        .map(PrivateMyChatListInfo::fromEntity)
+        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName ))
         .collect(Collectors.toList());
 
     return ResponseEntity.ok(chatListInfo);
