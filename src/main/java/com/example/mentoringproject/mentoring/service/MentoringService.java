@@ -15,6 +15,7 @@ import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
 import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
+import com.example.mentoringproject.mentoring.model.MentoringList;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.pay.entity.Pay;
@@ -280,23 +281,21 @@ public class MentoringService {
     return countDtoList;
   }
 
-  public Page<MentoringDto> getEndedMentoringList(String email, Pageable pageable) {
+  public Page<Mentoring> getEndedMentoringList(String email, Pageable pageable) {
     User user = userService.getUser(email);
-    List<MentoringDto> mentoringDtoList = menteeService.getMentoringListFormMenteeUser(user)
+    List<Mentoring> mentoringList = menteeService.getMentoringListFormMenteeUser(user)
         .stream()
         .filter(mentoring -> mentoring.getStatus().equals(MentoringStatus.FINISH))
-        .map(MentoringDto::from)
         .collect(Collectors.toList());
 
-    return pagingMentoringDto(pageable, mentoringDtoList);
+    return pagingMentoringDto(pageable, mentoringList);
   }
-
-  private static Page<MentoringDto> pagingMentoringDto(Pageable pageable, List<MentoringDto> mentoringDtoList) {
+  private static Page<Mentoring> pagingMentoringDto(Pageable pageable, List<Mentoring> mentoringLists) {
     PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
     int start = (int) pageRequest.getOffset();
-    int end = Math.min((start + pageable.getPageSize()), mentoringDtoList.size());
-    return new PageImpl<>(mentoringDtoList.subList(start, end),
-        pageRequest, mentoringDtoList.size());
+    int end = Math.min((start + pageable.getPageSize()), mentoringLists.size());
+    return new PageImpl<>(mentoringLists.subList(start, end),
+        pageRequest, mentoringLists.size());
   }
 
   @Transactional
