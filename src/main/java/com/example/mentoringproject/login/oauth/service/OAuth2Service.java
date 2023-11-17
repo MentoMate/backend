@@ -71,7 +71,7 @@ public class OAuth2Service {
           .email(UUID.randomUUID() + "@email.com")
           .socialId(socialId)
           .socialType(socialType)
-          .nickName(UUID.randomUUID() + "@nickname")
+          .nickName(makeRandomNickname())
           .registerDate(LocalDateTime.now())
           .build());
       log.info("oauth join success");
@@ -80,12 +80,19 @@ public class OAuth2Service {
 
     User oauthUser = optionalOauthUser.get();
     String email = oauthUser.getEmail();
+    Long userId = oauthUser.getId();
+    String nickname = oauthUser.getNickName();
 
     String accessToken = jwtService.createAccessToken(oauthUser.getEmail());
     String refreshToken = jwtService.createRefreshToken();
     jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+    jwtService.sendUserIdAndNickname(response, userId, nickname);
     jwtService.updateRefreshToken(email, refreshToken);
-    loginService.setLastLogin(oauthUser);
     log.info("oauth login success");
+  }
+
+  private String makeRandomNickname() {
+    String randomNickname = UUID.randomUUID().toString().replaceAll("-", "");
+    return randomNickname.substring(0, 8) + "@nickname";
   }
 }
