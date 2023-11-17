@@ -26,6 +26,7 @@ public class LoginService implements UserDetailsService {
     return EmailLoginUser.builder()
         .username(user.getEmail())
         .userId(user.getId())
+        .nickname(user.getNickName())
         .password(user.getPassword())
         .authorities(getGrantedAuthorities())
         .build();

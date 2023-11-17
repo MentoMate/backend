@@ -23,11 +23,12 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
       Authentication authentication){
     String email = extractUsername(authentication);
     Long userId = extractUserId(authentication);
+    String nickname = extractNickname(authentication);
     String accessToken = jwtService.createAccessToken(email);
     String refreshToken = jwtService.createRefreshToken();
 
     jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-    jwtService.sendUserIdInHeader(response, userId);
+    jwtService.sendUserIdAndNickname(response, userId, nickname);
     userRepository.findByEmail(email)
         .ifPresent(user -> {
           user.updateRefreshToken(refreshToken);
@@ -49,4 +50,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     return user.getUserId();
   }
 
+  private String extractNickname(Authentication authentication) {
+    EmailLoginUser user = (EmailLoginUser) authentication.getPrincipal();
+    return user.getNickname();
+  }
 }
