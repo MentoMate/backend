@@ -20,6 +20,7 @@ import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.example.mentoringproject.user.user.service.UserService;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -94,10 +95,11 @@ public class ChatService {
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "MENTORING_NOT_FOUND"));
 
     if (!mentoring.getUser().getId().equals(mentor.getId())) {
-      throw new AppException(HttpStatus.BAD_REQUEST,"Invalid mentor for the given mentoring");
+      throw new AppException(HttpStatus.BAD_REQUEST, "Invalid mentor for the given mentoring");
     }
 
-    if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(), privateChatRoomCreateRequest.getMentoringId())) {
+    if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(),
+        privateChatRoomCreateRequest.getMentoringId())) {
       throw new AppException(HttpStatus.BAD_REQUEST, "1:1 채팅방이 이미 생성 되었습니다");
     }
 
@@ -162,20 +164,42 @@ public class ChatService {
   @Transactional
   public List<PrivateMessage> getPrivateMyChatListInfo(String email) {
     User user = userService.getUser(email);
-    List<PrivateMessage> privateMessageList = privateMessageRepository.findBySenderNickName(user.getNickName());
+
+    boolean isUser = privateChatRoomRepository.existsByUser(user);
+    boolean isMentor = privateChatRoomRepository.existsByMentor(user);
+
+    PrivateChatRoom privateChatRoom = null;
+
+    if (isUser) {
+      privateChatRoom = privateChatRoomRepository.findByUser(user);
+    } else if (isMentor) {
+      privateChatRoom = privateChatRoomRepository.findByMentor(user);
+    }
+
+    if (privateChatRoom == null) {
+      return Collections.emptyList();
+    }
+
+    Long privateChatRoomId = privateChatRoom.getId();
+
+    List<PrivateMessage> privateMessageList = privateMessageRepository.findByPrivateChatRoomId(
+            privateChatRoomId);
+
     Map<Long, PrivateMessage> latestMessagesByMentoringId = new HashMap<>();
 
     for (PrivateMessage privateMessage : privateMessageList) {
       Long mentoringId = privateMessage.getPrivateChatRoom().getMentoring().getId();
       if (!latestMessagesByMentoringId.containsKey(mentoringId) ||
-          privateMessage.getRegisterDatetime().isAfter(latestMessagesByMentoringId.get(mentoringId).getRegisterDatetime())) {
+          privateMessage.getRegisterDatetime()
+              .isAfter(latestMessagesByMentoringId.get(mentoringId).getRegisterDatetime())) {
         latestMessagesByMentoringId.put(mentoringId, privateMessage);
       }
     }
 
     List<PrivateMessage> latestMessages = new ArrayList<>(latestMessagesByMentoringId.values());
 
-    latestMessages.sort(Comparator.comparing(PrivateMessage::getRegisterDatetime).reversed());;
+    latestMessages.sort(Comparator.comparing(PrivateMessage::getRegisterDatetime).reversed());
+    ;
 
     return latestMessages;
 

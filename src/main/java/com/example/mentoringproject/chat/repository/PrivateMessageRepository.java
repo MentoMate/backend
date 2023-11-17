@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PrivateMessageRepository extends JpaRepository<PrivateMessage, Long> {
 
   List<PrivateMessage> findByPrivateChatRoomIdOrderByRegisterDatetime(Long chatRoomId);
+  List<PrivateMessage> findByPrivateChatRoomId(Long privateChatRoomId);
 
-  List<PrivateMessage> findBySenderNickName(String senderNickName);
+
 
 }
