@@ -101,9 +101,7 @@ public class ChatService {
 
     if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(),
         privateChatRoomCreateRequest.getMentoringId())) {
-      Long existingRoomId = privateChatRoomRepository.findByUserIdAndMentoringId(user.getId(),
-          privateChatRoomCreateRequest.getMentoringId()).getId();
-      throw new DuplicateChatRoomException(HttpStatus.BAD_REQUEST, existingRoomId);
+      throw new AppException(HttpStatus.BAD_REQUEST, "1:1 채팅창이 이미 생성되었습니다");
     }
 
     PrivateChatRoom privateChatRoom = new PrivateChatRoom(user, mentor, mentoring);
