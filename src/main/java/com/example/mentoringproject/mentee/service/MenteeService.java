@@ -33,4 +33,11 @@ public class MenteeService {
         .map(Mentee::getMentoring)
         .collect(Collectors.toList());
   }
+
+  public Mentee addMentee(User mentee, Mentoring mentoring) {
+    return menteeRepository.save(Mentee.builder()
+        .mentoring(mentoring)
+        .user(mentee)
+        .build());
+  }
 }
