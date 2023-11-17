@@ -68,8 +68,8 @@ public class PayService {
         .build());
 
     log.debug("Pay Info = {}", pay);
-    //mentoring userList에 user추가
-    menteeList.add(buyer);
+
+    menteeService.addMentee(buyer, mentoring);
 
     return createPaymentNotificationResponseDto(mentoring, buyer);
   }
