@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +53,10 @@ public class MentoringController {
   private final MentoringService mentoringService;
   private final ScheduleService scheduleService;
   private final ReviewService ratingService;
+  @Value("${iamport.key}")
+  private String restApiKey;
+  @Value("${iamport.secret}")
+  private String restApiSecret;
 
   @Operation(summary = "멘토링 등록 api", description = "멘토링 등록 api", responses = {
       @ApiResponse(responseCode = "200", description = "멘토링 등록 성공", content =
@@ -89,7 +94,7 @@ public class MentoringController {
   public ResponseEntity<Void> deleteMentoring(
       @PathVariable Long mentoringId
   ) {
-    mentoringService.deleteMentoring(mentoringId);
+    mentoringService.deleteMentoring(mentoringId, restApiKey, restApiSecret);
     return ResponseEntity.ok().build();
   }
 

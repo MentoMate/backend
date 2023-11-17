@@ -33,4 +33,8 @@ public class MenteeService {
         .map(Mentee::getMentoring)
         .collect(Collectors.toList());
   }
+
+  public void deleteMenteeList(List<Mentee> menteeList){
+    menteeRepository.deleteAllInBatch(menteeList);
+  }
 }
