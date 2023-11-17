@@ -38,6 +38,7 @@ public class JwtService {
   private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
   private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
   private static final String USER_ID = "UserId";
+  private static final String NICK_NAME = "Nickname";
   private static final String EMAIL_CLAIM = "email";
 
   private static final String BEARER = "Bearer";
@@ -121,7 +122,8 @@ public class JwtService {
     }
   }
 
-  public void sendUserIdInHeader(HttpServletResponse response, Long userId) {
+  public void sendUserIdAndNickname(HttpServletResponse response, Long userId, String nickname) {
     response.setHeader(USER_ID, String.valueOf(userId));
+    response.setHeader(NICK_NAME, nickname);
   }
 }

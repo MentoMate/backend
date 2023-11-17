@@ -10,6 +10,8 @@ public class EmailLoginUser implements UserDetails {
 
   private final String username;
   private final Long userId;
+  private final String nickname;
+
   private final String password;
   private final Collection<GrantedAuthority> authorities;
 
@@ -20,6 +22,10 @@ public class EmailLoginUser implements UserDetails {
 
   public Long getUserId() {
     return this.userId;
+  }
+
+  public String getNickname() {
+    return this.nickname;
   }
 
   @Override

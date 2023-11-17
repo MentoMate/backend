@@ -81,11 +81,12 @@ public class OAuth2Service {
     User oauthUser = optionalOauthUser.get();
     String email = oauthUser.getEmail();
     Long userId = oauthUser.getId();
+    String nickname = oauthUser.getNickName();
 
     String accessToken = jwtService.createAccessToken(oauthUser.getEmail());
     String refreshToken = jwtService.createRefreshToken();
     jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-    jwtService.sendUserIdInHeader(response, userId);
+    jwtService.sendUserIdAndNickname(response, userId, nickname);
     jwtService.updateRefreshToken(email, refreshToken);
     log.info("oauth login success");
   }
