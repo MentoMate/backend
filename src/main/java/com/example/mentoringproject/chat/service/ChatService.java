@@ -13,6 +13,7 @@ import com.example.mentoringproject.chat.repository.GroupMessageRepository;
 import com.example.mentoringproject.chat.repository.PrivateChatRoomRepository;
 import com.example.mentoringproject.chat.repository.PrivateMessageRepository;
 import com.example.mentoringproject.common.exception.AppException;
+import com.example.mentoringproject.common.exception.DuplicateChatRoomException;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.user.entity.User;
@@ -100,7 +101,9 @@ public class ChatService {
 
     if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(),
         privateChatRoomCreateRequest.getMentoringId())) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "1:1 채팅방이 이미 생성 되었습니다");
+      Long existingRoomId = privateChatRoomRepository.findByUserIdAndMentoringId(user.getId(),
+          privateChatRoomCreateRequest.getMentoringId()).getId();
+      throw new DuplicateChatRoomException(HttpStatus.BAD_REQUEST, existingRoomId);
     }
 
     PrivateChatRoom privateChatRoom = new PrivateChatRoom(user, mentor, mentoring);
@@ -165,8 +168,13 @@ public class ChatService {
   public List<PrivateMessage> getPrivateMyChatListInfo(String email) {
     User user = userService.getUser(email);
 
+    log.debug("Debug: user - {}", user);
+
     boolean isUser = privateChatRoomRepository.existsByUser(user);
+    log.debug("Debug: isUser - {}", isUser);
+
     boolean isMentor = privateChatRoomRepository.existsByMentor(user);
+    log.debug("Debug: isMentor - {}", isMentor);
 
     PrivateChatRoom privateChatRoom = null;
 
@@ -176,14 +184,20 @@ public class ChatService {
       privateChatRoom = privateChatRoomRepository.findByMentor(user);
     }
 
+    log.debug("Debug: privateChatRoom - {}", privateChatRoom);
+
     if (privateChatRoom == null) {
       return Collections.emptyList();
     }
 
     Long privateChatRoomId = privateChatRoom.getId();
 
+    log.debug("Debug: privateChatRoomId - {}", privateChatRoomId);
+
     List<PrivateMessage> privateMessageList = privateMessageRepository.findByPrivateChatRoomId(
             privateChatRoomId);
+
+    log.debug("Debug: privateMessageList - {}", privateMessageList);
 
     Map<Long, PrivateMessage> latestMessagesByMentoringId = new HashMap<>();
 
@@ -196,10 +210,15 @@ public class ChatService {
       }
     }
 
+    log.debug("Debug: latestMessagesByMentoringId - {}", latestMessagesByMentoringId);
+
     List<PrivateMessage> latestMessages = new ArrayList<>(latestMessagesByMentoringId.values());
 
+    log.debug("Debug: latestMessages - {}", latestMessages);
+
     latestMessages.sort(Comparator.comparing(PrivateMessage::getRegisterDatetime).reversed());
-    ;
+
+    log.debug("Debug: latestMessages - {}", latestMessages);
 
     return latestMessages;
 
