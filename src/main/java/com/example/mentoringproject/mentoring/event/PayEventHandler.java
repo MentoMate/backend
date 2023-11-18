@@ -4,8 +4,9 @@ import com.example.mentoringproject.pay.service.PayService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
-@Getter
+@Component
 @RequiredArgsConstructor
 public class PayEventHandler {
   private final PayService payService;
