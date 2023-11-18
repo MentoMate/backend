@@ -179,6 +179,7 @@ public class UserService {
     user.setMainCategory(userProfileSave.getMainCategory());
     user.setMiddleCategory(userProfileSave.getMiddleCategory());
     user.setUploadFolder(userProfileSave.getUploadFolder());
+    user.setRating(0.0);
 
     return user;
   }
