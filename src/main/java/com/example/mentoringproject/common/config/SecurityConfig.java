@@ -83,6 +83,7 @@ public class SecurityConfig {
 
     config.addAllowedOrigin("http://localhost:5173"); // 로컬
     config.addAllowedOrigin("http://localhost:3000"); // 로컬
+    config.addAllowedOrigin("https://mentormate.vercel.app"); // 프론트 배포
     config.addAllowedMethod("*"); // 모든 메소드 허용.
     config.addAllowedHeader("*");
     config.setAllowCredentials(true);
