@@ -1,5 +1,6 @@
 package com.example.mentoringproject.pay.repository;
 
+import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.user.user.entity.User;
 import java.util.List;
@@ -13,5 +14,5 @@ public interface PayRepository extends JpaRepository<Pay, Long> {
 
   Page<Pay> findAllByUserOrderByUpdateDate(User user, Pageable pageable);
 
-  Pay findByMentoring_IdAndUser_Id(Long mentoringId, Long userId);
+  Pay findByMentoringAndUser(Mentoring mentoring, User user);
 }

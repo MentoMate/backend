@@ -111,17 +111,18 @@ public class PayService {
   }
 
   @Transactional
-  public void payCancelByMentor(List<Mentee> menteeList, Long mentoringId, String restApiKey, String restApiSecret) {
+  public void payCancelByMentor( Mentoring mentoring, String restApiKey, String restApiSecret) {
 
+    List<Mentee> menteeList = menteeService.getMenteeListFromMentoring(mentoring);
     for(Mentee mentee : menteeList){
-      Pay pay = payRepository.findByMentoring_IdAndUser_Id(mentoringId, mentee.getUser().getId());
+      Pay pay = payRepository.findByMentoringAndUser(mentoring, mentee.getUser());
 
       if(pay.getPayStatus().equals(PayStatus.CANCEL)) continue;
 
-      String accessToken = getAccessToken(restApiKey, restApiSecret);
+      /*String accessToken = getAccessToken(restApiKey, restApiSecret);
       log.debug(accessToken);
 
-      cancelPayment(accessToken, pay);
+      cancelPayment(accessToken, pay);*/
 
       pay.setPayStatus(PayStatus.CANCEL);
       payRepository.save(pay);

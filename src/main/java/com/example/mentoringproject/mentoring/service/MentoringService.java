@@ -10,13 +10,12 @@ import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.event.PayEvent;
 import com.example.mentoringproject.mentoring.model.CountDto;
 import com.example.mentoringproject.mentoring.model.MentorByRatingDto;
 import com.example.mentoringproject.mentoring.model.MentoringByCountWatchDto;
 import com.example.mentoringproject.mentoring.model.MentoringByEndDateDto;
-import com.example.mentoringproject.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.model.MentoringInfo;
-import com.example.mentoringproject.mentoring.model.MentoringList;
 import com.example.mentoringproject.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.pay.entity.Pay;
@@ -38,6 +37,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -60,9 +60,8 @@ public class MentoringService {
   private final UserRepository userRepository;
   private final PrivateChatRoomRepository privateChatRoomRepository;
   private final UserService userService;
-//  private final PayService payService;
   private final S3Service s3Service;
-
+  private final ApplicationEventPublisher publisher;
   private static final String FOLDER = "mentoring/";
   private static final String FILE_TYPE = "img";
 
@@ -120,7 +119,7 @@ public class MentoringService {
 
     List<Mentee> menteeList = menteeService.getMenteeListFromMentoring(mentoring);
     if(!menteeList.isEmpty()){
-//      payService.payCancelByMentor(menteeList, mentoring.getId(), restApiKey,restApiSecret);
+      publisher.publishEvent(new PayEvent(this, mentoring, restApiKey, restApiSecret));
     }
     menteeService.deleteMenteeList(menteeList);
     mentoring.setStatus(MentoringStatus.DELETE);
