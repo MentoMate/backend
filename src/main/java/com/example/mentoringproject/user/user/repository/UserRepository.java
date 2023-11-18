@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -32,6 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findBySocialIdAndSocialType(String socialId, SocialType socialType);
 
   Page<User> findByNameIsNotNull(Pageable pageable);
+
+  @Query("SELECT m FROM users u JOIN u.followerList m WHERE u.id = :userId")
+  Page<User> findFollowMentorByFollowerListAndId  (Long userId, Pageable pageable);
 
   Long countByNameIsNotNull();
 

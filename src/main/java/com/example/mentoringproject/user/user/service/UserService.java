@@ -224,21 +224,21 @@ public class UserService {
   @Transactional
   public void userFollow(String email, Long userId){
 
-    User followUser = getUser(email);
+    User user = getUser(email);
     User mentor = profileInfo(userId);
-    List<User> followerList = mentor.getFollowerList();
-    if (followerList.stream().anyMatch(user -> user.getId().equals(followUser.getId()))) {
-      followerList.removeIf(user -> user.equals(followUser));
+    List<User> followList = user.getFollowerList();
+    if (followList.stream().anyMatch(followUser -> followUser.getId().equals(mentor.getId()))) {
+      followList.removeIf(followUser -> followUser.equals(mentor));
     }
     else{
-      followerList.add(followUser);
+      followList.add(mentor);
     }
   }
 
   @Transactional(readOnly = true)
   public Page<User> getFollowProfileList(String email, Pageable pageable) {
     User user = getUser(email);
-    return userRepository.findByNameIsNotNull(pageable);
+    return userRepository.findFollowMentorByFollowerListAndId(user.getId(), pageable);
   }
 
   public User getUserById(Long userId) {

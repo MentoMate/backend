@@ -88,8 +88,8 @@ public class User {
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "users_follower",
-      joinColumns = @JoinColumn(name = "mentor_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id")
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "mentor_id")
   )
   private List<User> followerList = new ArrayList<>();
 

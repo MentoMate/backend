@@ -23,7 +23,6 @@ public interface MentoringRepository extends JpaRepository<Mentoring, Long> {
 
   Page<Mentoring> findByStatusNotAndFollowerList_Id (MentoringStatus status, Long userId, Pageable pageable);
   Page<Mentoring> findByStatusNotAndUserId (MentoringStatus status, Long userId, Pageable pageable);
-//  Page<Mentoring> findByStatusNotAndMenteeList_Id (MentoringStatus status, Long userId, Pageable pageable);
   List<Mentoring> findTop50ByOrderByCountWatchDesc();
 
   List<Mentoring> findByEndDateBetween(LocalDate today, LocalDate maxEndDate);
