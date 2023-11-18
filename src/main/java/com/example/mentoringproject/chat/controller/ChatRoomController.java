@@ -10,6 +10,7 @@ import com.example.mentoringproject.chat.model.PrivateMyChatListInfo;
 import com.example.mentoringproject.chat.service.ChatService;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,6 +36,7 @@ public class ChatRoomController {
 
   private final ChatService chatService;
   private final UserService userService;
+  private final UserRepository userRepository;
 
   /*
   // 그룹 채팅방 생성 (사용 안함)
@@ -97,8 +99,8 @@ public class ChatRoomController {
       @PathVariable Long privateChatRoomId) {
     List<PrivateMessage> privateMessageList = chatService.findAllPrivateMessages(privateChatRoomId);
 
-    String email = SpringSecurityUtil.getLoginEmail();
-    User user = userService.getUser(email);
+    String senderNickName = privateMessageList.get(0).getSenderNickName();
+    User user = userRepository.findByNickName(senderNickName);
     Long userId = user.getId();
 
     List<PrivateChatMessageInfo> messageInfos = privateMessageList.stream()

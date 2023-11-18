@@ -16,7 +16,7 @@ public class PrivateChatMessageInfo {
   private String senderNickName;
   private String message;
   private LocalDateTime registerDatetime;
-  private Long userId;
+  private Long senderUserId;
 
   public static PrivateChatMessageInfo fromEntity(PrivateMessage privateMessage, Long userId) {
     return PrivateChatMessageInfo.builder()
@@ -24,7 +24,7 @@ public class PrivateChatMessageInfo {
         .senderNickName(privateMessage.getSenderNickName())
         .message(privateMessage.getMessage())
         .registerDatetime(privateMessage.getRegisterDatetime())
-        .userId(userId)
+        .senderUserId(userId)
         .build();
   }
 
