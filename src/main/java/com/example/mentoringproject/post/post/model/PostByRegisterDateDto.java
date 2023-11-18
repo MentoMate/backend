@@ -43,7 +43,7 @@ public class PostByRegisterDateDto {
             .countWatch(post.getCountWatch())
             .registerDatetime(post.getRegisterDatetime())
             .updateDatetime(post.getUpdateDatetime())
-            .writer(post.getUser().getName())
+            .writer(post.getUser().getNickName())
             .build())
         .collect(Collectors.toList());
   }
