@@ -1,5 +1,6 @@
 package com.example.mentoringproject.chat.controller;
 
+import com.example.mentoringproject.chat.entity.GroupMessage;
 import com.example.mentoringproject.chat.entity.PrivateChatRoom;
 import com.example.mentoringproject.chat.entity.PrivateMessage;
 import com.example.mentoringproject.chat.model.GroupChatMessageInfo;
@@ -60,8 +61,14 @@ public class ChatRoomController {
   public ResponseEntity<List<GroupChatMessageInfo>> GroupMessageInfo(
       @PathVariable Long mentoringId) {
 
-    return ResponseEntity.ok(chatService.findAllGroupMessages(mentoringId).stream()
-        .map(GroupChatMessageInfo::fromEntity).collect(Collectors.toList()));
+    List<GroupMessage> groupMessageList = chatService.findAllGroupMessages(mentoringId);
+
+    List<GroupChatMessageInfo> messageInfos = groupMessageList.stream()
+        .map(message -> GroupChatMessageInfo.fromEntity(message, userRepository))
+        .collect(Collectors.toList());
+
+    return ResponseEntity.ok(messageInfos);
+
   }
 
 
@@ -127,7 +134,7 @@ public class ChatRoomController {
     log.debug("Debug: privateMessageList - {}", privateMessageList);
 
     List<PrivateMyChatListInfo> chatListInfo = privateMessageList.stream()
-        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName ))
+        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName))
         .collect(Collectors.toList());
 
     log.debug("Debug: chatListInfo - {}", chatListInfo);
