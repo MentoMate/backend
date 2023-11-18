@@ -258,4 +258,9 @@ public class UserService {
     return UserInfoDto.from(user);
   }
 
+  public boolean userMentorChk(String email){
+    User user = getUser(email);
+    return userRepository.existsByIdAndNameIsNotNull(user.getId());
+  }
+
 }

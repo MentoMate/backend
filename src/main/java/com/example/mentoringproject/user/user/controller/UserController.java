@@ -177,6 +177,9 @@ public class UserController {
     return ResponseEntity.ok(UserProfileList.from(userService.getProfileList(pageable)));
   }
 
+  @Operation(summary = "멘토 팔로우 api", description = "멘토 팔로우 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토 팔로우 성공")
+  })
   @PostMapping("/{userId}")
   public ResponseEntity<Void> userFollow(
       @PathVariable Long userId
@@ -186,6 +189,10 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
+  @Operation(summary = "팔로우한 멘토 조회 api", description = "팔로우한 멘토 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = "팔로우한 멘토 조회 성공", content =
+      @Content(schema = @Schema(implementation = UserProfileList.class)))
+  })
   @GetMapping("/profile/follow")
   public ResponseEntity<Page<UserProfileList>> getFollowProfileList(
       @RequestParam(defaultValue = "1") int page,
@@ -196,5 +203,14 @@ public class UserController {
     Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortId);
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(UserProfileList.from(userService.getFollowProfileList(email,pageable)));
+  }
+
+  @Operation(summary = "멘토 여부 확인 api", description = "멘토 여부 확인 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토 여부 확인 성공")
+  })
+  @GetMapping("/profile/mentor")
+  public ResponseEntity<Boolean> userMentorChk() {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(userService.userMentorChk(email));
   }
 }
