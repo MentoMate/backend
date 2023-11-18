@@ -119,10 +119,10 @@ public class PayService {
 
       if(pay.getPayStatus().equals(PayStatus.CANCEL)) continue;
 
-      /*String accessToken = getAccessToken(restApiKey, restApiSecret);
+      String accessToken = getAccessToken(restApiKey, restApiSecret);
       log.debug(accessToken);
 
-      cancelPayment(accessToken, pay);*/
+      cancelPayment(accessToken, pay);
 
       pay.setPayStatus(PayStatus.CANCEL);
       payRepository.save(pay);
