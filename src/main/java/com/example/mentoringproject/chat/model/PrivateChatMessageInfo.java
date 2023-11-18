@@ -1,6 +1,8 @@
 package com.example.mentoringproject.chat.model;
 
 import com.example.mentoringproject.chat.entity.PrivateMessage;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +20,12 @@ public class PrivateChatMessageInfo {
   private LocalDateTime registerDatetime;
   private Long senderUserId;
 
-  public static PrivateChatMessageInfo fromEntity(PrivateMessage privateMessage, Long userId) {
+  public static PrivateChatMessageInfo fromEntity(PrivateMessage privateMessage, UserRepository userRepository) {
+
+    String senderNickName = privateMessage.getSenderNickName();
+    User user = userRepository.findByNickName(senderNickName);
+    Long userId = user.getId();
+
     return PrivateChatMessageInfo.builder()
         .privateChatRoomId(privateMessage.getPrivateChatRoom().getId())
         .senderNickName(privateMessage.getSenderNickName())

@@ -99,12 +99,8 @@ public class ChatRoomController {
       @PathVariable Long privateChatRoomId) {
     List<PrivateMessage> privateMessageList = chatService.findAllPrivateMessages(privateChatRoomId);
 
-    String senderNickName = privateMessageList.get(0).getSenderNickName();
-    User user = userRepository.findByNickName(senderNickName);
-    Long userId = user.getId();
-
     List<PrivateChatMessageInfo> messageInfos = privateMessageList.stream()
-        .map(message -> PrivateChatMessageInfo.fromEntity(message, userId))
+        .map(message -> PrivateChatMessageInfo.fromEntity(message, userRepository))
         .collect(Collectors.toList());
 
     return ResponseEntity.ok(messageInfos);
