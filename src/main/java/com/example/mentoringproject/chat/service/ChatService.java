@@ -99,6 +99,10 @@ public class ChatService {
       throw new AppException(HttpStatus.BAD_REQUEST, "Invalid mentor for the given mentoring");
     }
 
+    if (mentor.getId().equals(userId)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "사용자가 작성한 멘토링 글입니다");
+    }
+
     if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(),
         privateChatRoomCreateRequest.getMentoringId())) {
       PrivateChatRoom existingChatRoom = privateChatRoomRepository.findByUserIdAndMentoringId(user.getId(),
