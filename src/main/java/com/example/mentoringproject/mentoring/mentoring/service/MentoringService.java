@@ -113,7 +113,7 @@ public class MentoringService {
 
     Mentoring mentoring = getMentoring(mentoringId);
 
-    if(!mentoring.getStatus().equals(MentoringStatus.PROGRESS)){
+    if(mentoring.getStatus().equals(MentoringStatus.PROGRESS) && mentoring.getStartDate().isBefore(LocalDate.now())){
       throw new AppException(HttpStatus.BAD_REQUEST, "시작한 멘토링은 삭제할 수 없습니다.");
     }
 
