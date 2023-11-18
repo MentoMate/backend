@@ -2,9 +2,9 @@ package com.example.mentoringproject.ElasticSearch.mentoring.model;
 
 import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
-import com.example.mentoringproject.mentoring.repository.MentoringRepository;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;

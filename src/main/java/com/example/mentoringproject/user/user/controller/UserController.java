@@ -129,7 +129,6 @@ public class UserController {
   public ResponseEntity<UserProfile> createProfile(
       @RequestPart UserProfileSave userProfileSave,
       @RequestPart(name = "img") List<MultipartFile> multipartFile
-
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(

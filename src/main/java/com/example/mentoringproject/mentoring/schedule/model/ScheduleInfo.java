@@ -1,10 +1,7 @@
 
 package com.example.mentoringproject.mentoring.schedule.model;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
-import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
-import com.example.mentoringproject.mentoring.schedule.file.model.FileUploadInfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

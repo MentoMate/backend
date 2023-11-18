@@ -35,4 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Long countByNameIsNotNull();
 
+  User findByNickName(String senderNickName);
+
 }

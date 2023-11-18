@@ -74,9 +74,11 @@ public class MessageController {
 
     String senderNickName = user.getNickName();
 
+    log.debug("senderNickName retrieved from user: {}", senderNickName);
+
     Long usrId = user.getId();
 
-    log.debug("senderNickName retrieved from user: {}", senderNickName);
+    log.debug("usrId retrieved from user: {}", usrId);
 
     PrivateMessage privateMessage = chatService.savePrivateChatMessage(privateChatMessage,
         senderNickName);

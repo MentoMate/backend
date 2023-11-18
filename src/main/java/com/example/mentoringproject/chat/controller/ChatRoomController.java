@@ -1,5 +1,6 @@
 package com.example.mentoringproject.chat.controller;
 
+import com.example.mentoringproject.chat.entity.GroupMessage;
 import com.example.mentoringproject.chat.entity.PrivateChatRoom;
 import com.example.mentoringproject.chat.entity.PrivateMessage;
 import com.example.mentoringproject.chat.model.GroupChatMessageInfo;
@@ -10,6 +11,7 @@ import com.example.mentoringproject.chat.model.PrivateMyChatListInfo;
 import com.example.mentoringproject.chat.service.ChatService;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,6 +37,7 @@ public class ChatRoomController {
 
   private final ChatService chatService;
   private final UserService userService;
+  private final UserRepository userRepository;
 
   /*
   // 그룹 채팅방 생성 (사용 안함)
@@ -58,8 +61,14 @@ public class ChatRoomController {
   public ResponseEntity<List<GroupChatMessageInfo>> GroupMessageInfo(
       @PathVariable Long mentoringId) {
 
-    return ResponseEntity.ok(chatService.findAllGroupMessages(mentoringId).stream()
-        .map(GroupChatMessageInfo::fromEntity).collect(Collectors.toList()));
+    List<GroupMessage> groupMessageList = chatService.findAllGroupMessages(mentoringId);
+
+    List<GroupChatMessageInfo> messageInfos = groupMessageList.stream()
+        .map(message -> GroupChatMessageInfo.fromEntity(message, userRepository))
+        .collect(Collectors.toList());
+
+    return ResponseEntity.ok(messageInfos);
+
   }
 
 
@@ -97,12 +106,8 @@ public class ChatRoomController {
       @PathVariable Long privateChatRoomId) {
     List<PrivateMessage> privateMessageList = chatService.findAllPrivateMessages(privateChatRoomId);
 
-    String email = SpringSecurityUtil.getLoginEmail();
-    User user = userService.getUser(email);
-    Long userId = user.getId();
-
     List<PrivateChatMessageInfo> messageInfos = privateMessageList.stream()
-        .map(message -> PrivateChatMessageInfo.fromEntity(message, userId))
+        .map(message -> PrivateChatMessageInfo.fromEntity(message, userRepository))
         .collect(Collectors.toList());
 
     return ResponseEntity.ok(messageInfos);
@@ -129,7 +134,7 @@ public class ChatRoomController {
     log.debug("Debug: privateMessageList - {}", privateMessageList);
 
     List<PrivateMyChatListInfo> chatListInfo = privateMessageList.stream()
-        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName ))
+        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName))
         .collect(Collectors.toList());
 
     log.debug("Debug: chatListInfo - {}", chatListInfo);

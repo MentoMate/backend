@@ -13,6 +13,7 @@ public interface PrivateChatRoomRepository extends JpaRepository<PrivateChatRoom
   boolean existsByMentor(User user);
   PrivateChatRoom findFirstByUser(User user);
   PrivateChatRoom findFirstByMentor(User user);
+  PrivateChatRoom findByUserIdAndMentoringId (Long userId, Long mentoringId);
 
 }
 
