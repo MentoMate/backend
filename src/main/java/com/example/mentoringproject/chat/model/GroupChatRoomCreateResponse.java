@@ -1,7 +1,7 @@
 package com.example.mentoringproject.chat.model;
 
 import com.example.mentoringproject.chat.entity.GroupChatRoom;
-import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

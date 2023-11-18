@@ -1,6 +1,6 @@
 package com.example.mentoringproject.common.s3.Model;
 
-import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.mentoring.file.entity.FileUpload;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

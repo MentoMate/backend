@@ -1,9 +1,8 @@
-package com.example.mentoringproject.mentoring.entity;
+package com.example.mentoringproject.mentoring.mentoring.entity;
 
 import com.example.mentoringproject.chat.entity.GroupChatRoom;
 import com.example.mentoringproject.chat.entity.GroupMessage;
-import com.example.mentoringproject.chat.entity.PrivateMessage;
-import com.example.mentoringproject.mentoring.model.MentoringSave;
+import com.example.mentoringproject.mentoring.mentoring.model.MentoringSave;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

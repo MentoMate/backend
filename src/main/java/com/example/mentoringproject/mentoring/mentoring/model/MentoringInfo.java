@@ -1,12 +1,11 @@
-package com.example.mentoringproject.mentoring.model;
+package com.example.mentoringproject.mentoring.mentoring.model;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import lombok.Builder;
 import lombok.Getter;

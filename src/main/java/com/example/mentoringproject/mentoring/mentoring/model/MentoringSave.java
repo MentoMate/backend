@@ -1,4 +1,4 @@
-package com.example.mentoringproject.mentoring.model;
+package com.example.mentoringproject.mentoring.mentoring.model;
 
 import java.time.LocalDate;
 import java.util.List;

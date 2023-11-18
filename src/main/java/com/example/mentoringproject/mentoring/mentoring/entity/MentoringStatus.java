@@ -1,4 +1,4 @@
-package com.example.mentoringproject.mentoring.entity;
+package com.example.mentoringproject.mentoring.mentoring.entity;
 
 public enum MentoringStatus {
 

@@ -1,13 +1,13 @@
-package com.example.mentoringproject.mentoring.controller;
+package com.example.mentoringproject.mentoring.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.mentoring.model.MentoringDto;
-import com.example.mentoringproject.mentoring.model.MentoringInfo;
-import com.example.mentoringproject.mentoring.model.MentoringList;
-import com.example.mentoringproject.mentoring.model.MentoringSave;
+import com.example.mentoringproject.mentoring.mentoring.model.MentoringSave;
+import com.example.mentoringproject.mentoring.mentoring.model.MentoringDto;
+import com.example.mentoringproject.mentoring.mentoring.model.MentoringInfo;
+import com.example.mentoringproject.mentoring.mentoring.model.MentoringList;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
-import com.example.mentoringproject.mentoring.service.MentoringService;
+import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
 import com.example.mentoringproject.user.rating.model.ReviewRequestDto;
 import com.example.mentoringproject.user.rating.model.ReviewResponseDto;
 import com.example.mentoringproject.user.rating.service.ReviewService;

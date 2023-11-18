@@ -1,6 +1,6 @@
 package com.example.mentoringproject.chat.entity;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,10 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 

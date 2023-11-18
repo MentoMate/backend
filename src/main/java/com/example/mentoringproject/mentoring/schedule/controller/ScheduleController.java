@@ -1,10 +1,7 @@
 package com.example.mentoringproject.mentoring.schedule.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.mentoring.model.MentoringDto;
-import com.example.mentoringproject.mentoring.model.MentoringSave;
-import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
-import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
+import com.example.mentoringproject.mentoring.file.service.FileUploadService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleDetailInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
@@ -15,14 +12,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
-import java.util.List;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "일정", description = "일정 API")
 @RestController

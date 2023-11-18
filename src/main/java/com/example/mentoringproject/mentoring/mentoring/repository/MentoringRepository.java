@@ -1,8 +1,8 @@
-package com.example.mentoringproject.mentoring.repository;
+package com.example.mentoringproject.mentoring.mentoring.repository;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.user.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

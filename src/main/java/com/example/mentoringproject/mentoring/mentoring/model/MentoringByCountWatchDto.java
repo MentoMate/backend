@@ -1,7 +1,7 @@
-package com.example.mentoringproject.mentoring.model;
+package com.example.mentoringproject.mentoring.mentoring.model;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
