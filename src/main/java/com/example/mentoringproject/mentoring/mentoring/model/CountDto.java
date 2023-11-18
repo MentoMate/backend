@@ -1,4 +1,4 @@
-package com.example.mentoringproject.mentoring.model;
+package com.example.mentoringproject.mentoring.mentoring.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

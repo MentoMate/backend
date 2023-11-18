@@ -1,4 +1,4 @@
-package com.example.mentoringproject.mentoring.schedule.file.model;
+package com.example.mentoringproject.mentoring.file.model;
 
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import java.time.LocalDateTime;

@@ -1,7 +1,6 @@
-package com.example.mentoringproject.mentoring.schedule.file.model;
+package com.example.mentoringproject.mentoring.file.model;
 
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
-import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.mentoring.file.entity.FileUpload;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;

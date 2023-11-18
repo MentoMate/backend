@@ -1,7 +1,7 @@
 package com.example.mentoringproject.ElasticSearch.mentoring.entity;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.entity.MentoringStatus;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

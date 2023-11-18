@@ -1,4 +1,4 @@
-package com.example.mentoringproject.mentoring.schedule.file.entity;
+package com.example.mentoringproject.mentoring.file.entity;
 
 import com.example.mentoringproject.common.s3.Model.S3FileDto;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;

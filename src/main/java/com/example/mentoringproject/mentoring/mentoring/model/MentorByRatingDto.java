@@ -1,4 +1,4 @@
-package com.example.mentoringproject.mentoring.model;
+package com.example.mentoringproject.mentoring.mentoring.model;
 
 import com.example.mentoringproject.user.user.entity.User;
 import java.util.List;

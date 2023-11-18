@@ -2,12 +2,12 @@ package com.example.mentoringproject.mentoring.schedule.service;
 
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.s3.Service.S3Service;
-import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
-import com.example.mentoringproject.mentoring.schedule.file.service.FileUploadService;
+import com.example.mentoringproject.mentoring.file.service.FileUploadService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.repository.ScheduleRepository;
-import com.example.mentoringproject.mentoring.service.MentoringService;
+import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.service.UserService;
 import java.util.Collections;

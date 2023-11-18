@@ -11,8 +11,8 @@ import static org.mockito.Mockito.verify;
 
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.mentee.service.MenteeService;
-import com.example.mentoringproject.mentoring.entity.Mentoring;
-import com.example.mentoringproject.mentoring.service.MentoringService;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.pay.entity.PayStatus;
 import com.example.mentoringproject.pay.repository.PayRepository;
