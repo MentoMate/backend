@@ -138,11 +138,12 @@ public class MentoringService {
       isOwner = true;
     }
 
-    User user = userService.getUser(email);
-
     boolean isPrivateChatRoomCreate = false;
-    if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(), mentoringId)) {
-      isPrivateChatRoomCreate = true;
+    if(!email.equals("anonymousUser")){
+      User user = userService.getUser(email);
+      if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(), mentoringId)) {
+          isPrivateChatRoomCreate = true;
+      }
     }
 
     mentoringRepository.updateCount(mentoringId);
