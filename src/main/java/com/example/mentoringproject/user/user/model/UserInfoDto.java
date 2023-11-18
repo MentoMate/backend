@@ -16,12 +16,14 @@ public class UserInfoDto {
   private String name;
   private String email;
   private String nickname;
+  private String uploadUrl;
 
   public static UserInfoDto from(User user) {
     return UserInfoDto.builder()
         .name(user.getName())
         .email(user.getEmail())
         .nickname(user.getNickName())
+        .uploadUrl(user.getUploadUrl())
         .build();
   }
 }
