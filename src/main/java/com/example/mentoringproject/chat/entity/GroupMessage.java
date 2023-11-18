@@ -1,6 +1,6 @@
 package com.example.mentoringproject.chat.entity;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;

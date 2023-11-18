@@ -1,8 +1,7 @@
 package com.example.mentoringproject.mentoring.event;
 
-import com.example.mentoringproject.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.context.ApplicationEvent;
 
 @Getter

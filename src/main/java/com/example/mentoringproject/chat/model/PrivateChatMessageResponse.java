@@ -18,13 +18,15 @@ public class PrivateChatMessageResponse {
   private String senderNickName;
   private String message;
   private LocalDateTime registerDatetime;
+  private Long userId;
 
-  public static PrivateChatMessageResponse fromEntity(PrivateMessage privateMessage) {
+  public static PrivateChatMessageResponse fromEntity(PrivateMessage privateMessage, Long userId) {
     return PrivateChatMessageResponse.builder()
         .privateChatRoomId(privateMessage.getPrivateChatRoom().getId())
         .senderNickName(privateMessage.getSenderNickName())
         .message(privateMessage.getMessage())
         .registerDatetime(privateMessage.getRegisterDatetime())
+        .userId(userId)
         .build();
   }
 

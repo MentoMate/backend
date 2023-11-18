@@ -18,13 +18,15 @@ public class GroupChatMessageResponse {
   private String senderNickName;
   private String message;
   private LocalDateTime registerDatetime;
+  private Long userId;
 
-  public static GroupChatMessageResponse fromEntity(GroupMessage groupMessage) {
+  public static GroupChatMessageResponse fromEntity(GroupMessage groupMessage, Long userId) {
     return GroupChatMessageResponse.builder()
         .groupMentoringId(groupMessage.getMentoring().getId())
         .senderNickName(groupMessage.getSenderNickName())
         .message(groupMessage.getMessage())
         .registerDatetime(groupMessage.getRegisterDatetime())
+        .userId(userId)
         .build();
   }
 

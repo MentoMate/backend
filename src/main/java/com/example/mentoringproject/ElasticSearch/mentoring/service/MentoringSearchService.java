@@ -3,7 +3,7 @@ package com.example.mentoringproject.ElasticSearch.mentoring.service;
 import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentoring.model.MentoringSearchDto;
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
-import com.example.mentoringproject.mentoring.repository.MentoringRepository;
+import com.example.mentoringproject.mentoring.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.util.List;

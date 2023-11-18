@@ -1,6 +1,7 @@
 package com.example.mentoringproject.common.s3.Model;
 
-import com.example.mentoringproject.mentoring.schedule.file.entity.FileUpload;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.mentoring.file.entity.FileUpload;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,5 +32,13 @@ public class S3FileDto {
             .uploadUrl(s3FileDto.getUploadUrl())
             .build())
         .collect(Collectors.toList());
+  }
+
+  public static List<S3FileDto> from(User user){
+    List<S3FileDto> s3FileDtoList = new ArrayList<>();
+    s3FileDtoList.add(S3FileDto.builder()
+        .uploadFolder("profile/" + user.getUploadFolder() + "/")
+        .uploadUrl( user.getUploadUrl()).build());
+    return  s3FileDtoList;
   }
 }

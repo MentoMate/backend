@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import retrofit2.http.Multipart;
 
 
 @Tag(name = "User", description = "유저 API")
@@ -108,6 +109,18 @@ public class UserController {
     return ResponseEntity.ok(userService.changeNickname(email, nickname));
   }
 
+  @Operation(summary = "사진 변경 api", description = "사진 변경 api", responses = {
+      @ApiResponse(responseCode = "200", description = "사진 변경 완료", content = @Content(schema =
+      @Schema(implementation = UserInfoDto.class)))
+  })
+  @PutMapping("/img")
+  public ResponseEntity<UserInfoDto> changeImg(
+      @RequestPart(name = "img") List<MultipartFile> multipartFile) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(userService.changeImg(email, multipartFile));
+  }
+
+
   @Operation(summary = "프로필 등록 api", description = "프로필 등록 api", responses = {
       @ApiResponse(responseCode = "200", description = "프로필 등록 성공", content =
       @Content(schema = @Schema(implementation = UserProfile.class)))
@@ -116,7 +129,6 @@ public class UserController {
   public ResponseEntity<UserProfile> createProfile(
       @RequestPart UserProfileSave userProfileSave,
       @RequestPart(name = "img") List<MultipartFile> multipartFile
-
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
     return ResponseEntity.ok(
