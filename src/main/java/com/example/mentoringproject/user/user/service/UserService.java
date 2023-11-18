@@ -188,6 +188,23 @@ public class UserService {
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
   }
 
+  @Transactional
+  public UserInfoDto changeImg(String email, List<MultipartFile> multipartFile) {
+
+    User user = getUser(email);
+
+    if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
+      s3Service.deleteFile(S3FileDto.from(user));
+    }
+
+    String uploadPath = FOLDER + user.getUploadFolder();
+    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);
+    user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
+    userRepository.save(user);
+
+    return UserInfoDto.from(user);
+
+  }
   private void ImgUpload(List<MultipartFile> multipartFile, User user, UserProfileSave userProfile) {
     String uploadPath = FOLDER + user.getUploadFolder();
     List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);

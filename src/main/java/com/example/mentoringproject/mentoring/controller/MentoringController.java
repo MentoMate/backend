@@ -98,8 +98,8 @@ public class MentoringController {
     return ResponseEntity.ok().build();
   }
 
-  @Operation(summary = "멘토링 등록 api", description = "멘토링 등록 api", responses = {
-      @ApiResponse(responseCode = "200", description = "멘토링 등록 성공", content =
+  @Operation(summary = "멘토링 정보 조회 api", description = "멘토링 정보 조회 api", responses = {
+      @ApiResponse(responseCode = "200", description = "멘토링 정보 조회 성공", content =
       @Content(schema = @Schema(implementation = MentoringInfo.class)))
   })
 
