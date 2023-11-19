@@ -12,4 +12,10 @@ public interface MentorSearchRepository extends
   List<MentorSearchDocumment> findAll();
 
   void deleteByName(String name);
+
+  List<MentorSearchDocumment> findAllByNameContaining(String name);
+
+  List<MentorSearchDocumment> findAllByMiddleCategory(String middleCategory);
+
+
 }

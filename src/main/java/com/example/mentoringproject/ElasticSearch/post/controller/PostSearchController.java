@@ -1,6 +1,5 @@
 package com.example.mentoringproject.ElasticSearch.post.controller;
 
-import com.example.mentoringproject.ElasticSearch.mentoring.model.MentoringSearchDto;
 import com.example.mentoringproject.ElasticSearch.post.model.PostSearchDto;
 import com.example.mentoringproject.ElasticSearch.post.service.PostSearchService;
 import com.example.mentoringproject.ElasticSearch.util.SearchResult;

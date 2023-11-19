@@ -43,11 +43,14 @@ public class MentorSearchController {
     List<MentorSearchDto> mentorSearchDtoList = new ArrayList<>();
     String email = SpringSecurityUtil.getLoginEmail();
 
-    if (searchCategory != null) {
-      mentorSearchDtoList = mentorSearchService.searchCategory(searchText,
-          searchCategory, email);
+    if (searchText != null) {
+      mentorSearchDtoList = mentorSearchService.searchTextAndCategory(searchText, searchCategory, email);
     } else {
-      mentorSearchDtoList = mentorSearchService.searchAll(email);
+      if (searchCategory != null) {
+        mentorSearchDtoList = mentorSearchService.searchCategory(searchCategory, email);
+      } else {
+        mentorSearchDtoList = mentorSearchService.searchAll(email);
+      }
     }
 
     // 평점순, 최신순, 팔로우순 정렬

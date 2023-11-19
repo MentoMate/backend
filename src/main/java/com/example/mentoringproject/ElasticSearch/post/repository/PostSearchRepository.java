@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 public interface PostSearchRepository extends ElasticsearchRepository<PostSearchDocumment, Long> {
 
-  List<PostSearchDocumment> findAllByWriterAndCategory(String writer, String category);
+  List<PostSearchDocumment> findAllByWriterContainingAndCategory(String writer, String category);
 
   List<PostSearchDocumment> findAllByTitleContainingAndCategory(String title, String category);
 
@@ -15,7 +15,9 @@ public interface PostSearchRepository extends ElasticsearchRepository<PostSearch
 
   List<PostSearchDocumment> findAll();
 
+  List<PostSearchDocumment> findAllByWriterContaining(String writer);
 
+  List<PostSearchDocumment> findAllByTitleContaining(String title);
 
 
 }

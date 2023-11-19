@@ -55,7 +55,11 @@ public class MentoringSearchController {
         return ResponseEntity.badRequest().build();
       }
     } else {
-      mentoringSearchDtoList = mentoringSearchService.searchAll(email);
+      if (searchCategory != null) {
+        mentoringSearchDtoList = mentoringSearchService.searchAllByCategory(email, searchCategory);
+      } else {
+        mentoringSearchDtoList = mentoringSearchService.searchAll(email);
+      }
     }
 
     // 평점순, 최신순, 금액순 정렬
