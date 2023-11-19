@@ -9,7 +9,14 @@ public interface MentoringSearchRepository extends
 
   List<MentoringSearchDocumment> findAllByTitleContainingAndCategory(String title, String category);
 
-  List<MentoringSearchDocumment> findAllByWriterAndCategory(String writer, String category);
+  List<MentoringSearchDocumment> findAllByWriterContainingAndCategory(String writer, String category);
 
   List<MentoringSearchDocumment> findAll();
+
+  List<MentoringSearchDocumment> findAllByTitleContaining(String title);
+
+  List<MentoringSearchDocumment> findAllByWriterContaining(String writer);
+
+  List<MentoringSearchDocumment> findAllByCategory(String category);
+
 }

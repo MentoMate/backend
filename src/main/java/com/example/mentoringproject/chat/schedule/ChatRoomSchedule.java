@@ -15,7 +15,6 @@ public class ChatRoomSchedule {
     this.chatService = chatService;
   }
 
-  // 매일 자정에 스케줄링 실행 (cron 표현식 사용)
   @Scheduled(cron = "0 0 0 * * ?")
   public void createChatRoomScheduled() {
     chatService.createRoomAutomatically();

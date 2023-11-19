@@ -19,7 +19,12 @@ public class PostSearchService {
   private final PostRepository postRepository;
 
   public List<PostSearchDto> searchWriterAndCategory(String writer, String category) {
-    List<PostSearchDocumment> postSearchDocummentList = postSearchRepository.findAllByWriterAndCategory(writer, category);
+    List<PostSearchDocumment> postSearchDocummentList = new ArrayList<>();
+    if ("default".equals(category)) {
+      postSearchDocummentList = postSearchRepository.findAllByWriterContaining(writer);
+    } else {
+      postSearchDocummentList = postSearchRepository.findAllByWriterContainingAndCategory(writer, category);
+    }
 
     return postSearchDocummentList.stream()
         .map(doc -> PostSearchDto.fromDocument(doc, postRepository))
@@ -27,8 +32,12 @@ public class PostSearchService {
   }
 
   public List<PostSearchDto> searchTitleAndCategory(String title, String category) {
-    List<PostSearchDocumment> postSearchDocummentList = postSearchRepository.findAllByTitleContainingAndCategory(title, category);
-
+    List<PostSearchDocumment> postSearchDocummentList = new ArrayList<>();
+    if ("default".equals(category)) {
+      postSearchDocummentList = postSearchRepository.findAllByTitleContaining(title);
+    } else {
+      postSearchDocummentList = postSearchRepository.findAllByTitleContainingAndCategory(title, category);
+    }
     return postSearchDocummentList.stream()
         .map(doc -> PostSearchDto.fromDocument(doc, postRepository))
         .collect(Collectors.toList());
