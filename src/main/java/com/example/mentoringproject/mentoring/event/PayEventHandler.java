@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PayEventHandler {
   private final PayService payService;
+
   @EventListener
   public void payCancelByMentor(PayEvent event){
     payService.payCancelByMentor(event.getMentoring(), event.getRestApiKey(), event.getRestApiSecret());

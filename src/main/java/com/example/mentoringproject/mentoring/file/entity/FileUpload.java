@@ -1,6 +1,6 @@
 package com.example.mentoringproject.mentoring.file.entity;
 
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.model.S3FileDto;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.user.user.entity.User;
 import java.time.LocalDateTime;
