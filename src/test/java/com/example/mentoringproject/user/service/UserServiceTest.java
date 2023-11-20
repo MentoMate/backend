@@ -6,7 +6,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.model.UserJoinDto;

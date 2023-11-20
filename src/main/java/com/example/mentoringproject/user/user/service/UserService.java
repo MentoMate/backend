@@ -3,8 +3,8 @@ package com.example.mentoringproject.user.user.service;
 import com.example.mentoringproject.ElasticSearch.mentor.entity.MentorSearchDocumment;
 import com.example.mentoringproject.ElasticSearch.mentor.repository.MentorSearchRepository;
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.model.S3FileDto;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.model.UserInfoDto;
@@ -154,16 +154,20 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public User profileInfo(Long userId) {
+  public User getProfileInfo(Long userId) {
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
 
-    if (!userRepository.existsByIdAndNameIsNotNull(user.getId())) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
-    }
+    checkExistsProfileName(user);
 
     return user;
+  }
+
+  public void checkExistsProfileName(User user) {
+    if (user.getName().isEmpty()) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
+    }
   }
 
   @Transactional(readOnly = true)
@@ -225,7 +229,7 @@ public class UserService {
   public void userFollow(String email, Long userId){
 
     User user = getUser(email);
-    User mentor = profileInfo(userId);
+    User mentor = getProfileInfo(userId);
     List<User> followList = user.getFollowerList();
     if (followList.stream().anyMatch(followUser -> followUser.getId().equals(mentor.getId()))) {
       followList.removeIf(followUser -> followUser.equals(mentor));

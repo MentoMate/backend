@@ -1,7 +1,7 @@
 package com.example.mentoringproject.mentoring.schedule.service;
 
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.mentoring.file.service.FileUploadService;

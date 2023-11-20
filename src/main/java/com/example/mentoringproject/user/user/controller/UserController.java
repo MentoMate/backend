@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import retrofit2.http.Multipart;
 
 
 @Tag(name = "User", description = "유저 API")
@@ -157,7 +156,7 @@ public class UserController {
   public ResponseEntity<UserProfile> profileInfo(
       @PathVariable Long userId
   ) {
-    return ResponseEntity.ok(UserProfile.from(userService.profileInfo(userId)));
+    return ResponseEntity.ok(UserProfile.from(userService.getProfileInfo(userId)));
   }
 
   @Operation(summary = "프로필 목록 조회 api", description = "프로필 목록 조회 api", responses = {

@@ -1,8 +1,8 @@
 package com.example.mentoringproject.mentoring.file.service;
 
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.model.S3FileDto;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.mentoring.file.entity.FileUpload;

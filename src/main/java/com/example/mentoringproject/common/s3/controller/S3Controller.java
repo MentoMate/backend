@@ -1,6 +1,6 @@
-package com.example.mentoringproject.common.s3.Controller;
+package com.example.mentoringproject.common.s3.controller;
 
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

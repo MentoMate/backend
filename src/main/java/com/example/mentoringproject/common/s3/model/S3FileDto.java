@@ -1,4 +1,4 @@
-package com.example.mentoringproject.common.s3.Model;
+package com.example.mentoringproject.common.s3.model;
 
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.mentoring.file.entity.FileUpload;

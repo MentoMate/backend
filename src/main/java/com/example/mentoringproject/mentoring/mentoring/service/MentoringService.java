@@ -4,8 +4,8 @@ import com.example.mentoringproject.ElasticSearch.mentoring.entity.MentoringSear
 import com.example.mentoringproject.ElasticSearch.mentoring.repository.MentoringSearchRepository;
 import com.example.mentoringproject.chat.repository.PrivateChatRoomRepository;
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.model.S3FileDto;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.event.PayEvent;
@@ -68,7 +68,8 @@ public class MentoringService {
   @Transactional
   public Mentoring createMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
-    User user = userService.profileInfo(userService.getUser(email).getId());
+    User user = userService.getUser(email);
+    userService.checkExistsProfileName(user);
 
     Mentoring mentoring = Mentoring.from(user, mentoringSave);
     mentoring.setStatus(MentoringStatus.PROGRESS);
@@ -86,7 +87,7 @@ public class MentoringService {
   public Mentoring updateMentoring(String email, MentoringSave mentoringSave, List<MultipartFile> thumbNailImg){
 
     Mentoring mentoring = getMentoring(mentoringSave.getMentoringId());
-    User user = userService.profileInfo(userService.getUser(email).getId());
+    User user = userService.getProfileInfo(userService.getUser(email).getId());
 
     mentoring.setTitle(mentoringSave.getTitle());
     mentoring.setContent(mentoringSave.getContent());
@@ -96,8 +97,6 @@ public class MentoringService {
     mentoring.setAmount(mentoringSave.getAmount());
     mentoring.setCategory(mentoringSave.getCategory());
 
-
-
     imgUpload(mentoringSave, mentoring, thumbNailImg);
 
     mentoringRepository.save(mentoring);
@@ -105,7 +104,6 @@ public class MentoringService {
     mentoringSearchRepository.save(MentoringSearchDocumment.fromEntity(user, mentoring));
 
     return mentoring;
-
   }
 
 

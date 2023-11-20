@@ -1,7 +1,7 @@
 package com.example.mentoringproject.post.post.controller;
 
 import com.example.mentoringproject.ElasticSearch.util.SearchResult;
-import com.example.mentoringproject.common.s3.Service.S3Service;
+import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.post.post.model.PostDto;
 import com.example.mentoringproject.post.post.model.PostInfoResponseDto;

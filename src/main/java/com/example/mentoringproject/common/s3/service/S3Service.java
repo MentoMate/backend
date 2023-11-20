@@ -1,4 +1,4 @@
-package com.example.mentoringproject.common.s3.Service;
+package com.example.mentoringproject.common.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
@@ -8,7 +8,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.example.mentoringproject.common.exception.AppException;
-import com.example.mentoringproject.common.s3.Model.S3FileDto;
+import com.example.mentoringproject.common.s3.model.S3FileDto;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
