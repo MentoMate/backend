@@ -1,19 +1,17 @@
 package com.example.mentoringproject.common.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ErrorResponse {
-  private String errorMessage;
-  private Long privateChatRoomId;
-
-  public ErrorResponse(String errorMessage, Long privateChatRoomId) {
-    this.errorMessage = errorMessage;
-    this.privateChatRoomId = privateChatRoomId;
-  }
-
-  public String getErrorMessage() {
-    return errorMessage;
-  }
-
-  public Long getPrivateChatRoomId() {
-    return privateChatRoomId;
-  }
+  private String code;
+  private Object message;
 }

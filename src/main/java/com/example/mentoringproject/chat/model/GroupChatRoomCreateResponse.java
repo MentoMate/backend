@@ -17,7 +17,7 @@ public class GroupChatRoomCreateResponse {
   private Mentoring mentoring;
   private LocalDateTime registerDatetime;
 
-  public static GroupChatRoomCreateResponse fromEntity(GroupChatRoom groupChatRoom) {
+  public static GroupChatRoomCreateResponse from(GroupChatRoom groupChatRoom) {
     return GroupChatRoomCreateResponse.builder()
         .id(groupChatRoom.getId())
         .mentoring(groupChatRoom.getMentoring())

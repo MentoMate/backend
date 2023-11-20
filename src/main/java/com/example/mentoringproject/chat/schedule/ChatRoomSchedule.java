@@ -11,7 +11,7 @@ public class ChatRoomSchedule {
 
   private final ChatService chatService;
 
-  @Scheduled(cron = "0 0 0 * * ?")
+  @Scheduled(cron = "0 0 0 * * *")
   public void createChatRoomScheduled() {
     chatService.createRoomAutomatically();
   }

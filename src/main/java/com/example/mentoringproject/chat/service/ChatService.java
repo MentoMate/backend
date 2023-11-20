@@ -15,6 +15,7 @@ import com.example.mentoringproject.chat.repository.PrivateMessageRepository;
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.exception.ChatRoomAlreadyExistsException;
 import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
+import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
 import com.example.mentoringproject.mentoring.mentoring.repository.MentoringRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
@@ -57,17 +58,16 @@ public class ChatService {
 
   //  그룹 채팅방 생성 - (1)
   public void createRoomAutomatically() {
-    List<Mentoring> mentorings = mentoringRepository.findAll();
-
+    List<Mentoring> mentorings = mentoringRepository.
+        findAllByStartDateIsBeforeAndStatusIsAndRoomExistIsFalse(LocalDate.now(), MentoringStatus.PROGRESS);
     for (Mentoring mentoring : mentorings) {
-      createGroupRoom(mentoring.getId());
+      createGroupRoom(mentoring);
     }
   }
 
   //  그룹 채팅방 생성 - (2)
-  public Optional<GroupChatRoomCreateResponse> createGroupRoom(Long mentoringId) {
-    Mentoring mentoring = mentoringRepository.findById(mentoringId)
-        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "Not Found Mentoring"));
+  @Transactional
+  public Optional<GroupChatRoomCreateResponse> createGroupRoom(Mentoring mentoring) {
     LocalDate autoCreateChatRoomDate = mentoring.getStartDate();
     LocalDate currentDate = LocalDate.now();
 
@@ -75,8 +75,10 @@ public class ChatService {
         autoCreateChatRoomDate)) {
       GroupChatRoom groupChatRoom = new GroupChatRoom();
       groupChatRoom.setMentoring(mentoring);
+      mentoring.setRoomExist(true);
+      mentoringRepository.save(mentoring);
       groupChatRoomRepository.save(groupChatRoom);
-      return Optional.of(GroupChatRoomCreateResponse.fromEntity(groupChatRoom));
+      return Optional.of(GroupChatRoomCreateResponse.from(groupChatRoom));
     }
     return Optional.empty();
   }
