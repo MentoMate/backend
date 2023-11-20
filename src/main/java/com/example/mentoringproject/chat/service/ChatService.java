@@ -66,7 +66,6 @@ public class ChatService {
   }
 
   //  그룹 채팅방 생성 - (2)
-  @Transactional
   public Optional<GroupChatRoomCreateResponse> createGroupRoom(Mentoring mentoring) {
     LocalDate autoCreateChatRoomDate = mentoring.getStartDate();
     LocalDate currentDate = LocalDate.now();
