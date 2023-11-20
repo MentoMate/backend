@@ -229,13 +229,17 @@ public class UserService {
   public void userFollow(String email, Long userId){
 
     User user = getUser(email);
-    User mentor = getProfileInfo(userId);
-    List<User> followList = user.getFollowerList();
-    if (followList.stream().anyMatch(followUser -> followUser.getId().equals(mentor.getId()))) {
-      followList.removeIf(followUser -> followUser.equals(mentor));
-    }
-    else{
-      followList.add(mentor);
+
+    if (!user.getId().equals(userId)) {
+      User mentor = getProfileInfo(userId);
+      List<User> followList = user.getFollowerList();
+      if (followList.stream().anyMatch(followUser -> followUser.getId().equals(mentor.getId()))) {
+        followList.removeIf(followUser -> followUser.equals(mentor));
+      } else {
+        followList.add(mentor);
+      }
+    }else {
+      throw new AppException(HttpStatus.BAD_REQUEST, "사용자가 멘토로 등록 되어 있습니다. 팔로우가 불가합니다.");
     }
   }
 

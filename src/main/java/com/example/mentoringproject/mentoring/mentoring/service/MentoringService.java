@@ -311,12 +311,16 @@ public class MentoringService {
     User likeUser = userService.getUser(email);
 
     Mentoring mentoring = getMentoring(mentoringId);
-    List<User> followerList = mentoring.getFollowerList();
-    if (followerList.stream().anyMatch(user -> user.getId().equals(likeUser.getId()))) {
-      followerList.removeIf(user -> user.equals(likeUser));
-    }
-    else{
-      followerList.add(likeUser);
+
+    if (!likeUser.getId().equals(mentoring.getUser().getId())) {
+      List<User> followerList = mentoring.getFollowerList();
+      if (followerList.stream().anyMatch(user -> user.getId().equals(likeUser.getId()))) {
+        followerList.removeIf(user -> user.equals(likeUser));
+      } else {
+        followerList.add(likeUser);
+      }
+    } else {
+      throw new AppException(HttpStatus.BAD_REQUEST, "사용자가 멘토로 등록한 글입니다. 멘토링 찜이 불가합니다.");
     }
   }
 
