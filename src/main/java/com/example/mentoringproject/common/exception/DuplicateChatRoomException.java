@@ -1,5 +1,8 @@
 package com.example.mentoringproject.common.exception;
 
+import lombok.Getter;
+
+@Getter
 public class DuplicateChatRoomException extends RuntimeException {
   private final long roomId;
 
@@ -10,5 +13,9 @@ public class DuplicateChatRoomException extends RuntimeException {
 
   public long getRoomId() {
     return roomId;
+  }
+
+  public RoomErrorResponse getErrorResponse() {
+    return new RoomErrorResponse(getMessage(), roomId);
   }
 }

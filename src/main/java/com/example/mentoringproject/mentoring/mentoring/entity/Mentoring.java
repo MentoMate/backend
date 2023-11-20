@@ -46,6 +46,7 @@ public class Mentoring {
 
   private String uploadUrl;
   private String uploadFolder;
+  private Boolean roomExist;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
