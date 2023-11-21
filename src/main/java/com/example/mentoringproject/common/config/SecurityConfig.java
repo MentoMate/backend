@@ -80,7 +80,8 @@ public class SecurityConfig {
     config.addAllowedMethod("*"); // 모든 메소드 허용.
     config.addAllowedHeader("*");
     config.setAllowCredentials(true);
-
+    config.addExposedHeader("Authorization");
+    config.addExposedHeader("Authorization-refresh");
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
     return source;
