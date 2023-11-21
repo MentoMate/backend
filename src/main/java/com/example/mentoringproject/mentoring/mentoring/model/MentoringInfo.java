@@ -27,6 +27,7 @@ public class MentoringInfo {
   private int countWatch;
   private Long userId;
   private String name;
+  private String email;
   private String useProfileImg;
   private int leftPeople;
   private int followers;
@@ -51,11 +52,12 @@ public class MentoringInfo {
         .category(mentoring.getCategory())
         .uploadFolder(mentoring.getUploadFolder())
         .userId(mentoring.getUser().getId())
+        .email(mentoring.getUser().getEmail())
         .name(mentoring.getUser().getName())
         .countWatch(mentoring.getCountWatch())
         .useProfileImg(mentoring.getUser().getUploadUrl())
         .leftPeople(mentoring.getNumberOfPeople() - userList.size())
-        .followers(mentoring.getFollowerList().size())
+        .followers(mentoring.getUser().getFollowerList().size())
         .isOwner(isOwner)
         .isMentoringLike(isMentoringLike)
         .isPrivateChatRoomCreate(isPrivateChatRoomCreate)
