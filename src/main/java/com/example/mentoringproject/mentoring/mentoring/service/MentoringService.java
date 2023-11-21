@@ -73,6 +73,7 @@ public class MentoringService {
 
     Mentoring mentoring = Mentoring.from(user, mentoringSave);
     mentoring.setStatus(MentoringStatus.PROGRESS);
+    mentoring.setRoomExist(false);
 
     imgUpload(mentoringSave, mentoring, thumbNailImg);
 
