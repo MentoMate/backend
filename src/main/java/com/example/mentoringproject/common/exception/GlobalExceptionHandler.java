@@ -1,17 +1,20 @@
 package com.example.mentoringproject.common.exception;
 
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Set;
 
 @Slf4j
 @RestControllerAdvice
@@ -82,5 +85,15 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleChatRoomAlreadyExistsException(ChatRoomAlreadyExistsException ex) {
     RoomErrorResponse errorResponse = ex.makeRoomErrorResponse();
     return ResponseEntity.badRequest().body(makeErrorResponse(HttpStatus.BAD_REQUEST, errorResponse));
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    return ResponseEntity.badRequest().body(makeErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+    return ResponseEntity.badRequest().body(makeErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
   }
 }
