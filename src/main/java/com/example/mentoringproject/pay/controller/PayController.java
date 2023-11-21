@@ -49,6 +49,18 @@ public class PayController {
     this.iamportClient = new IamportClient(restApiKey, restApiSecret);
   }
 
+  @Operation(summary = "결제가 가능한 유저인지 확인", description = "결제가 가능한 유저인지 확인", responses = {
+          @ApiResponse(responseCode = "200", description = "true/false")
+  })
+  @GetMapping("/pay/check/user")
+  public ResponseEntity<Boolean> checkUsersCanBuyMentoring(@RequestParam Long mentoringId) {
+    String email = SpringSecurityUtil.getLoginEmail();
+    //취소 api 진행
+    payService.checkUsersCanBuyMentoring(email, mentoringId);
+    return ResponseEntity.ok(true);
+  }
+
+
   @Operation(summary = "결제 성공시 db저장 api", description = "결제 성공시 db저장 api", responses = {
       @ApiResponse(responseCode = "200", description = "iamportClient.paymentByImpUid(ImpUid)로 반환")
   })

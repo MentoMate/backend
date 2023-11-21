@@ -43,6 +43,15 @@ public class PayService {
   public static final String IAMPORT_ACCESS_TOKEN_URL = "https://api.iamport.kr/users/getToken";
   public static final String IAMPORT_CANCEL_URL = "https://api.iamport.kr/payments/cancel";
 
+
+
+  public void checkUsersCanBuyMentoring(String email, Long mentoringId) {
+    User buyer = userService.getUser(email);
+    Mentoring mentoring = mentoringService.getMentoring(mentoringId);
+    checkAlreadyBuyMentoring(mentoring, buyer);
+    checkBuyerIsOwnerOfMentoring(mentoring, buyer);
+  }
+
   @Transactional
   public NotificationRequestDto payCompleteRegister(String email, String impUid, Long mentoringId) {
 
@@ -212,4 +221,5 @@ public class PayService {
         pageable);
     return payPage.map(PayDetailDto::from);
   }
+
 }
