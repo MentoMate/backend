@@ -34,8 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Page<User> findByNameIsNotNull(Pageable pageable);
 
-  @Query("SELECT m FROM users u JOIN u.followerList m WHERE u.id = :userId")
-  Page<User> findFollowMentorByFollowerListAndId  (Long userId, Pageable pageable);
+  Page<User> findUsersByFollowerList_Id  (Long userId, Pageable pageable);
 
   Long countByNameIsNotNull();
 
