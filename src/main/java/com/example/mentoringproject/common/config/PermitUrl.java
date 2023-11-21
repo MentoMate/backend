@@ -23,4 +23,15 @@ public class PermitUrl {
   public static final String[] PERMIT_GET_USER_URL_ARRAY = {
       "/user/profile", "/user/profile/{userId}"
   };
+
+  public static final String[] PERMIT_CHAT_URL_ARRAY = {
+          "/ws/**",
+          "/ws/*",
+          "/ws/chat/*",
+          "/ws/chat/**",
+          "/subscribe/**",
+          "/topic/**",
+          "/chat/*",
+          "/chat/**"
+  };
 }
