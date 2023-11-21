@@ -166,7 +166,7 @@ public class UserService {
     boolean isMentorFollow = false;
     if(!email.equals("anonymousUser")){
       User loginUser = getUser(email);
-      isMentorFollow = loginUser.getFollowerList().stream().anyMatch(mentor -> mentor.getId().equals(user.getId()));
+      isMentorFollow = user.getFollowerList().stream().anyMatch(mentor -> mentor.getId().equals(loginUser.getId()));
     }
 
     return UserProfileInfo.from(user, isMentorFollow);
