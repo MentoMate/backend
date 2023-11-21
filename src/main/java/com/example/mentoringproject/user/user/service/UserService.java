@@ -9,6 +9,8 @@ import com.example.mentoringproject.login.email.components.MailComponents;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.model.UserInfoDto;
 import com.example.mentoringproject.user.user.model.UserJoinDto;
+import com.example.mentoringproject.user.user.model.UserProfile;
+import com.example.mentoringproject.user.user.model.UserProfileInfo;
 import com.example.mentoringproject.user.user.model.UserProfileSave;
 import com.example.mentoringproject.user.user.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -154,14 +156,20 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public User getProfileInfo(Long userId) {
+  public UserProfileInfo getProfileInfo(String email, Long userId) {
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
 
     checkExistsProfileName(user);
 
-    return user;
+    boolean isMentorFollow = false;
+    if(!email.equals("anonymousUser")){
+      User loginUser = getUser(email);
+      isMentorFollow = loginUser.getFollowerList().stream().anyMatch(mentor -> mentor.getId().equals(user.getId()));
+    }
+
+    return UserProfileInfo.from(user, isMentorFollow);
   }
 
   public void checkExistsProfileName(User user) {
@@ -232,6 +240,7 @@ public class UserService {
 
     if (!user.getId().equals(userId)) {
       User mentor = getProfileInfo(userId);
+
       List<User> followList = user.getFollowerList();
       if (followList.stream().anyMatch(followUser -> followUser.getId().equals(mentor.getId()))) {
         followList.removeIf(followUser -> followUser.equals(mentor));
@@ -270,6 +279,13 @@ public class UserService {
   public boolean userMentorChk(String email){
     User user = getUser(email);
     return userRepository.existsByIdAndNameIsNotNull(user.getId());
+  }
+
+  public User getProfileInfo(Long userId){
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
+    checkExistsProfileName(user);
+    return user;
   }
 
 }

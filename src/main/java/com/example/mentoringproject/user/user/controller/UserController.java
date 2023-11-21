@@ -4,6 +4,7 @@ import com.example.mentoringproject.common.util.SpringSecurityUtil;
 import com.example.mentoringproject.user.user.model.UserInfoDto;
 import com.example.mentoringproject.user.user.model.UserJoinDto;
 import com.example.mentoringproject.user.user.model.UserProfile;
+import com.example.mentoringproject.user.user.model.UserProfileInfo;
 import com.example.mentoringproject.user.user.model.UserProfileList;
 import com.example.mentoringproject.user.user.model.UserProfileSave;
 import com.example.mentoringproject.user.user.service.UserService;
@@ -153,10 +154,11 @@ public class UserController {
       @Content(schema = @Schema(implementation = UserProfile.class)))
   })
   @GetMapping("/profile/{userId}")
-  public ResponseEntity<UserProfile> profileInfo(
+  public ResponseEntity<UserProfileInfo> profileInfo(
       @PathVariable Long userId
   ) {
-    return ResponseEntity.ok(UserProfile.from(userService.getProfileInfo(userId)));
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(userService.getProfileInfo(email, userId));
   }
 
   @Operation(summary = "프로필 목록 조회 api", description = "프로필 목록 조회 api", responses = {

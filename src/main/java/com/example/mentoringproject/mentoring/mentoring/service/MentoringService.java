@@ -137,8 +137,10 @@ public class MentoringService {
     }
 
     boolean isPrivateChatRoomCreate = false;
+    boolean isMentoringLike = false;
     if(!email.equals("anonymousUser")){
       User user = userService.getUser(email);
+      isMentoringLike = mentoring.getFollowerList().stream().anyMatch(loginUser -> loginUser.getId().equals(user.getId()));
       if (privateChatRoomRepository.existsByUserIdAndMentoringId(user.getId(), mentoringId)) {
           isPrivateChatRoomCreate = true;
       }
@@ -146,7 +148,7 @@ public class MentoringService {
 
     mentoringRepository.updateCount(mentoringId);
     List<User> userList = menteeService.getUserListFormMentoring(mentoring);
-    return MentoringInfo.from(mentoring, isOwner, isPrivateChatRoomCreate, userList);
+    return MentoringInfo.from(mentoring, isOwner, isPrivateChatRoomCreate, isMentoringLike, userList);
   }
 
   public Mentoring getMentoring(Long mentoringId){
