@@ -34,11 +34,12 @@ public class MentoringInfo {
   private boolean isOwner;
   private boolean isPrivateChatRoomCreate;
   private boolean isMentoringLike;
+  private boolean isMentorFollow;
   private LocalDateTime registerDate;
   private LocalDateTime updateDate;
 
   public static MentoringInfo from(Mentoring mentoring, boolean isOwner,
-      boolean isPrivateChatRoomCreate, boolean isMentoringLike, List<User> userList ) {
+      boolean isPrivateChatRoomCreate, boolean isMentoringLike, boolean isMentorFollow, List<User> userList ) {
 
     return MentoringInfo.builder()
         .mentoringId(mentoring.getId())
@@ -61,6 +62,7 @@ public class MentoringInfo {
         .isOwner(isOwner)
         .isMentoringLike(isMentoringLike)
         .isPrivateChatRoomCreate(isPrivateChatRoomCreate)
+        .isMentorFollow(isMentorFollow)
         .registerDate(mentoring.getRegisterDate())
         .updateDate(mentoring.getUpdateDate())
         .build();
