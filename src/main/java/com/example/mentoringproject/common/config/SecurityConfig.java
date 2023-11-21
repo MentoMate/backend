@@ -40,6 +40,7 @@ public class SecurityConfig {
   private static final String[] PERMIT_GET_MENTORING_URL_ARRAY = PermitUrl.PERMIT_GET_MENTORING_URL_ARRAY;
   private static final String[] PERMIT_GET_POST_URL_ARRAY = PermitUrl.PERMIT_GET_POST_URL_ARRAY;
   private static final String[] PERMIT_GET_USER_URL_ARRAY = PermitUrl.PERMIT_GET_USER_URL_ARRAY;
+  private static final String[] PERMIT_CHAT_URL_ARRAY = PermitUrl.PERMIT_CHAT_URL_ARRAY;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,15 +61,7 @@ public class SecurityConfig {
         .antMatchers(HttpMethod.GET, PERMIT_GET_MENTORING_URL_ARRAY).permitAll()
         .antMatchers(HttpMethod.GET, PERMIT_GET_POST_URL_ARRAY).permitAll()
         .antMatchers(HttpMethod.GET, PERMIT_GET_USER_URL_ARRAY).permitAll()
-        .antMatchers("/ws/**").permitAll()
-        .antMatchers("/ws/*").permitAll()
-        .antMatchers("/ws/chat/*").permitAll()
-        .antMatchers("/ws/chat/**").permitAll()
-        .antMatchers("/subscribe/**").permitAll()
-        .antMatchers("/topic/**").permitAll()
-        .antMatchers("/chat/*").permitAll()
-        .antMatchers("/chat/**").permitAll()
-
+        .antMatchers(PERMIT_CHAT_URL_ARRAY).permitAll()
         .anyRequest().authenticated();
 
     http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);

@@ -58,9 +58,10 @@ public class ChatService {
 
   //  그룹 채팅방 생성 - (1)
   public void createRoomAutomatically() {
-    List<Mentoring> mentorings = mentoringRepository.
-        findAllByStartDateIsBeforeAndStatusIsAndRoomExistIsFalse(LocalDate.now(), MentoringStatus.PROGRESS);
-    for (Mentoring mentoring : mentorings) {
+    List<Mentoring> mentorings = mentoringRepository
+        .findAllByStartDateIsAndStatusIsAndRoomExistIsFalse(
+            LocalDate.now(), MentoringStatus.PROGRESS
+        );   for (Mentoring mentoring : mentorings) {
       createGroupRoom(mentoring);
     }
   }

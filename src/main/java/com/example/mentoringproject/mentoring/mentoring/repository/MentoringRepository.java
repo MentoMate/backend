@@ -31,7 +31,7 @@ public interface MentoringRepository extends JpaRepository<Mentoring, Long> {
 
   List<Mentoring> findAllByEndDateIsBeforeAndStatusIs(LocalDate localDate, MentoringStatus mentoringStatus);
 
-  List<Mentoring> findAllByStartDateIsBeforeAndStatusIsAndRoomExistIsFalse(LocalDate date,
+  List<Mentoring> findAllByStartDateIsAndStatusIsAndRoomExistIsFalse(LocalDate date,
       MentoringStatus status);
 
 }
