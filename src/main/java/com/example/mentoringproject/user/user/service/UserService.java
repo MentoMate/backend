@@ -173,7 +173,7 @@ public class UserService {
   }
 
   public void checkExistsProfileName(User user) {
-    if (user.getName().isEmpty()) {
+    if (user.getName() == null) {
       throw new AppException(HttpStatus.BAD_REQUEST, "프로필이 등록 되어 있지 않습니다.");
     }
   }
