@@ -16,20 +16,17 @@ import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import javax.transaction.Transactional;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -53,12 +50,8 @@ public class PayService {
     User buyer = userService.getUser(email);
 
     //이미 결제가 완료된 사람인지 확인
-    List<User> menteeList = menteeService.getUserListFormMentoring(mentoring);
-
-    if (menteeList.stream().anyMatch(user -> user.getId().equals(buyer.getId()))) {
-      throw new AppException(HttpStatus.BAD_REQUEST, "이미 결제가 완료되었습니다.");
-    }
-
+    checkAlreadyBuyMentoring(mentoring, buyer);
+    checkBuyerIsOwnerOfMentoring(mentoring, buyer);
     //결제 완료, repository에 저장
     Pay pay = payRepository.save(Pay.builder()
         .user(buyer)
@@ -75,15 +68,26 @@ public class PayService {
     return createPaymentNotificationResponseDto(mentoring, buyer);
   }
 
+  private void checkAlreadyBuyMentoring(Mentoring mentoring, User buyer) {
+    List<User> menteeList = menteeService.getUserListFormMentoring(mentoring);
+    if (menteeList.stream().anyMatch(user -> user.getId().equals(buyer.getId()))) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "이미 결제가 완료되었습니다.");
+    }
+  }
+
+  private void checkBuyerIsOwnerOfMentoring(Mentoring mentoring, User buyer) {
+    if (mentoring.getUser().equals(buyer)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "멘토링의 멘토는 결제할 수 없습니다.");
+    }
+  }
+
   private NotificationRequestDto createPaymentNotificationResponseDto(
       Mentoring mentoring, User buyer) {
-
     return NotificationRequestDto.builder()
         .receiverEmail(mentoring.getUser().getEmail())
         .notificationType(NotificationType.PAY)
         .content(createPayCompleteMessage(mentoring, buyer))
         .build();
-
   }
 
   private String createPayCompleteMessage(Mentoring mentoring, User buyer) {
