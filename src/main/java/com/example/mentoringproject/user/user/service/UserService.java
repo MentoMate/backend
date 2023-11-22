@@ -134,9 +134,10 @@ public class UserService {
 
     setProfile(user, userProfileSave);
     ImgUpload(multipartFile, user, userProfileSave);
+    user = userRepository.save(user);
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
 
-    return userRepository.save(user);
+    return user;
 
   }
 
@@ -151,9 +152,10 @@ public class UserService {
 
     setProfile(user, userProfileSave);
     ImgUpload(multipartFile, user, userProfileSave);
+    user = userRepository.save(user);
     mentorSearchRepository.save(MentorSearchDocumment.fromEntity(user));
 
-    return userRepository.save(user);
+    return user;
   }
 
   public UserProfileInfo getProfileInfo(String email, Long userId) {
