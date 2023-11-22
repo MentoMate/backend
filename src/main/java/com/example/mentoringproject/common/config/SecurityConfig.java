@@ -56,6 +56,7 @@ public class SecurityConfig {
         .and()
         .authorizeRequests()
         .antMatchers("/", "/user/login/**", "/user/join/**", "/login/oauth2/**", "/user/jwt/check").permitAll()
+        .antMatchers("/test/**").permitAll()
         .antMatchers(PERMIT_SWAGGER_URL_ARRAY).permitAll()
         .antMatchers().permitAll()
         .antMatchers(HttpMethod.GET, PERMIT_GET_MENTORING_URL_ARRAY).permitAll()
