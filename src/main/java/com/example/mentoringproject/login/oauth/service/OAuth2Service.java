@@ -1,9 +1,6 @@
 package com.example.mentoringproject.login.oauth.service;
 
 
-import static com.example.mentoringproject.user.user.entity.SocialType.KAKAO;
-import static com.example.mentoringproject.user.user.entity.SocialType.NAVER;
-
 import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.service.LoginService;
@@ -13,16 +10,20 @@ import com.example.mentoringproject.login.oauth.oauth.NaverOauth;
 import com.example.mentoringproject.user.user.entity.SocialType;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.example.mentoringproject.user.user.entity.SocialType.KAKAO;
+import static com.example.mentoringproject.user.user.entity.SocialType.NAVER;
 
 @Slf4j
 @Service
@@ -86,7 +87,7 @@ public class OAuth2Service {
     String accessToken = jwtService.createAccessToken(oauthUser.getEmail());
     String refreshToken = jwtService.createRefreshToken();
     jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-    jwtService.sendUserIdAndNickname(response, userId, nickname);
+    jwtService.sendUserIdAndNicknameAndEmail(response, userId, nickname, email);
     jwtService.updateRefreshToken(email, refreshToken);
     log.info("oauth login success");
   }

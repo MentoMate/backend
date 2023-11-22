@@ -133,11 +133,12 @@ public class JwtService {
     }
   }
 
-  public void sendUserIdAndNickname(HttpServletResponse response, Long userId, String nickname)
+  public void sendUserIdAndNicknameAndEmail(HttpServletResponse response, Long userId, String nickname, String email)
       throws IOException {
     ResponseBody responseBody= ResponseBody.builder()
         .userId(userId)
         .nickname(nickname)
+        .email(email)
         .build();
     response.getWriter().write(objectMapper.writeValueAsString(responseBody));
   }
