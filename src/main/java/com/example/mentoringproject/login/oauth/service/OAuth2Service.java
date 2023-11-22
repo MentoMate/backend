@@ -58,12 +58,17 @@ public class OAuth2Service {
       ResponseEntity<String> userInfoResponse = naverOauth.requestUserInfo(oAuthToken);
       socialId = naverOauth.getUserInfo(userInfoResponse);
     } else {
+      log.debug("accessTokenResponse get start");
       ResponseEntity<String> accessTokenResponse = kakaoOauth.requestAccessToken(code);
+      log.debug("oAuthToken get start");
       OAuthToken oAuthToken = kakaoOauth.getAccessToken(accessTokenResponse);
+      log.debug("userInfoResponse get start");
       ResponseEntity<String> userInfoResponse = kakaoOauth.requestUserInfo(oAuthToken);
+      log.debug("getUserInfo get start");
       socialId = kakaoOauth.getUserInfo(userInfoResponse);
     }
 
+    log.debug("user get start");
     Optional<User> optionalOauthUser = userRepository.findBySocialIdAndSocialType(socialId,
         socialType);
 
