@@ -24,6 +24,7 @@ public class MentoringInfo {
   private MentoringStatus status;
   private String category;
   private String uploadFolder;
+  private String uploadUrl;
   private int countWatch;
   private Long userId;
   private String name;
@@ -51,6 +52,7 @@ public class MentoringInfo {
         .status(mentoring.getStatus())
         .category(mentoring.getCategory())
         .uploadFolder(mentoring.getUploadFolder())
+        .uploadUrl(mentoring.getUploadUrl())
         .userId(mentoring.getUser().getId())
         .email(mentoring.getUser().getEmail())
         .name(mentoring.getUser().getName())
