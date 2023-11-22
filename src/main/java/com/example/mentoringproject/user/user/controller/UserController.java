@@ -37,12 +37,9 @@ public class UserController {
   private final UserService userService;
   private final JwtService jwtService;
 
-  private static final String ACCESS_TOKEN = "AccessToken";
-  private static final String REFRESH_TOKEN = "RefreshToken";
-
   @Operation(summary = "jwt token이 유효한지 체크하는 api", description = "jwt token이 유효한지 체크하는 api", responses = {
-          @ApiResponse(responseCode = "200", description = "jwt token이 유효한지 체크하는 api")
-  })
+          @ApiResponse(responseCode = "200", description = "jwt token이 유효한지 체크하는 api", content = @Content(
+                  schema = @Schema(implementation = ReissueToken.class)))})
   @GetMapping("/jwt/check")
   public ResponseEntity<ReissueToken> checkJwtToken(@RequestHeader String AccessTokenCheck,
                             @RequestHeader String RefreshTokenCheck,
