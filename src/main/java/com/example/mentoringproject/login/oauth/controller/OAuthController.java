@@ -34,6 +34,7 @@ public class OAuthController {
   @GetMapping("/oauth/callback/kakao")
   public void loginKakaoCallback(
       @RequestParam(name = "code") String code) throws IOException {
+    log.debug("code = {}", code);
     oauthService.oAuthLogin(SocialType.KAKAO, code);
   }
 
