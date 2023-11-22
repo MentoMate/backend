@@ -19,16 +19,10 @@ import java.util.Set;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-  private final String VALIDATION_ERROR_CODE = "VALIDATION ERROR CODE";
-
+  
   @ExceptionHandler(AppException.class)
   public ResponseEntity<String> appExceptionHandler(AppException e) {
     return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
-  }
-
-  private ErrorResponse makeErrorResponse(HttpStatus status, Object errorMessage) {
-    return new ErrorResponse(status.toString(), errorMessage);
   }
 
   @ExceptionHandler(MissingServletRequestPartException.class)
@@ -73,7 +67,6 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.badRequest().body(result);
   }
-
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
