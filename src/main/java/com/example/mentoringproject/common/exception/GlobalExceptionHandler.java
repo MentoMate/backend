@@ -74,11 +74,6 @@ public class GlobalExceptionHandler {
     return ResponseEntity.badRequest().body(result);
   }
 
-  @ExceptionHandler(ChatRoomAlreadyExistsException.class)
-  public ResponseEntity<ErrorResponse> handleChatRoomAlreadyExistsException(ChatRoomAlreadyExistsException ex) {
-    RoomErrorResponse errorResponse = ex.makeRoomErrorResponse();
-    return ResponseEntity.badRequest().body(makeErrorResponse(HttpStatus.BAD_REQUEST, errorResponse));
-  }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {

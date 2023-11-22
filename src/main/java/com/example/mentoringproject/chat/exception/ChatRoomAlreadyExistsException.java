@@ -1,9 +1,7 @@
-package com.example.mentoringproject.common.exception;
-
-import org.springframework.http.HttpStatus;
+package com.example.mentoringproject.chat.exception;
 
 public class ChatRoomAlreadyExistsException extends RuntimeException {
-  private final Long privateChatRoomId;
+  private Long privateChatRoomId;
 
   public ChatRoomAlreadyExistsException(Long privateChatRoomId, String message) {
     super(message);
@@ -14,7 +12,7 @@ public class ChatRoomAlreadyExistsException extends RuntimeException {
     return privateChatRoomId;
   }
 
-  public RoomErrorResponse makeRoomErrorResponse() {
+  public RoomErrorResponse getRoomErrorResponse() {
     return new RoomErrorResponse(getMessage(), privateChatRoomId);
   }
 }
