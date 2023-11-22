@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,9 +22,9 @@ public class TestController {
   }
 
   @GetMapping("/app/400")
-  public ResponseEntity<?> errorApp400() {
+  public ResponseEntity<?> errorApp400(@RequestParam Boolean check) {
 
-    if (true) {
+    if (check) {
       throw new AppException(HttpStatus.BAD_REQUEST, "400errorTest");
     }
     return ResponseEntity.ok().build();
