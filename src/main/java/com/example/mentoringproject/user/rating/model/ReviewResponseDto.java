@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ReviewResponseDto {
+  private Long id;
   private Long mentoringId;
   private Long userId;
   private String comment;
@@ -23,6 +24,7 @@ public class ReviewResponseDto {
 
   public static ReviewResponseDto from(Mentee mentee, User user) {
     return ReviewResponseDto.builder()
+        .id(mentee.getId())
         .mentoringId(mentee.getMentoring().getId())
         .userId(user.getId())
         .comment(mentee.getComment())
@@ -33,6 +35,7 @@ public class ReviewResponseDto {
 
   public static ReviewResponseDto from(Mentee mentee) {
     return ReviewResponseDto.builder()
+        .id(mentee.getId())
         .mentoringId(mentee.getMentoring().getId())
         .userId(mentee.getUser().getId())
         .comment(mentee.getComment())
