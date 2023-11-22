@@ -29,11 +29,11 @@ public class MentoringSearchDocumment {
   private String content;
 
   //ex) basic_date =  2023 01 11
-  @Field(name = "product_created_at", type=FieldType.Date, format = DateFormat.basic_date)
+  @Field(name = "start_date", type=FieldType.Date, format = DateFormat.basic_date)
   private LocalDate startDate; // 날짜를 문자열로 저장
 
   //ex) basic_date =  2023 01 11
-  @Field(name = "product_created_at", type=FieldType.Date, format = DateFormat.basic_date)
+  @Field(name = "end_date", type=FieldType.Date, format = DateFormat.basic_date)
   private LocalDate endDate; // 날짜를 문자열로 저장
 
 
