@@ -110,7 +110,7 @@ public class UserService {
     User user = userRepository.findByEmail(parameter.getEmail())
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
-    if (user.getEmailAuthDate()==null) {
+    if (user.getEmailAuthDate() == null) {
       throw new AppException(HttpStatus.BAD_REQUEST, "이메일 인증이 필요합니다.");
     }
 
@@ -166,9 +166,10 @@ public class UserService {
     checkExistsProfileName(user);
 
     boolean isMentorFollow = false;
-    if(!email.equals("anonymousUser")){
+    if (!email.equals("anonymousUser")) {
       User loginUser = getUser(email);
-      isMentorFollow = user.getFollowerList().stream().anyMatch(mentor -> mentor.getId().equals(loginUser.getId()));
+      isMentorFollow = user.getFollowerList().stream()
+          .anyMatch(mentor -> mentor.getId().equals(loginUser.getId()));
     }
 
     return UserProfileInfo.from(user, isMentorFollow);
@@ -207,22 +208,33 @@ public class UserService {
   public UserInfoDto changeImg(String email, List<MultipartFile> multipartFile) {
 
     User user = getUser(email);
+    Long userId = user.getId();
 
-    if(userRepository.existsByIdAndNameIsNotNull(user.getId())){
+    if (userRepository.existsByIdAndNameIsNotNull(user.getId())) {
       s3Service.deleteFile(S3FileDto.from(user));
     }
 
     String uploadPath = FOLDER + user.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);
+    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile, uploadPath, FILE_TYPE);
     user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
     userRepository.save(user);
+
+    MentorSearchDocumment mentorSearchDocumment = mentorSearchRepository.findById(userId).
+        orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "프로필 사진 변경에 실패 했습니다."));
+    ;
+    mentorSearchDocumment.setUploadUrl(user.getUploadUrl());
+    mentorSearchDocumment.setUploadFolder(user.getUploadFolder());
+
+    mentorSearchRepository.save(mentorSearchDocumment);
 
     return UserInfoDto.from(user);
 
   }
-  private void ImgUpload(List<MultipartFile> multipartFile, User user, UserProfileSave userProfile) {
+
+  private void ImgUpload(List<MultipartFile> multipartFile, User user,
+      UserProfileSave userProfile) {
     String uploadPath = FOLDER + user.getUploadFolder();
-    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile,uploadPath,FILE_TYPE);
+    List<S3FileDto> s3FileDto = s3Service.upload(multipartFile, uploadPath, FILE_TYPE);
     user.setUploadUrl(s3FileDto.get(0).getUploadUrl());
 
     List<String> imgList = Optional.ofNullable(userProfile.getUploadImg())
@@ -236,7 +248,7 @@ public class UserService {
   }
 
   @Transactional
-  public void userFollow(String email, Long userId){
+  public void userFollow(String email, Long userId) {
 
     User user = getUser(email);
 
@@ -249,7 +261,7 @@ public class UserService {
       } else {
         followList.add(user);
       }
-    }else {
+    } else {
       throw new AppException(HttpStatus.BAD_REQUEST, "사용자가 멘토로 등록 되어 있습니다. 팔로우가 불가합니다.");
     }
   }
@@ -278,12 +290,12 @@ public class UserService {
     return UserInfoDto.from(user);
   }
 
-  public boolean userMentorChk(String email){
+  public boolean userMentorChk(String email) {
     User user = getUser(email);
     return userRepository.existsByIdAndNameIsNotNull(user.getId());
   }
 
-  public User getProfileInfo(Long userId){
+  public User getProfileInfo(Long userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."));
     checkExistsProfileName(user);
