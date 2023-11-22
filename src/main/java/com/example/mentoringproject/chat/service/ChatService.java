@@ -183,52 +183,45 @@ public class ChatService {
     boolean isMentor = privateChatRoomRepository.existsByMentor(user);
     log.debug("Debug: isMentor - {}", isMentor);
 
-    PrivateChatRoom privateChatRoom = null;
+    List<PrivateMessage> latestMessages = new ArrayList<>();
 
     if (isUser) {
-      privateChatRoom = privateChatRoomRepository.findFirstByUser(user);
+      List<PrivateChatRoom> foundChatRoomsByUser = privateChatRoomRepository.findByUser(user);
+      latestMessages.addAll(getLatestMessages(foundChatRoomsByUser));
+
+      if (isMentor) {
+        List<PrivateChatRoom> foundChatRoomsByMentor = privateChatRoomRepository.findByMentor(user);
+        latestMessages.addAll(getLatestMessages(foundChatRoomsByMentor));
+      }
     } else if (isMentor) {
-      privateChatRoom = privateChatRoomRepository.findFirstByMentor(user);
-    }
+      List<PrivateChatRoom> foundChatRoomsByMentor = privateChatRoomRepository.findByMentor(user);
+      latestMessages.addAll(getLatestMessages(foundChatRoomsByMentor));
 
-    log.debug("Debug: privateChatRoom - {}", privateChatRoom);
-
-    if (privateChatRoom == null) {
-      return Collections.emptyList();
-    }
-
-    Long privateChatRoomId = privateChatRoom.getId();
-
-    log.debug("Debug: privateChatRoomId - {}", privateChatRoomId);
-
-    List<PrivateMessage> privateMessageList = privateMessageRepository.findByPrivateChatRoomId(
-            privateChatRoomId);
-
-    log.debug("Debug: privateMessageList - {}", privateMessageList);
-
-    Map<Long, PrivateMessage> latestMessagesByMentoringId = new HashMap<>();
-
-    for (PrivateMessage privateMessage : privateMessageList) {
-      Long mentoringId = privateMessage.getPrivateChatRoom().getMentoring().getId();
-      if (!latestMessagesByMentoringId.containsKey(mentoringId) ||
-          privateMessage.getRegisterDatetime()
-              .isAfter(latestMessagesByMentoringId.get(mentoringId).getRegisterDatetime())) {
-        latestMessagesByMentoringId.put(mentoringId, privateMessage);
+      if (isUser) {
+        List<PrivateChatRoom> foundChatRoomsByUser = privateChatRoomRepository.findByUser(user);
+        latestMessages.addAll(getLatestMessages(foundChatRoomsByUser));
       }
     }
 
-    log.debug("Debug: latestMessagesByMentoringId - {}", latestMessagesByMentoringId);
+    return latestMessages;
+  }
 
-    List<PrivateMessage> latestMessages = new ArrayList<>(latestMessagesByMentoringId.values());
+  private List<PrivateMessage> getLatestMessages(List<PrivateChatRoom> chatRooms) {
+    List<PrivateMessage> latestMessages = new ArrayList<>();
 
-    log.debug("Debug: latestMessages - {}", latestMessages);
+    for (PrivateChatRoom chatRoom : chatRooms) {
+      // 각 채팅방의 메시지 리스트를 가져와서 정렬
+      List<PrivateMessage> messages = chatRoom.getMessageList();
+      messages.sort(Comparator.comparing(PrivateMessage::getRegisterDatetime).reversed());
 
-    latestMessages.sort(Comparator.comparing(PrivateMessage::getRegisterDatetime).reversed());
-
-    log.debug("Debug: latestMessages - {}", latestMessages);
+      // 정렬된 메시지 리스트 중 첫 번째 메시지(최신 메시지)를 가져와서 결과 리스트에 추가
+      if (!messages.isEmpty()) {
+        latestMessages.add(messages.get(0));
+      }
+    }
 
     return latestMessages;
-
   }
+
 }
 

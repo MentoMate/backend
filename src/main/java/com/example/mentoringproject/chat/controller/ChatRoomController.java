@@ -17,7 +17,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,14 +136,32 @@ public class ChatRoomController {
 
     log.debug("Debug: privateMessageList - {}", privateMessageList);
 
-    List<PrivateMyChatListInfo> chatListInfo = privateMessageList.stream()
-        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName))
-        .collect(Collectors.toList());
+    List<PrivateMyChatListInfo> chatListInfo = getLatestChatListInfo(privateMessageList, nickName);
+
+    log.debug("Debug: chatListInfo - {}", chatListInfo);
+
+    chatListInfo.sort(Comparator.comparing(PrivateMyChatListInfo::getRegisterDatetime).reversed());
 
     log.debug("Debug: chatListInfo - {}", chatListInfo);
 
     return ResponseEntity.ok(chatListInfo);
+  }
 
+  private List<PrivateMyChatListInfo> getLatestChatListInfo(List<PrivateMessage> messages, String nickName) {
+    Map<PrivateChatRoom, PrivateMessage> latestMessagesMap = new HashMap<>();
+
+    for (PrivateMessage message : messages) {
+      PrivateChatRoom chatRoom = message.getPrivateChatRoom();
+
+      if (!latestMessagesMap.containsKey(chatRoom) ||
+          message.getRegisterDatetime().isAfter(latestMessagesMap.get(chatRoom).getRegisterDatetime())) {
+        latestMessagesMap.put(chatRoom, message);
+      }
+    }
+
+    return latestMessagesMap.values().stream()
+        .map(message -> PrivateMyChatListInfo.fromEntity(message, nickName))
+        .collect(Collectors.toList());
   }
 
 }
