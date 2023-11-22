@@ -2,20 +2,28 @@ package com.example.mentoringproject.common.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.mentoringproject.common.exception.AppException;
 import com.example.mentoringproject.login.response.ResponseBody;
+import com.example.mentoringproject.user.user.entity.User;
+import com.example.mentoringproject.user.user.model.ReissueToken;
 import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +54,7 @@ public class JwtService {
 
   private final UserRepository userRepository;
   private final ObjectMapper objectMapper;
+
   public String createAccessToken(String email) {
     Date now = new Date();
     return JWT.create()
@@ -131,5 +140,89 @@ public class JwtService {
         .nickname(nickname)
         .build();
     response.getWriter().write(objectMapper.writeValueAsString(responseBody));
+  }
+
+  public boolean checkTokenValidMoreThanThirtySecondsLeft(String token) {
+    try {
+      DecodedJWT verify = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+      Date expiresAt = verify.getExpiresAt();
+      Date timeLimit = Timestamp.valueOf(LocalDateTime.now().plusSeconds(30));
+      if (expiresAt.before(timeLimit)) {
+        return false;
+      }
+      return true;
+    } catch (Exception e) {
+      log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+      return false;
+    }
+  }
+
+  public Boolean checkTokenValid(String accessTokenCheck) {
+    String accessToken = getAccessToken(accessTokenCheck);
+    if (!checkTokenValidMoreThanThirtySecondsLeft(accessToken)) {
+      return false;
+    }
+    return true;
+  }
+
+  private static String getAccessToken(String authorization) {
+    if (!authorization.startsWith(BEARER)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "잘못된 access 토큰값입니다.");
+    }
+    return authorization.split(" ")[1];
+  }
+
+
+
+  public ReissueToken reissueAccessTokenAndRefreshToken(String refreshTokenCheck, String email) {
+    User user = userRepository.findByEmail(email).orElseThrow(
+            () -> new AppException(HttpStatus.BAD_REQUEST, "Not Found User By Email"));
+    String refreshToken = getRefreshToken(refreshTokenCheck);
+    checkRefreshTokenAccord(user, refreshToken);
+    String reissueRefreshToken = "";
+    if (!checkRefreshTokenValidTime(refreshToken)) {
+      reissueRefreshToken = reissueRefreshToken(user);
+    }
+    String accessToken = createAccessToken(email);
+
+    return ReissueToken.builder()
+            .accessToken(accessToken)
+            .refreshToken(reissueRefreshToken)
+            .build();
+  }
+
+  private String reissueRefreshToken(User user) {
+    String reissueRefreshToken = createRefreshToken();
+    user.setRefreshToken(reissueRefreshToken);
+    userRepository.save(user);
+    return reissueRefreshToken;
+  }
+
+  private static String getRefreshToken(String authorizationRefresh) {
+    if (!authorizationRefresh.startsWith(BEARER)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "잘못된 refresh 토큰값입니다.");
+    }
+    return authorizationRefresh.split(" ")[1];
+  }
+
+  private static void checkRefreshTokenAccord(User user, String refreshToken) {
+    if (!user.getRefreshToken().equals(refreshToken)) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "refreshToken값 불일치");
+    }
+  }
+
+  public boolean checkRefreshTokenValidTime(String refreshToken) {
+    try {
+      DecodedJWT verify = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(refreshToken);
+      Date expiresAt = verify.getExpiresAt();
+      Date timeLimit = Timestamp.valueOf(LocalDateTime.now().plusDays(1));
+      if (expiresAt.before(timeLimit)) {
+        return false;
+      }
+      return true;
+    } catch (Exception e) {
+      log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+      return false;
+    }
   }
 }

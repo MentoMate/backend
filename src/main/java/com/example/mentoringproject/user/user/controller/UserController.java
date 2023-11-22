@@ -1,23 +1,14 @@
 package com.example.mentoringproject.user.user.controller;
 
+import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.user.user.model.UserInfoDto;
-import com.example.mentoringproject.user.user.model.UserJoinDto;
-import com.example.mentoringproject.user.user.model.UserProfile;
-import com.example.mentoringproject.user.user.model.UserProfileInfo;
-import com.example.mentoringproject.user.user.model.UserProfileList;
-import com.example.mentoringproject.user.user.model.UserProfileSave;
+import com.example.mentoringproject.user.user.model.*;
 import com.example.mentoringproject.user.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
@@ -27,16 +18,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 
 @Tag(name = "User", description = "유저 API")
@@ -47,6 +35,23 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
   private final UserService userService;
+  private final JwtService jwtService;
+
+  private static final String ACCESS_TOKEN = "AccessToken";
+  private static final String REFRESH_TOKEN = "RefreshToken";
+
+  @Operation(summary = "jwt token이 유효한지 체크하는 api", description = "jwt token이 유효한지 체크하는 api", responses = {
+          @ApiResponse(responseCode = "200", description = "jwt token이 유효한지 체크하는 api")
+  })
+  @GetMapping("/jwt/check")
+  public ResponseEntity<ReissueToken> checkJwtToken(@RequestHeader String AccessTokenCheck,
+                            @RequestHeader String RefreshTokenCheck,
+                            @RequestParam String email) {
+    if (jwtService.checkTokenValid(AccessTokenCheck)) {
+      return ResponseEntity.ok().build();
+    }
+    return ResponseEntity.ok(jwtService.reissueAccessTokenAndRefreshToken(RefreshTokenCheck, email));
+  }
 
   @Operation(summary = "이메일 코드번호 전송", description = "이메일 코드번호 전송을 위해 이메일사용", responses = {
       @ApiResponse(responseCode = "200", description = "이메일 코드 전송 성공")
