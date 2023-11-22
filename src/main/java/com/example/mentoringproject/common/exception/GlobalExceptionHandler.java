@@ -23,8 +23,8 @@ public class GlobalExceptionHandler {
   private final String VALIDATION_ERROR_CODE = "VALIDATION ERROR CODE";
 
   @ExceptionHandler(AppException.class)
-  public ResponseEntity<ErrorResponse> appExceptionHandler(AppException e) {
-    return ResponseEntity.status(e.getErrorCode()).body(makeErrorResponse(e.getErrorCode(), e.getMessage()));
+  public ResponseEntity<String> appExceptionHandler(AppException e) {
+    return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
   }
 
   private ErrorResponse makeErrorResponse(HttpStatus status, Object errorMessage) {
@@ -32,16 +32,15 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MissingServletRequestPartException.class)
-  public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
+  public ResponseEntity<String> handleMissingServletRequestPartException(
       MissingServletRequestPartException ex) {
     // 예외 처리 및 클라이언트에게 오류 응답 전달
     String errorMessage = "Required request part '" + ex.getRequestPartName() + "' is not present";
-    return ResponseEntity.badRequest().body(makeErrorResponse(
-        HttpStatus.BAD_REQUEST, errorMessage));
+    return ResponseEntity.badRequest().body(errorMessage);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleValidException(
+  public ResponseEntity<String> handleValidException(
       MethodArgumentNotValidException exception) {
     BindingResult bindingResult = exception.getBindingResult();
     StringBuilder builder = new StringBuilder();
@@ -55,16 +54,13 @@ public class GlobalExceptionHandler {
       builder.append("]");
     }
 
-    ErrorResponse result = ErrorResponse.builder()
-        .code(VALIDATION_ERROR_CODE)
-        .message(builder.toString())
-        .build();
+    String result = builder.toString();
 
     return ResponseEntity.badRequest().body(result);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ErrorResponse> handleConstraintViolationException(
+  public ResponseEntity<String> handleConstraintViolationException(
       ConstraintViolationException exception) {
     Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
     StringBuilder builder = new StringBuilder();
@@ -73,10 +69,7 @@ public class GlobalExceptionHandler {
       builder.append(constraintViolation.getMessage());
       builder.append("]");
     }
-    ErrorResponse result = ErrorResponse.builder()
-        .code(VALIDATION_ERROR_CODE)
-        .message(builder.toString())
-        .build();
+    String result = builder.toString();
 
     return ResponseEntity.badRequest().body(result);
   }
@@ -88,12 +81,12 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-    return ResponseEntity.badRequest().body(makeErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+  public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    return ResponseEntity.badRequest().body(ex.getMessage());
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)
-  public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-    return ResponseEntity.badRequest().body(makeErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+  public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+    return ResponseEntity.badRequest().body(ex.getMessage());
   }
 }
