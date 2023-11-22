@@ -3,14 +3,15 @@ package com.example.mentoringproject.login.email.handler;
 import com.example.mentoringproject.common.jwt.service.JwtService;
 import com.example.mentoringproject.login.email.user.EmailLoginUser;
 import com.example.mentoringproject.user.user.repository.UserRepository;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     String refreshToken = jwtService.createRefreshToken();
 
     jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-    jwtService.sendUserIdAndNickname(response, userId, nickname);
+    jwtService.sendUserIdAndNicknameAndEmail(response, userId, nickname, email);
     userRepository.findByEmail(email)
         .ifPresent(user -> {
           user.updateRefreshToken(refreshToken);

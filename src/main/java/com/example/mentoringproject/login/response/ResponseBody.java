@@ -14,5 +14,6 @@ import lombok.Setter;
 public class ResponseBody {
   private Long userId;
   private String nickname;
+  private String email;
 
 }
