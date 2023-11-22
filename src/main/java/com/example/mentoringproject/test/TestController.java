@@ -16,13 +16,17 @@ public class TestController {
     throw new IllegalAccessException();
   }
   @GetMapping("/400")
-  public void error400() throws RuntimeException {
-    throw new RuntimeException();
+  public void error400() throws Exception {
+    throw new Exception();
   }
 
   @GetMapping("/app/400")
-  public void errorApp400() {
-    throw new AppException(HttpStatus.BAD_REQUEST, "400errorTest");
+  public ResponseEntity<?> errorApp400() {
+
+    if (true) {
+      throw new AppException(HttpStatus.BAD_REQUEST, "400errorTest");
+    }
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/app/500")
