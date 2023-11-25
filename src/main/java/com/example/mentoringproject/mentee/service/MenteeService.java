@@ -4,10 +4,11 @@ import com.example.mentoringproject.mentee.entity.Mentee;
 import com.example.mentoringproject.mentee.repository.MenteeRepository;
 import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import com.example.mentoringproject.user.user.entity.User;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,13 @@ public class MenteeService {
         .stream()
         .map(Mentee::getMentoring)
         .collect(Collectors.toList());
+  }
+
+  public List<Mentoring> getEndedAndWithoutRatingInputMentoring(User user) {
+    return menteeRepository.findAllByUserAndRatingIsNull(user)
+            .stream()
+            .map(Mentee::getMentoring)
+            .collect(Collectors.toList());
   }
 
 

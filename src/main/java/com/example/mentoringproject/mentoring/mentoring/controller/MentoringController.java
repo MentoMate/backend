@@ -1,13 +1,13 @@
 package com.example.mentoringproject.mentoring.mentoring.controller;
 
 import com.example.mentoringproject.common.util.SpringSecurityUtil;
-import com.example.mentoringproject.mentoring.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.mentoring.model.MentoringList;
+import com.example.mentoringproject.mentoring.mentoring.model.MentoringSave;
+import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
-import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
 import com.example.mentoringproject.user.rating.model.ReviewRequestDto;
 import com.example.mentoringproject.user.rating.model.ReviewResponseDto;
 import com.example.mentoringproject.user.rating.service.ReviewService;
@@ -17,10 +17,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -32,17 +28,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Tag(name = "멘토링", description = "멘토링 API")
 @RestController
@@ -214,8 +206,8 @@ public class MentoringController {
         MentoringList.from(mentoringService.getParticipatedMentoring(email, pageable)));
   }
 
-  @Operation(summary = "MentoringStatus가 Finish인 Mentoring가져오기 API",
-      description = "종료된 멘토링 가져오기", responses = {
+  @Operation(summary = "종료되고 평점을 입력하지 않은 멘토링 가져오기",
+      description = "종료되고 평점을 입력하지 않은 멘토링 가져오기 API", responses = {
       @ApiResponse(responseCode = "200", description = "종료된 멘토링 가져오기 성공", content =
       @Content(schema = @Schema(implementation = MentoringDto.class)))
   })
@@ -224,7 +216,7 @@ public class MentoringController {
       @PageableDefault Pageable pageable
   ) {
     String email = SpringSecurityUtil.getLoginEmail();
-    return ResponseEntity.ok(MentoringList.from(mentoringService.getEndedMentoringList(email, pageable)));
+    return ResponseEntity.ok(MentoringList.from(mentoringService.getEndedAndRatingIsNullMentoring(email, pageable)));
   }
 
   @Operation(summary = "평점, 후기 남기기 API", description = "평점, 후기 남기기 API", responses = {

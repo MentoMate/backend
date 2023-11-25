@@ -11,13 +11,8 @@ import com.example.mentoringproject.mentee.service.MenteeService;
 import com.example.mentoringproject.mentoring.event.PayEvent;
 import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.mentoring.entity.MentoringStatus;
-import com.example.mentoringproject.mentoring.mentoring.model.CountDto;
-import com.example.mentoringproject.mentoring.mentoring.model.MentoringSave;
+import com.example.mentoringproject.mentoring.mentoring.model.*;
 import com.example.mentoringproject.mentoring.mentoring.repository.MentoringRepository;
-import com.example.mentoringproject.mentoring.mentoring.model.MentorByRatingDto;
-import com.example.mentoringproject.mentoring.mentoring.model.MentoringByCountWatchDto;
-import com.example.mentoringproject.mentoring.mentoring.model.MentoringByEndDateDto;
-import com.example.mentoringproject.mentoring.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.pay.entity.Pay;
 import com.example.mentoringproject.post.post.entity.Category;
 import com.example.mentoringproject.post.post.entity.Post;
@@ -26,16 +21,6 @@ import com.example.mentoringproject.post.post.repository.PostRepository;
 import com.example.mentoringproject.user.user.entity.User;
 import com.example.mentoringproject.user.user.repository.UserRepository;
 import com.example.mentoringproject.user.user.service.UserService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -47,6 +32,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -293,9 +283,9 @@ public class MentoringService {
     return countDtoList;
   }
 
-  public Page<Mentoring> getEndedMentoringList(String email, Pageable pageable) {
+  public Page<Mentoring> getEndedAndRatingIsNullMentoring(String email, Pageable pageable) {
     User user = userService.getUser(email);
-    List<Mentoring> mentoringList = menteeService.getMentoringListFormMenteeUser(user)
+    List<Mentoring> mentoringList = menteeService.getEndedAndWithoutRatingInputMentoring(user)
         .stream()
         .filter(mentoring -> mentoring.getStatus().equals(MentoringStatus.FINISH))
         .collect(Collectors.toList());
