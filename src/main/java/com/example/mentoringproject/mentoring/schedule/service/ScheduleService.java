@@ -5,6 +5,7 @@ import com.example.mentoringproject.common.s3.service.S3Service;
 import com.example.mentoringproject.mentoring.mentoring.entity.Mentoring;
 import com.example.mentoringproject.mentoring.schedule.entity.Schedule;
 import com.example.mentoringproject.mentoring.file.service.FileUploadService;
+import com.example.mentoringproject.mentoring.schedule.model.ScheduleCalender;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleSave;
 import com.example.mentoringproject.mentoring.schedule.repository.ScheduleRepository;
 import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
@@ -68,8 +69,11 @@ public class ScheduleService {
     return  scheduleChk(scheduleId);
   }
 
-  public List<Schedule> scheduleInfoByPeriod(Long mentoringId, LocalDate startDate, LocalDate endDate){
-      return  scheduleRepository.findByMentoring_IdAndStartBetween(mentoringId, startDate, endDate);
+  public List<ScheduleCalender> scheduleInfoByPeriod(String email, Long mentoringId, LocalDate startDate, LocalDate endDate){
+    User user = userService.getUser(email);
+    Mentoring mentoring = mentoringService.getMentoring(mentoringId);
+    boolean isMentor = user.getId().equals(mentoring.getUser().getId());
+    return ScheduleCalender.from(scheduleRepository.findByMentoring_IdAndStartBetween(mentoringId, startDate, endDate), isMentor);
   }
 
   private void scheduleRegisterAuth(String email, Mentoring mentoring){

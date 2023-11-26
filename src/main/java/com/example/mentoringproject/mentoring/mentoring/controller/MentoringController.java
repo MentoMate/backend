@@ -5,6 +5,7 @@ import com.example.mentoringproject.mentoring.mentoring.model.MentoringSave;
 import com.example.mentoringproject.mentoring.mentoring.model.MentoringDto;
 import com.example.mentoringproject.mentoring.mentoring.model.MentoringInfo;
 import com.example.mentoringproject.mentoring.mentoring.model.MentoringList;
+import com.example.mentoringproject.mentoring.schedule.model.ScheduleCalender;
 import com.example.mentoringproject.mentoring.schedule.model.ScheduleInfo;
 import com.example.mentoringproject.mentoring.schedule.service.ScheduleService;
 import com.example.mentoringproject.mentoring.mentoring.service.MentoringService;
@@ -133,13 +134,13 @@ public class MentoringController {
       @Content(array = @ArraySchema(schema = @Schema(implementation = ScheduleInfo.class))))
   })
   @GetMapping("/{mentoringId}/schedule")
-  public ResponseEntity<List<ScheduleInfo>> scheduleInfoByPeriod(
+  public ResponseEntity<List<ScheduleCalender>> scheduleInfoByPeriod(
       @PathVariable Long mentoringId,
       @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
   ) {
-    return ResponseEntity.ok(
-        ScheduleInfo.from(scheduleService.scheduleInfoByPeriod(mentoringId, startDate, endDate)));
+    String email = SpringSecurityUtil.getLoginEmail();
+    return ResponseEntity.ok(scheduleService.scheduleInfoByPeriod(email, mentoringId, startDate, endDate));
   }
 
   @Operation(summary = "멘토링 종료 api", description = "멘토링 종료 api", responses = {
